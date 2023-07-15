@@ -31,5 +31,5 @@ img_me*
 prompts/[0-9]*
 models/config-user.yaml
 
-.DS_Store
 Thumbs.db
+.DS_Store
