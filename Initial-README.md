@@ -26,6 +26,8 @@ You're going to need a few things before you start
 
       Make this the first thing you get before you do anything else.
 
+      https://iterm2.com/downloads.html
+
       If you spend any time on the command line, you must get this, unless you just love Terminal.app. There are far too many configuration options to go into here, but play around with it. PROTIP: Set it up for tabbed windows.
 
 1. XCode
