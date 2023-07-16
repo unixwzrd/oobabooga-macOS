@@ -1,4 +1,3 @@
 # Just a placeholder
 
-Planning to have information regarding macOS as it pertains to oobabooga/text-generation-webui
-
+You want this: [Apple Silicon Support for oobabooga textgeneration-webui](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS-Install.md)
