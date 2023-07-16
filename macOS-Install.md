@@ -43,7 +43,7 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Llama for macOS and MPS](#llama-for-macos-and-mps)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
-  - [NOTE THIS IS INCOMPLETE- To be continued.](#note-this-is-incomplete--to-be-continued)
+  - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
 
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
 
@@ -328,13 +328,13 @@ conda install pytorch torchvision torchaudio -c pytorch
 
 ## Where We Are
 
-This is alot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot o fmodules and a lot of dependecies, so expect breakage from time to time.  Making checkpoints fo rrollback along the way will help a lot if you get a bad modulke, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
+This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot o fmodules and a lot of dependecies, so expect breakage from time to time.  Making checkpoints fo rrollback along the way will help a lot if you get a bad modulke, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
 
-Once you feel comfortable with your checkpoints and working venv, you can remove some of th eones you aren't using and this will pimprove COoda's performance.
+Once you feel comfortable with your checkpoints and working venv, you can remove some of th eones you aren't using and this will pimprove Conda's performance.
 
-At his point, LLaMa models dhold start up just fine and you shoul dee a noticiable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+At his point, LLaMA models dhold start up just fine and you shoul dee a noticiable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
 
-## NOTE THIS IS INCOMPLETE- To be continued.
+## NOTE THIS IS INCOMPLETE- To be continued
 
 There are a number of other modules like Pandas and SciPy wihich need review on Apple Silicon, many of these are usetd in oobababooga and elsewhere.
 
