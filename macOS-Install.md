@@ -2,20 +2,18 @@
 
 This guide provides instructions on how to build and run the oobabooga text-generation-webui on macOS, specifically on Apple Silicon.
 
-## TL;DR:
-
-  Sure, here's a brief summary of the steps described in the sections:
+## TL;DR;
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
-1. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
-1. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
-1. **NumPy**: Install NumPy in two ways: 
+2. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
+3. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
+4. **NumPy**: Install NumPy in two ways: 
    - Build it from source, ensuring it uses the OpenBLAS library you built.
    - Install it quickly using Conda or Pip.
-1. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
-1. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
-1. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
-1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
+5. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
+6. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
+7. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
+8. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
 
 Throughout the process, you're advised to create clones of your Conda environments at various stages. This allows you to easily roll back to a previous state if something goes wrong.
 
@@ -26,7 +24,7 @@ Please note that the guide is incomplete and is expected to be continued.
 -- [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
 
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
-  - [TL;DR:](#tldr)
+  - [TL;DR;](#tldr)
   - [Table of Contents](#table-of-contents)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
@@ -315,7 +313,7 @@ You're going to need the llama library and the Python module for it. You should 
 
 ```bash
 pip uninstall -y llama-cpp-python
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile -v llama-cpp-python
+CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
 ```
 
 ## PyTorch for macOS and MPS
