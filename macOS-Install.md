@@ -1,6 +1,6 @@
 # Apple Silicon Support for oobabooga textgeneration-webui
 
-Her's the contents, skip forward if you want to. I may get a little wordy, so, just follow thw steps her in the table of contents.
+Her's the contents, skip forward if you want to. I may get a little wordy, so, just follow thw steps her in the table of contents. I also plan to have a Reader's Digest condensed version soon as well.
 
 - [Apple Silicon Support for oobabooga textgeneration-webui](#apple-silicon-support-for-oobabooga-textgeneration-webui)
 - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
@@ -17,7 +17,9 @@ Her's the contents, skip forward if you want to. I may get a little wordy, so, j
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS](#llama-for-macos-and-mps)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
-- [Misc ToDo's](#misc-todos)
+  - [NOTE THIS IS INCOMPLETE- To be continued...](#note-this-is-incomplete--to-be-continued)
+  - [Misc ToDo's (some random items on my todo list, or maybe not, will move them off here)](#misc-todos-some-random-items-on-my-todo-list-or-maybe-not-will-move-them-off-here)
+
 
 
 
@@ -268,6 +270,7 @@ Create a checkpoint before either installing using pip or conda. This allows us 
 
 ```bash
 conda create --clone appbase -n numpy
+conda activate numpy
 ```
 
 The main point of this installation was that during my build-up of th eenvironment, I had a version of NumPy which was not configured correctly. So, whichever way you decide, make sure you validate nothing has pulled out your modules and put in ones you don't want pr are questionable.
@@ -281,18 +284,26 @@ Method 1 is with pip. After it's complete, we should clone th eenvironment as a 
 ```bash
 pip install torch torchvision torchaudio
 conda create -clone numpy -n  piptorch
+conda activate torch
 ```
 
 Method 2 is woith conda. lso clone th eenvironment it was built in so we can roll back and move forward or fork if we want.
 
 ```bash
 conda install pytorch torchvision torchaudio -c pytorch
-conda create -clone numpy -n  piptorch
+conda create -clone numpy -n  condatorch
+conda activate pytorch
 ```
 
-Later lobrary andn module installations may require re-installs of PyTorch or numpy.  For instance, I knkw that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
+Later library and module installations may require re-installs of PyTorch or numpy.  For instance, I knkw that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
 
 ## oobabooga Base - Everything Else
+
+Pick one of the venv's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with th eone which is active, use the following:
+
+```bash
+conda info -e
+```
 
 ### Clone The oobabooga GitHub Repository
 
@@ -316,49 +327,62 @@ pip install -r requirements.txt
 
 Now, at this point, we have everything we need to run the basid server with no extensions.  However, we should have a look at the llama-cpp and llama-cpp-python as we may need to build them ourselves.
 
+If everything looks good, then clone a checkpoint here,
+
+```bash
+conda create --clone pytorch -n oobaboogabase
+```
+
 ## Llama for macOS and MPS
 
 You're going to need the llama library and the python modulke for it. You chould recompile it, and O have validated that my build using OpenBLAS. I will also add instructions laetr fro building a stand-alone llama-cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you opnly need the stand-alone version.
 
-
 ```bash
 pip uninstall -y llama-cpp-python
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install llama-cpp-python --no-cache-dir
+pip install --no-cache ---no-binary :all: --compile llama-cpp-python
 ```
+
 ## PyTorch for macOS and MPS
 
 This seems to be the best method rathetr than using pip to install, th ecollection seems more up to date and more comprehensive than PyPi.
 
-''
+```bash
 conda install pytorch torchvision torchaudio -c pytorch
-''
+```
 
-# Misc ToDo's
+## NOTE THIS IS INCOMPLETE- To be continued...
 
-- Build Linux/macOS Installer for ARM64 and x86_64
+
+## Misc ToDo's (some random items on my todo list, or maybe not, will move them off here)
+
+- Build Linux/macOS Installer Startup for ARM64 and x86_64
   - Keep Windows batch, WSL separated from these. Windows file system and *nix don't play nice together very well.
   - This is a work in process.
     - Do it all in shell scripts with sne envirnment variables
     - .env
     - .env.local
     - .env.default
+    - All above environments are loaded in a hierarchy
+  - Unix/Linux/macOS startup script
 
-- Keep existing or download new Minicondo
+- Keep existing or download new Minicondo or Update ?
   - Prevent a new installation of Miniconda from burining down existing Miniconda installs.
 
-- New venv on update
+- New venv on update incase of rollback
   - Copy repo to backup or tar
   - Clone repo
   - Create new venv for backup
 
-- support for building in and retreiving extensions
+- Support for building in and retreiving extensions ?
 
 - Voice alterations and config to keep ElevenLabs voice
   - Save voice name and ID
   - Save Voice parameters
-  - Clear cache and mp3 files somehow
+    - Stability
+    - Clarity + Similarity Enhancement
+  - Clear cache and mp3 files somehow when restarted and th esequence number starts over
 
 - Increase Context size to 16k or make it a parameter
   - Fix context truncation calculkation
   - Generate tokens in advance and store them along side history
-  - Add token_count and
+  - Add token_count and ?
