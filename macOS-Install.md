@@ -39,6 +39,7 @@ Please note that the guide is incomplete and is expected to be continued.
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS](#llama-for-macos-and-mps)
+  - [Pandas](#pandas)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
   - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
@@ -99,7 +100,7 @@ Before you begin, there are a few things you'll need.
 
 3. **VSCode**
 
-    Yes, two IDE's, but there are many plugins for VSCode. Unless you're developing macOS or other Apple apps, this is a great IDE. I like it because there's a Vi/Vim mode for it. If you're familiar with the keystrokes for Vi, you're good to go. An integrated terminal means you can run shell scripts while in the IDE. There are many options, settings, and plugins for this, and finding the right ones may be challenging. However, if you're working with AI, you'll likely want this for the Jupyter Notebooks support alone. It also integrates seamlessly with GitHub.
+    Yes, two IDE's, but there are many plugins for VSCode. Unless you're developing macOS or other Apple apps, this is a great IDE. I like it because there's a Vi/Vim mode for it. If you're familiar with the keystrokes for Vi, you're good to go. An integrated terminal means you can run a command line while in the IDE, and it can even do ssh tunneling so you can develop on aremote machine apearing as though everything was local. There are many options, settings, and plugins for this, and finding the right ones may be challenging. However, if you're working with AI or Data Science, you'll likely want this for the Jupyter Notebooks support alone. It also integrates seamlessly with GitHub.
 
     Make sure you get the "Apple Silicon" zip file. The universal and the Intel version caused me problems when I migrated from my Intel Mac to Apple Silicon because it would run in Rosetta, and everything on the system would report that it was running on Intel when using the terminal. Universal could possibly run inside Rosetta as there is an option on some applications, like iTerm, where when you open the "Get Info" for the application, there is an option to run it using Rosetta. Make sure you don't have the universal build and this box is unchecked.
 
@@ -230,6 +231,7 @@ Clone that 'textgen0' and put the numerical items necessary for the conda instal
 
 ```bash
 conda create --clone python3.10 -n appbase
+conda deactivate
 conda install numpy
 ```
 
@@ -239,6 +241,7 @@ Create a checkpoint before either installing using pip or conda. This allows us 
 
 ```bash
 conda create --clone appbase -n numpy
+conda deactivate
 conda activate numpy
 ```
 
@@ -253,6 +256,7 @@ Method 1 is with Conda and is the preferred way to install, according to the [Py
 ```bash
 conda install pytorch torchvision torchaudio -c pytorch
 conda create --clone numpy -n condatorch
+conda deactivate
 conda activate condatorch
 ```
 
@@ -261,6 +265,7 @@ Method 2 is with pip. After it's complete, we should clone the environment as a 
 ```bash
 pip install torch torchvision torchaudio
 conda create --clone numpy -n piptorch
+conda deactivate
 conda activate piptorch
 ```
 
@@ -301,8 +306,13 @@ If everything looks good, then clone a checkpoint here,
 
 ```bash
 conda create --clone pytorch -n oobaboogabase
-# or
+conda deactivate
+#
+# or depending on which you used to install
+#
 conda create --clone condatorch -n oobaboogabase
+conda deactivate
+conda activate oobaboogabase
 ```
 
 Create the venv for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
@@ -311,17 +321,33 @@ Create the venv for whichever PyTorch installation you wish to use going forward
 
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama-cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
+The application llama-cpp compiles with MPs support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
+
 ```bash
 pip uninstall -y llama-cpp-python
 CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
 ```
 
-## PyTorch for macOS and MPS
+## Pandas
 
-This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi.
+Pandas is now on th erequirements list and I belieev it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
+
+I will have to look into this some more, but if anyone has any infomration on this, please let me know.
 
 ```bash
-conda install pytorch torchvision torchaudio -c pytorch
+pip uninstall -y pandas
+CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
+```
+
+
+## PyTorch for macOS and MPS
+
+It may be necessary to re-install NumPy or at least upgrade it due to another module having different requiremnts and a diffrent version of a module like NumPy. The OpenWhisper python modules is incompatible with the latest NumPy, at least at the tiem I wrote this, but please let me know if you have additional information.
+
+This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
+
+```bash
+conda install ppytorch torchvision torchaudio -c pytorch
 ```
 
 ## Where We Are
@@ -336,4 +362,4 @@ At his point, LLaMA models dhold start up just fine and you shoul dee a noticiab
 
 There are a number of other modules like Pandas and SciPy wihich need review on Apple Silicon, many of these are usetd in oobababooga and elsewhere.
 
-Please run through the steps and feel free to comment, update or clarify.
+Please run through the steps and feel free to comment, update, clarify, or contribute.
