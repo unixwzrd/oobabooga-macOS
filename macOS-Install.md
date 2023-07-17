@@ -317,6 +317,8 @@ Create the venv for whichever PyTorch installation you wish to use going forward
 
 ## Llama for macOS and MPS
 
+The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi.
+
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama-cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
 The application llama-cpp compiles with MPs support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
