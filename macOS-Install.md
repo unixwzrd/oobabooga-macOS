@@ -142,7 +142,7 @@ conda update -n base -c defaults conda
 Create a new venv using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
 
 ```bash
-conda create -n python3.10 python==3.10
+conda create -n python3.10 python==3.10.*
 conda activate python3.10
 ```
 
