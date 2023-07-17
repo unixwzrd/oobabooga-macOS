@@ -2,12 +2,12 @@
 
 This guide provides instructions on how to build and run the oobabooga text-generation-webui on macOS, specifically on Apple Silicon.
 
-## TL;DR;
+## TL;DR
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
 2. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
 3. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
-4. **NumPy**: Install NumPy in two ways: 
+4. **NumPy**: Install NumPy in two ways:
    - Build it from source, ensuring it uses the OpenBLAS library you built.
    - Install it quickly using Conda or Pip.
 5. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
@@ -21,10 +21,8 @@ Please note that the guide is incomplete and is expected to be continued.
 
 ## Table of Contents
 
--- [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
-
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
-  - [TL;DR;](#tldr)
+  - [TL;DR](#tldr)
   - [Table of Contents](#table-of-contents)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
@@ -155,7 +153,7 @@ Cloning a venv can also help you quickly determine if a compile, or some other m
 
 Ensure you have CMake installed. Many dependencies rely on CMake, which is beneficial as it builds based on the original hardware and software configuration of your machine.
 
-You can find it here: https://cmake.org/download/
+You can find it here: <https://cmake.org/download/>
 
 CMake is easy to install and will be needed for later steps like llama-cpp, llama-cpp-python, and other modules.
 
@@ -339,7 +337,6 @@ pip uninstall -y pandas
 CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
 ```
 
-
 ## PyTorch for macOS and MPS
 
 It may be necessary to re-install NumPy or at least upgrade it due to another module having different requiremnts and a diffrent version of a module like NumPy. The OpenWhisper python modules is incompatible with the latest NumPy, at least at the tiem I wrote this, but please let me know if you have additional information.
@@ -347,7 +344,7 @@ It may be necessary to re-install NumPy or at least upgrade it due to another mo
 This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
 
 ```bash
-conda install ppytorch torchvision torchaudio -c pytorch
+conda install pytorch torchvision torchaudio -c pytorch
 ```
 
 ## Where We Are
