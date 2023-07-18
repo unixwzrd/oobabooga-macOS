@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+
+import torch
+
+# List of data types to test
+dtypes = [torch.float32, torch.float16, torch.bfloat16, torch.int64, torch.int32, torch.int16, torch.int8]
+
+for dtype in dtypes:
+    print(f"*************************************************************I")
+    print(f"               Testing dtype: {dtype}")
+    print(f"*************************************************************I")
+    # Create some tensors of the specified data type
+    a = torch.randn(10000, 10000, dtype=dtype)
+    b = torch.randn(10000, 10000, dtype=dtype)
+
+    with torch.autocast('mps'):
+        c = a + b
+        d = (a * b).mean()
+
+    print(c)
+    print(d)
+

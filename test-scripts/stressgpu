@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import torch
+
+# Check if a GPU is available and if not, use a CPU
+device = torch.device("cuda" if torch.cuda.is_available() else "mps")
+
+# Create two random 5000x5000 matrices
+mat1 = torch.randn(10000, 10000, device=device)
+mat2 = torch.randn(10000, 10000, device=device)
+
+# Perform a matrix multiplication
+result = torch.mm(mat1, mat2)
+
+# Print the result
+print(result)
+

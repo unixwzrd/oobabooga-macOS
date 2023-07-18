@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+
+import torch
+
+# Set the device to MPS
+device = torch.device("mps", 0)
+
+# Create random data
+N = 10000
+a = torch.randn([N, N], device=device)
+b = torch.randn([N, N], device=device)
+
+# Perform matrix multiplication
+for _ in range(10):
+    a @ b
+

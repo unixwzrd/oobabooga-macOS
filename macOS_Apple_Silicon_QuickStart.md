@@ -65,4 +65,6 @@ CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :
 conda install pytorch torchvision torchaudio -c pytorch
 ```
 
+Add the --upgrade flag to upgrade any of these.
+
 Remember to create clones of your Conda environments at various stages to easily roll back to a previous state if something goes wrong.
