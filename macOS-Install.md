@@ -42,6 +42,7 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Where We Are](#where-we-are)
   - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
 
+
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
 
 ## Building for macOS and Apple Silicon
@@ -126,8 +127,8 @@ One way to avoid conflicts, downgrades, and other issues is to use the "--dry-ru
    cd
    mkdir tmp
    cd tmp
-   curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOS-arm64.sh > Miniconda3.sh
-   sh Miniconda.sh
+   curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o Miniconda.sh
+   sh Miniconda1-latest-MacOS-arm64.sh 
    # Replace the shell name below with your preferred shell. The -l switch gives you a login shell and, contrary to what you may heard, you don't have to log out or exit the terminal. Simply exec the shell and it will reload your environment variables with the additional Conda ones set. This also works in Linux and most other Unix-like POSIX operating systems.
    exec bash -l
 ```
@@ -325,7 +326,9 @@ The application llama-cpp compiles with MPs support. I'm not sure if the cmake c
 
 ```bash
 pip uninstall -y llama-cpp-python
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
+CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FORCE_CMAKE=1 \
+    pip install --no-cache --no-binary :all: --force-reinstall --upgrade --compile llama-cpp-python
 ```
 
 ## Pandas

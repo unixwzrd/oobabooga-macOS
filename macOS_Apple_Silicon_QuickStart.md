@@ -4,8 +4,11 @@ Make sure Xcode at the minimum is installed.
 
 ```bash
 # Install Miniconda MAke sure it is arm64
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
 bash Miniconda3-latest-MacOSX-arm64.sh
+
+# Get a new login Shell
+exec bash -l
 
 # Update Conda if necessary
 conda update -n base -c defaults conda
@@ -17,12 +20,12 @@ conda create -n python3.10 python=3.10
 conda activate python3.10
 
 # Clone and build CMake from source
-wget https://github.com/Kitware/CMake/releases/download/v3.22.1/cmake-3.22.1.tar.gz
-tar -xzvf cmake-3.22.1.tar.gz
-cd cmake-3.22.1
+git clone https://github.com/Kitware/CMake.git
+cd cmake
 ./bootstrap
 make -j24
 make install
+cd ..
 
 # Clone, build, and install OpenBLAS
 git clone https://github.com/xianyi/OpenBLAS

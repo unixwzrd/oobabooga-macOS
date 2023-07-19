@@ -6,6 +6,10 @@
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 19 Jul 2023 - New information on building llama-cpp-python
+
+INstructions have been updated.  Also, ther were some corerctions as I was rushed getting this done.  If you find any errors are think or a better way to do things, let me know.
+
 ## 19 Jul 2023 - NEW llama-cpp-python
 
 Haven't tested it yet, but here's hwo to update yours.  Will change this with th eresults of my testing.
