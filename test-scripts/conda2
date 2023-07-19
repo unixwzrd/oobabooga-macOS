@@ -83,7 +83,7 @@ libtiff                   4.5.0                h313beb8_2
 libwebp                   1.2.4                ha3663a8_1  
 libwebp-base              1.2.4                h80987f9_1  
 linkify-it-py             2.0.2                    pypi_0    pypi
-llama-cpp-python          0.1.72                   pypi_0    pypi
+llama-cpp-python          0.1.73                   pypi_0    pypi
 llvm-openmp               14.0.6               hc6e5704_0  
 lz4-c                     1.9.4                h313beb8_0  
 markdown                  3.4.3                    pypi_0    pypi
@@ -170,6 +170,7 @@ torchvision               0.15.2          cpu_py310h31aa045_0
 tqdm                      4.65.0                   pypi_0    pypi
 traitlets                 5.9.0                    pypi_0    pypi
 transformers              4.30.2                   pypi_0    pypi
+typing-extensions         4.7.1                    pypi_0    pypi
 typing_extensions         4.6.3           py310hca03da5_0  
 tzdata                    2023.3                   pypi_0    pypi
 uc-micro-py               1.0.2                    pypi_0    pypi

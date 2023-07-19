@@ -53,13 +53,13 @@ pip install -r requirements.txt
 pip uninstall -y llama-cpp-python
 
 # If necessary, reinstall llama-cpp-python with specific CMake arguments to enable Metal support
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
+CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
 
-# Uninstall any existing version of llama-cpp-python
+# Uninstall any existing version of pandas
 pip uninstall -y pandas
 
-# If necessary, reinstall llama-cpp-python with specific CMake arguments to enable Metal support
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
+# If necessary, reinstall pandas with specific CMake arguments to enable Metal support
+CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
 
 # If necessary, reinstall PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
 conda install pytorch torchvision torchaudio -c pytorch
