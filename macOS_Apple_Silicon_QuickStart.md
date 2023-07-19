@@ -3,9 +3,9 @@
 Make sure Xcode at the minimum is installed.
 
 ```bash
-# Install Miniconda
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-bash Miniconda3-latest-MacOSX-x86_64.sh
+# Install Miniconda MAke sure it is arm64
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+bash Miniconda3-latest-MacOSX-arm64.sh
 
 # Update Conda if necessary
 conda update -n base -c defaults conda
@@ -53,13 +53,17 @@ pip install -r requirements.txt
 pip uninstall -y llama-cpp-python
 
 # If necessary, reinstall llama-cpp-python with specific CMake arguments to enable Metal support
-CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
+CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FORCE_CMAKE=1 \
+    pip install --no-cache --no-binary :all: --force-reinstall --upgrade --compile llama-cpp-python
 
 # Uninstall any existing version of pandas
-pip uninstall -y pandas
+CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FOECE_CMAKE=1 \
+    pip uninstall -y pandas
 
 # If necessary, reinstall pandas with specific CMake arguments to enable Metal support
-CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
+    pip install --no-cache --no-binary :all: --compile pandas
 
 # If necessary, reinstall PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
 conda install pytorch torchvision torchaudio -c pytorch
