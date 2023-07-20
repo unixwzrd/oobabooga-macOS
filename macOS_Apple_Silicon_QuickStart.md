@@ -61,12 +61,10 @@ CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     pip install --no-cache --no-binary :all: --force-reinstall --upgrade --compile llama-cpp-python
 
 # Uninstall any existing version of pandas
-CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
-    FOECE_CMAKE=1 \
-    pip uninstall -y pandas
+pip uninstall -y pandas
 
 # If necessary, reinstall pandas with specific CMake arguments to enable Metal support
-    pip install --no-cache --no-binary :all: --compile pandas
+FOECE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
 
 # If necessary, reinstall PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
 conda install pytorch torchvision torchaudio -c pytorch
