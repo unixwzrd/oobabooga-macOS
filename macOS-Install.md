@@ -15,6 +15,8 @@ This guide provides instructions on how to build and run the oobabooga text-gene
 7. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
 8. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
 
+Cheeck out [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md) for the short method without explanations.
+
 Throughout the process, you're advised to create clones of your Conda environments at various stages. This allows you to easily roll back to a previous state if something goes wrong.
 
 Please note that the guide is incomplete and is expected to be continued.
@@ -40,6 +42,7 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Pandas](#pandas)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
+  - [Extensions](#extensions)
   - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
 
 
@@ -127,7 +130,7 @@ One way to avoid conflicts, downgrades, and other issues is to use the "--dry-ru
    cd
    mkdir tmp
    cd tmp
-   curl -sL https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o Miniconda.sh
+   curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o Miniconda.sh
    sh Miniconda1-latest-MacOS-arm64.sh 
    # Replace the shell name below with your preferred shell. The -l switch gives you a login shell and, contrary to what you may heard, you don't have to log out or exit the terminal. Simply exec the shell and it will reload your environment variables with the additional Conda ones set. This also works in Linux and most other Unix-like POSIX operating systems.
    exec bash -l
@@ -209,9 +212,9 @@ With the installation of NumPy, we begin to change the nature of the Python envi
 To create a clone of my baseline to this point, just in case something goes wrong, like other modules being updated or for some reason we want to roll this back. This one is fairly easy, since pip only installs one module for NumPy, however using conda, will install several modules, presumably as dependencies though pip doesn't. One thing which is included separately in the conda install is the OpenBLAS libraries.
 
 ```bash
-conda create --clone python3.10 -n appbase
+conda cradte --clone python3.10 -n tgeb.00.numpy
 conda deactivate
-conda activate appbase
+conda activate tgen.00.numpy
 pip install --no-cache --no-binary :all: --compile numpy
 ```
 
@@ -226,23 +229,32 @@ numpy.show_config()
 
 ### Numpy Quicker - Use Conda or Pip
 
-Clone that 'textgen0' and put the numerical items necessary for the conda install of the NumPy and PyTorch modules and their dependencies.  The big difference between pip and conda is that OpenBLAS will be put in your conda venv, whereas the compilation and installation of OpenBLAS and the forced recompile of NumPy by pip will use the library in /usr/local/lib instead of your conda/miniconda repository.
+Clone the untouched python3.10. I've found that teh following naming convention woeks well for being able to roll back:
+
+  tgen.00.numpy
+
+- appcode, a code for the application.
+- sequence, this number will give me the sequence the venv was craeted in as a reference and is incremented for each recovery milestone.
+- milestone, this is an identifier for the milestone, suc as here "numpy" we are about to install numpy on top of our environment.
+
+ This convention allows us to easilky identify what the packages were or the significance of the milestobe in th eenvironment build process.  Removing the venv will remove fron that milestone forward, at least symbolically. The later venvs will still be installed, but I've found it's good to remove them too as I roll back, thoug hsome might be left in place for testing purposes.
+
+ The sequence number will help in understanding what happened every step along the way, and can also be useful if you decide to list the venvs using:
+
+ ```bash
+conda info -e  | grep -v \# | sort
+ ```
+
+This will list your environments in th eorder they weer created if you use the sequence number and can help you determine what you might want to roll back.  Adding a .n.nn to th enumber could also signify a branch.  This si a lot to maintain manually, but is helpful when tracking down module dependencies and helping to keep one's view of the envirnments clear.
 
 ```bash
-conda create --clone python3.10 -n appbase
+conda cradte --clone python3.10 -n tgeb.00.numpy
 conda deactivate
+conda activate tgen.00.numpy
 conda install numpy
 ```
 
 Either one of these options is viable, but if you go the OpenBLAS route, you definitely know what you have and it was built in your environment.
-
-Create a checkpoint before either installing using pip or conda. This allows us to roll back the NumPy install.  If we wish to do other testing, we can later clone the NumPy venv and move forward from there. Some applications may want only NumPy and then have additional requirements based on a version of NumPy.
-
-```bash
-conda create --clone appbase -n numpy
-conda deactivate
-conda activate numpy
-```
 
 The main point of this installation was that during my build-up of the environment, I had a version of NumPy which was not configured correctly. So, whichever way you decide, make sure you validate nothing has pulled out your modules and put in ones you don't want or are questionable.
 
@@ -253,22 +265,24 @@ Let's now install PyTorch or Torch and see what happens by using either pip, con
 Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
 
 ```bash
+conda create --clone tgeb.00.numpy -n tgeb.01.torch
+conda deactivate 
+conda activate tgeb.01.torch
 conda install pytorch torchvision torchaudio -c pytorch
-conda create --clone numpy -n condatorch
-conda deactivate
-conda activate condatorch
 ```
 
 Method 2 is with pip. After it's complete, we should clone the environment as a checkpoint for rolling back.
 
 ```bash
+conda create --clone tgeb.00.numpy -n tgeb.01.torch
+conda deactivate 
+conda activate tgeb.01.torch
 pip install torch torchvision torchaudio
-conda create --clone numpy -n piptorch
-conda deactivate
-conda activate piptorch
 ```
 
 Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
+
+Create the venv for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
 
 ## oobabooga Base - Everything Else
 
@@ -296,25 +310,13 @@ git clone https://github.com/oobabooga/text-generation-webui.git
 Change into the oobabooga text-generation-webui directory you cloned from GitHub earlier. Due to the structure of the file, it must be done with pip.
 
 ```bash
+conda create --clone tgen.01.torch -n tgen.02.oobaboogabase
+conda deactivate
+conda activate tgen.02.oobaboogabase 
 pip install -r requirements.txt
 ```
 
 Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama-cpp and llama-cpp-python as we may need to build them ourselves.
-
-If everything looks good, then clone a checkpoint here,
-
-```bash
-conda create --clone pytorch -n oobaboogabase
-conda deactivate
-#
-# or depending on which you used to install
-#
-conda create --clone condatorch -n oobaboogabase
-conda deactivate
-conda activate oobaboogabase
-```
-
-Create the venv for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
 
 ## Llama for macOS and MPS
 
@@ -325,6 +327,9 @@ You're going to need the llama library and the Python module for it. You should 
 The application llama-cpp compiles with MPs support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
+conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
+conda deactivate
+conda activate tgen.03.reblds
 pip uninstall -y llama-cpp-python
 CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
@@ -335,11 +340,13 @@ CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
 
 Pandas is now on th erequirements list and I belieev it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
 
-I will have to look into this some more, but if anyone has any infomration on this, please let me know.
-
 ```bash
+# Optional, but will give finer granularity of you need to rollback.
+conda create --clone tgen.03.reblds -n tgen.04.pandas
+conda deactivate
+conda activate tgen.04.pandas
 pip uninstall -y pandas
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile llama-cpp-python
+pip install --no-cache --no-binary :all: --compile llama-cpp-python
 ```
 
 ## PyTorch for macOS and MPS
@@ -349,6 +356,9 @@ It may be necessary to re-install NumPy or at least upgrade it due to another mo
 This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
 
 ```bash
+conda create --clone tgen.04.pandas -n tgen.05.torch2
+conda deactivate
+conda activate tgen.05.torch2
 conda install pytorch torchvision torchaudio -c pytorch
 ```
 
@@ -359,6 +369,21 @@ This is a lot to cover, but there are more modules which get mis-installed and n
 Once you feel comfortable with your checkpoints and working venv, you can remove some of th eones you aren't using and this will pimprove Conda's performance.
 
 At his point, LLaMA models dhold start up just fine and you shoul dee a noticiable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+
+## Extensions
+
+There are a number of extensions you can use with oobabooga textgen, but som ebreak other things with their requirements. At this point, here are the extensions I have had no problems with so far:
+
+- elevenlabs
+- silero
+
+    These are both for TTS, Text To Speech, one reies on ElevenLabs to generate the speech, and the other runs locally using a torch speech model. I'd be interested in discovering other TTS ackages available which could be hosted locally withoutr relying on th eInternet.
+
+- Whisper
+
+  This is the speech to text utility, modules or libraries from OpenAI, which I believe may be hosted locally as th emodel it uses is fairly small, though I haven't had a chance to check it out yet.
+
+  The issue with Whisper is that it requires some older Python packages wihch will cause NumPy to be downgraded and there you have a problem.  Hopefully this will be sorted out soon.
 
 ## NOTE THIS IS INCOMPLETE- To be continued
 
