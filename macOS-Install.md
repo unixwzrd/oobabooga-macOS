@@ -333,7 +333,7 @@ conda activate tgen.03.reblds
 pip uninstall -y llama-cpp-python
 CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --force-reinstall --upgrade --compile llama-cpp-python
+    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
 ```
 
 ## Pandas

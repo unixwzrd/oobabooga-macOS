@@ -21,5 +21,7 @@ INstructions have been updated.  Also, ther were some corerctions as I was rushe
 Haven't tested it yet, but here's hwo to update yours.  Will change this with th eresults of my testing.
 
 ```bash
-CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 pip install --upgrade --no-cache --no-binary :all: --compile llama-cpp-python
+CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FORCE_CMAKE=1 \
+    pip install --no-cache --no-binary :all: --force-reinstall --upgrade --compile llama-cpp-python
 ```
