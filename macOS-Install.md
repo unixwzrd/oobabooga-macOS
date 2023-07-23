@@ -45,7 +45,6 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Extensions](#extensions)
   - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
 
-
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
 
 ## Building for macOS and Apple Silicon
