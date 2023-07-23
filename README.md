@@ -8,7 +8,7 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
-## 23 Jul 2023 Things are in a state of flux for Llams
+## 23 Jul 2023 Things are in a state of flux for Llamas
 
 It seems that there have been many updates th epast few days to account for handling the LLaMa 2 release and the software is so new, not all th ebugs are out yet. In th epast three days, I have updated my llama-cpp-python module about 3 times and now I'm on release 0.1.74. I'm not sure when thigs will stabilize, but right befor ethe fluury of LLaMa updates, I saw much improved performance on language models using the modules and packages installed using my procedures here.  My token generation was up to a fairly consistent 6 tokens/sec with good response time for inference. I'm going to see how this new llama-cpp-python works and then turn my attenion elsewhere until the dust settles.
 
