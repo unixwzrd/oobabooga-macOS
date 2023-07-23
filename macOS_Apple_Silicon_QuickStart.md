@@ -56,20 +56,22 @@ pip install -r requirements.txt
 pip uninstall -y llama-cpp-python
 
 # If necessary, reinstall llama-cpp-python with specific CMake arguments to enable Metal support
-CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --force-reinstall --upgrade --compile llama-cpp-python
+    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
 
 # Uninstall any existing version of pandas
+
 pip uninstall -y pandas
 
 # If necessary, reinstall pandas with specific CMake arguments to enable Metal support
+
 FOECE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
 
 # If necessary, reinstall PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
 conda install pytorch torchvision torchaudio -c pytorch
 ```
 
-Add the --upgrade flag to upgrade any of the pip or conda commands.
+Add the --upgrade flag to upgrade any of the pip or conda commands if necessary.
 
 Remember to create clones of your Conda environments at various stages to easily roll back to a previous state if something goes wrong.

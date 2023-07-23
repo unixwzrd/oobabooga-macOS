@@ -10,11 +10,14 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 ## 23 Jul 2023 LLaMA support in llama-cpp-python
 
-Ok, a big week for LLaMa users, increased context size roiling out with RoPE and LLaMA 2.  I think I have a new recioe whih worksfor getting the llama-cpp-python package working with MPS/Metal support on Apple Silicon.  I will go into it in more detail in a nother document, but wanted to get this out to as many as possible, as soon as possible.  It seems to work and I am getting reasonable response times, though some hallucinating. CAn't be sure where the hallucinations are coming from, my hyperparameter settings, or incompatibilities in various submodule versions which wil take a bit of time to catch up. Here's how to update llama-cpp-python quickly. I will g ointo more detail later.
+Ok, a big week for LLaMa users, increased context size roiling out with RoPE and LLaMA 2.  I think I have a new recioe whih worksfor getting the llama-cpp-python package working with MPS/Metal support on Apple Silicon.  I will go into it in more detail in a nother document, but wanted to get this out to as many as possible, as soon as possible.  It seems to work and I am getting reasonable response times, though some hallucinating. CAn't be sure where the hallucinations are coming from, my hyperparameter settings, or incompatibilities in various submodule versions which wil take a bit of time to catch up. Here's how to update llama-cpp-python quickly. I will go into more detail later.
 
 ### Installing from PyPi
 
 ```bash
+# Take a chekpoint of your venv, incase you ahev to roll back.
+conda create --clone ${CONDA_DEFAULT_ENV} --n new-llama-cpp
+conda activate new-llama-cpp
 pip uninsatll -y llama-cpp-python
 CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
@@ -26,6 +29,8 @@ The --fresh in the CMAKE_FLAGS is not really necessary, but won't affect anythin
 ### Installing from source
 
 ```bash
+conda create --clone ${CONDA_DEFAULT_ENV} --n new-llama-cpp
+conda activate new-llama-cpp
 git clone --recurse-submodules https://github.com/abetlen/llama-cpp-python.git
 pip uninsatll -y llama-cpp-python
 cd llama-cpp-python

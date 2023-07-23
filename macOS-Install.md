@@ -39,6 +39,7 @@ Please note that the guide is incomplete and is expected to be continued.
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS](#llama-for-macos-and-mps)
+    - [Buiklding llama-cpp-pythin from source](#buiklding-llama-cpp-pythin-from-source)
   - [Pandas](#pandas)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
@@ -319,21 +320,37 @@ Now, at this point, we have everything we need to run the basic server with no e
 
 ## Llama for macOS and MPS
 
-The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi.
+The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi at this time.
 
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama-cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
-The application llama-cpp compiles with MPs support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
+The application llama-cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
 conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
 conda deactivate
 conda activate tgen.03.reblds
 pip uninstall -y llama-cpp-python
-CMAKE_ARGS="-DLLAMA_METAL=on -DLLAMA_OPENBLAS=on -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
     pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
 ```
+
+### Buiklding llama-cpp-pythin from source
+
+This amy also be guilt from the latest source if you want to and installe and installed directly from your local repositoiry.
+
+```bash
+conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
+conda deactivate
+conda activate tgen.03.reblds
+pip uninstall -y llama-cpp-python
+CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FORCE_CMAKE=1 \
+    pip install --no-cache --no-binary :all: --upgrade --compile -e .
+```
+
+**NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it shoudl be at least one for teh GGML library to allocate space in the Applie Silicon M1 or M2 GPU space.
 
 ## Pandas
 
