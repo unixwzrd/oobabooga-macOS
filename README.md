@@ -21,7 +21,7 @@ CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=Ope
     pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
 ```
 
-The --fresh in th eCMAKE_FLAGS is not really necessary,. but won't affect anything unless you decide to download the llama-cpp-python repository, build and install from source.  That's bleeding edge, but if you want to do that you also need to use this git command line and update your local package source diretory of just create a new one with teh git clone.A
+The --fresh in the CMAKE_FLAGS is not really necessary, but won't affect anything unless you decide to download the llama-cpp-python repository, build, and install from source.  That's bleeding edge, but if you want to do that you also need to use this git command line and update your local package source diretory of just create a new one with teh git clone. The BLAS setting changed and only apply if you've built and installed OpenBlAS yourself. Instructions are in my two guides mentioned above.
 
 ### Installing from source
 
@@ -33,6 +33,7 @@ CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=Ope
     FORCE_CMAKE=1 \
     pip install --no-cache --no-binary :all: --upgrade --compile -e .
 ```
+
 **NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it shoudl be at least one for teh GGML library to allocate space in the Applie Silicon M1 or M2 GPU space.
 
 ## 23 Jul 2023 Things are in a state of flux for Llamas
