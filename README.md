@@ -8,6 +8,33 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 23 Jul 2023 LLaMA support in llama-cpp-python
+
+Ok, a big week for LLaMa users, increased context size roiling out with RoPE and LLaMA 2.  I think I have a new recioe whih worksfor getting the llama-cpp-python package working with MPS/Metal support on Apple Silicon.  I will go into it in more detail in a nother document, but wanted to get this out to as many as possible, as soon as possible.  It seems to work and I am getting reasonable response times, though some hallucinating. CAn't be sure where the hallucinations are coming from, my hyperparameter settings, or incompatibilities in various submodule versions which wil take a bit of time to catch up. Here's how to update llama-cpp-python quickly. I will g ointo more detail later.
+
+### Installing from PyPi
+
+```bash
+pip uninsatll -y llama-cpp-python
+CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FORCE_CMAKE=1 \
+    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
+```
+
+The --fresh in th eCMAKE_FLAGS is not really necessary,. but won't affect anything unless you decide to download the llama-cpp-python repository, build and install from source.  That's bleeding edge, but if you want to do that you also need to use this git command line and update your local package source diretory of just create a new one with teh git clone.A
+
+### Installing from source
+
+```bash
+git clone --recurse-submodules https://github.com/abetlen/llama-cpp-python.git
+pip uninsatll -y llama-cpp-python
+cd llama-cpp-python
+CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
+    FORCE_CMAKE=1 \
+    pip install --no-cache --no-binary :all: --upgrade --compile -e .
+```
+**NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it shoudl be at least one for teh GGML library to allocate space in the Applie Silicon M1 or M2 GPU space.
+
 ## 23 Jul 2023 Things are in a state of flux for Llamas
 
 It seems that there have been many updates th epast few days to account for handling the LLaMa 2 release and the software is so new, not all th ebugs are out yet. In th epast three days, I have updated my llama-cpp-python module about 3 times and now I'm on release 0.1.74. I'm not sure when thigs will stabilize, but right befor ethe fluury of LLaMa updates, I saw much improved performance on language models using the modules and packages installed using my procedures here.  My token generation was up to a fairly consistent 6 tokens/sec with good response time for inference. I'm going to see how this new llama-cpp-python works and then turn my attenion elsewhere until the dust settles.
