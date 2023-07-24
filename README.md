@@ -55,7 +55,7 @@ The two TTS modules use the same Global model variable in them, so model gets cl
 
 ## 19 Jul 2023 - New information on building llama-cpp-python
 
-INstructions have been updated.  Also, ther were some corerctions as I was rushed getting this done.  If you find any errors are think or a better way to do things, let me know.
+Instructions have been updated.  Also, ther were some corerctions as I was rushed getting this done.  If you find any errors are think or a better way to do things, let me know.
 
 ## 19 Jul 2023 - NEW llama-cpp-python
 
