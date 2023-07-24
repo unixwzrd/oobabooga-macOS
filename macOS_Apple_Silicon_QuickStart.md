@@ -46,8 +46,11 @@ conda install pytorch torchvision torchaudio -c pytorch
 # Alternatively, install PyTorch using pip
 pip install torch torchvision torchaudio
 
-# Clone the oobabooga GitHub repository
-git clone https://github.com/oobabooga/text-generation-webui.git
+# Clone the my slightly modified GitHub repository or use the clone after
+# this to get the original oobabooga.
+git clone https://github.com/unixwzrd/text-generation-webui-macos.git
+
+# git clone https://github.com/oobabooga/text-generation-webui.git
 
 # Install the Python modules listed in oobabooga's requirements.txt file
 pip install -r requirements.txt

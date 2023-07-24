@@ -2,6 +2,10 @@
 
 This guide provides instructions on how to build and run the oobabooga text-generation-webui on macOS, specifically on Apple Silicon.
 
+While this is primarily for oobabooga users at the moment, many of the Python ibraries and packages used heer may also be used for Data Analytics, Machine Learning and other purposes.
+
+I will likely turn this into information on acceleratuon using the Apple Silicon GPU.
+
 ## TL;DR
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
@@ -294,9 +298,20 @@ conda info -e
 
 ### Clone The oobabooga GitHub Repository
 
-Might as well get started by getting oobabooga set up in your working location, we'll use it later, referring to the requirements.txt to see which Python modules we will need.
+At this ppoint, get started setting up oobabooga in your working location, we'll use it later, referring to the requirements.txt to see which Python modules we will need.
 
 Pick a good location for your clone of the project. I have a projects directory with several sub-directories off of it to contain certain projects and source code, but you can pick any place you want. For me, I use ~/.projects/AI as the location where I place anything related to AI. So, open up iTerm and create a location and get the oobabooga text-generation-webui repository.
+
+This will pull clone my repository which has some changes that allow it to run with GPU acceleration.  This is unsuported, by th eoobabooga people, but I will try to keep my information as up-to-date as possible along with merging code into the repository on a regular basis.
+
+```bash
+cd
+mkdir -p projects/AI
+cd projects/AI
+git clone https://github.com/unixwzrd/text-generation-webui-macos.git
+```
+
+Alternately, you could get the original oobabooga and try running it using this set of installation instructions.
 
 ```bash
 cd
@@ -382,9 +397,9 @@ conda install pytorch torchvision torchaudio -c pytorch
 
 This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot o fmodules and a lot of dependecies, so expect breakage from time to time.  Making checkpoints fo rrollback along the way will help a lot if you get a bad modulke, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
 
-Once you feel comfortable with your checkpoints and working venv, you can remove some of th eones you aren't using and this will pimprove Conda's performance.
+Once you feel comfortable with your checkpoints and working venv, you can remove some of th eones you aren't using and this will improve Conda's performance.
 
-At his point, LLaMA models dhold start up just fine and you shoul dee a noticiable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+At his point, LLaMA models dhold start up just fine as long as they are GGML formatted models and you shoul see a noticiable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
 
 ## Extensions
 
