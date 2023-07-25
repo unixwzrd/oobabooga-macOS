@@ -8,6 +8,14 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 25 Jul 2023 macOS version patched and working
+
+I managed to get the code back together from an unwanted pull of future commits, I had things mis-configured on my side. The patches are applied and it just needs some testing.  So far I haev only really briefly tested with a llama 30B 4bit quantized model and I am getting very reasonable resoponse times, though there it is running a range of 1-12 tokens per second. It seemed like more yesterday, but it's still reasonable.
+
+I have not tested much more tahn a basic llama qhich was 4 bit qualtized. I will try to test more today and tomorrow.
+
+If anyone else is interested in testing and validating what works and what doesn't, please let me know.
+
 ## 25 Jul 2023 Wrong Commit Point
 
 I merged with one commit too far ahead whe I created the created the dev-ms branch with a merge back to the oobabooga main branch. I'll need a bit of time to sort th ecode out.  Until then, I don't know of a working version around. I'll have to sort through my local repository and see if I have smoething I can create a new repository with or revert to a previous commit.
@@ -29,6 +37,7 @@ New Python llama-cpp-python out. Need to be installed before loading running th 
 Same command top update as yesterday, it will grab llama-cpp-python.0.1.77.
 
 I'm trying things out now here.
+
 ## 23 Jul 2023 LLaMA support in llama-cpp-python
 
 Ok, a big week for LLaMa users, increased context size roiling out with RoPE and LLaMA 2.  I think I have a new recioe whih worksfor getting the llama-cpp-python package working with MPS/Metal support on Apple Silicon.  I will go into it in more detail in a nother document, but wanted to get this out to as many as possible, as soon as possible.  It seems to work and I am getting reasonable response times, though some hallucinating. CAn't be sure where the hallucinations are coming from, my hyperparameter settings, or incompatibilities in various submodule versions which wil take a bit of time to catch up. Here's how to update llama-cpp-python quickly. I will go into more detail later.
