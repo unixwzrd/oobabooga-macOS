@@ -16,7 +16,7 @@ Ok, a big week for LLaMa users, increased context size roiling out with RoPE and
 
 ```bash
 # Take a chekpoint of your venv, incase you ahev to roll back.
-conda create --clone ${CONDA_DEFAULT_ENV} --n new-llama-cpp
+conda create --clone ${CONDA_DEFAULT_ENV} -n new-llama-cpp
 conda activate new-llama-cpp
 pip uninsatll -y llama-cpp-python
 CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
