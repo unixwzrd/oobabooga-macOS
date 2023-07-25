@@ -8,6 +8,12 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 25 Jul 2023 Wrong Commit Point
+
+I merged with one commit too far ahead whe I created the created the dev-ms branch with a merge back to the oobabooga main branch. I'll need a bit of time to sort th ecode out.  Until then, I don't know of a working version around. I'll have to sort through my local repository and see if I have smoething I can create a new repository with or revert to a previous commit.
+
+I'll update the statua on my repository and here when I get it sorted out.
+
 ## 24 Jul 2023 macOS Broken with oobabooga Llama2 support
 
 The new oobabooga does not support macOS anymore.  I am removing the fork I was working on because there are code changeds speciffically for Windows and Linux which are not installed onn macOS, so the default repository is now the one I generated a pull resuest for to fix things so Apple Silicon M1 and M2 machines would use GPU's.  It's going to get it sorted out, but I will do it as soon as I can.  Here's teh command to clone the repository and if you have any problems with it, let me know.
