@@ -8,6 +8,13 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 24 July 2023 LLaMa Python Package Bumped
+
+New Python llama-cpp-python out. Need to be installed before loading running th enew version of oobabooga with Llama2 support.
+
+Same command top update as yesterday, it will grab llama-cpp-python.0.1.77.
+
+I'm trying things out now here.
 ## 23 Jul 2023 LLaMA support in llama-cpp-python
 
 Ok, a big week for LLaMa users, increased context size roiling out with RoPE and LLaMA 2.  I think I have a new recioe whih worksfor getting the llama-cpp-python package working with MPS/Metal support on Apple Silicon.  I will go into it in more detail in a nother document, but wanted to get this out to as many as possible, as soon as possible.  It seems to work and I am getting reasonable response times, though some hallucinating. CAn't be sure where the hallucinations are coming from, my hyperparameter settings, or incompatibilities in various submodule versions which wil take a bit of time to catch up. Here's how to update llama-cpp-python quickly. I will go into more detail later.
@@ -18,7 +25,7 @@ Ok, a big week for LLaMa users, increased context size roiling out with RoPE and
 # Take a chekpoint of your venv, incase you ahev to roll back.
 conda create --clone ${CONDA_DEFAULT_ENV} -n new-llama-cpp
 conda activate new-llama-cpp
-pip uninsatll -y llama-cpp-python
+pip uninstall -y llama-cpp-python
 CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
     pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
