@@ -8,6 +8,18 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 27 Jul 2023
+
+**IMPORTANT:** Make sure to use the older llama-cpp-python version 0.1.74, I haven't got the new version sorted out yet, so that means Llama2 support is not working just yet. I updated the instructions to include the version number. I was testing with the new one and haven't got it working quite right yet.
+
+I may turn my attention to the Hugging Face llama code next.
+
+Someone gets a HUGE thank you for being the first person to give feedback and help me make things better! They actually went throiugh my instructionas and gave me some feedback, spotted a few typos and found thinsg to be useful.  You know who you are! 👍
+
+Someone else also asked if this would woitk for Intel, I tried, but the python which comes with Conda is compiled for i386, whcih should work(?) but doesn't and should be x86_64.  Might work for Intel macOS, but would be difficult when you try getting conda to install PyTorch, taht won't work well. I'm sure I could hack it to make it work, but that would be a nasty hack. Not only that, I was trying to run things on a 32GB MacBook Pro and having memory issues, I doubt many Intal Macs out there have much more than 32GB and even thouhg they have unified memory, my bet is they would still be slow. I gave up when I figured out that Conda wouldn't install on my 16GB Intel MacBook Pro. Never thiught I'd need tat much RAM, but initially I was going to get 64GB and then swapped my 36GB Apple Silicon MBP for 96BG. 😮
+
+If anyone is interested in helping out with this effort, please let me know.  I'm in the oobaboga Discord #mac-setup channel a good bit, or you may reach me through GitHub.
+
 ## 25 Jul 2023 macOS version patched and working
 
 I managed to get the code back together from an unwanted pull of future commits, I had things mis-configured on my side. The patches are applied and it just needs some testing.  So far I haev only really briefly tested with a llama 30B 4bit quantized model and I am getting very reasonable resoponse times, though there it is running a range of 1-12 tokens per second. It seemed like more yesterday, but it's still reasonable.
