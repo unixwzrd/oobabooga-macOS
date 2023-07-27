@@ -4,8 +4,8 @@ Make sure Xcode at the minimum is installed.
 
 ```bash
 # Install Miniconda MAke sure it is arm64
-curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
-bash Miniconda3-latest-MacOSX-arm64.sh
+curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
+sh miniconda.sh
 
 # Get a new login Shell
 exec bash -l

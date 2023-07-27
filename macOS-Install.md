@@ -134,8 +134,8 @@ One way to avoid conflicts, downgrades, and other issues is to use the "--dry-ru
    cd
    mkdir tmp
    cd tmp
-   curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o Miniconda.sh
-   sh Miniconda1-latest-MacOS-arm64.sh 
+   curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
+   sh miniconda.sh
    # Replace the shell name below with your preferred shell. The -l switch gives you a login shell and, contrary to what you may heard, you don't have to log out or exit the terminal. Simply exec the shell and it will reload your environment variables with the additional Conda ones set. This also works in Linux and most other Unix-like POSIX operating systems.
    exec bash -l
 ```
@@ -369,7 +369,7 @@ CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=Ope
 
 ## Pandas
 
-Pandas is now on th erequirements list and I belieev it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
+Pandas is now on the requirements list and I belieev it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
 
 ```bash
 # Optional, but will give finer granularity of you need to rollback.
