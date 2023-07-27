@@ -21,7 +21,7 @@ An easy way to see how many layers a model uses is to turn on verbose mode and l
 
 It's right near the start of the output when loading the model. Apparently the huge numbers above the number of layers is not best to, "*Set this to 1000000000 to offload all layers to the GPU.*" breaks the context's memory pool. I haven't figured out the proper high setting for this, but you can get the number easily enough by loading your model and looking for the **n_layer** line, then unload th emodel and put that into n-gpu-layers in the Models tab. BE sure to set it so it's save for the nest time you load the same model.
 
-The output of STDERR is also a good place to validate if your GPU is actually being accessed if you see lines with **ggml_metal_init** at the start of them. It doesn't necessarily mean it's being used, only that llamacpp sees it and is loading supported code for it.
+The output of STDERR is also a good place to validate if your GPU is actually being accessed if you see lines with **ggml_metal_init** at the start of them. It doesn't necessarily mean it's being used, only that llamacpp sees it and is loading supported code for it. Unload the model and then load it again with the new settings.
 
 Someone gets a HUGE thank you for being the first person to give feedback and help me make things better! They actually went throiugh my instructionas and gave me some feedback, spotted a few typos and found thinsg to be useful.  You know who you are! 👍
 
