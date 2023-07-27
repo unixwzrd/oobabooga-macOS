@@ -8,11 +8,20 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
-## 27 Jul 2023
+## 27 Jul 2023 - More llama.cpp Testing
 
-**IMPORTANT:** Make sure to use the older llama-cpp-python version 0.1.74, I haven't got the new version sorted out yet, so that means Llama2 support is not working just yet. I updated the instructions to include the version number. I was testing with the new one and haven't got it working quite right yet.
+Earlier problems with the new llama-cpp-python worked out. Seems setting **--n-gpu-layers** to very big numbers is not good anymore. It will result in overallocation of the context's memory pool and this error:
 
-I may turn my attention to the Hugging Face llama code next.
+ggml_new_tensor_impl: not enough space in the context's memory pool (needed 19731968, available 16777216)
+Segmentation fault: 11
+
+An easy way to see how many layers a model uses is to turn on verbose mode and look for this in the output of STDERR:
+
+**llama_model_load_internal: n_layer    = 60**
+
+It's right near the start of the output when loading the model. Apparently the huge numbers above the number of layers is not best to, "*Set this to 1000000000 to offload all layers to the GPU.*" breaks the context's memory pool. I haven't figured out the proper high setting for this, but you can get the number easily enough by loading your model and looking for the **n_layer** line, then unload th emodel and put that into n-gpu-layers in the Models tab. BE sure to set it so it's save for the nest time you load the same model.
+
+The output of STDERR is also a good place to validate if your GPU is actually being accessed if you see lines with **ggml_metal_init** at the start of them. It doesn't necessarily mean it's being used, only that llamacpp sees it and is loading supported code for it.
 
 Someone gets a HUGE thank you for being the first person to give feedback and help me make things better! They actually went throiugh my instructionas and gave me some feedback, spotted a few typos and found thinsg to be useful.  You know who you are! 👍
 
@@ -20,7 +29,7 @@ Someone else also asked if this would woitk for Intel, I tried, but the python w
 
 If anyone is interested in helping out with this effort, please let me know.  I'm in the oobaboga Discord #mac-setup channel a good bit, or you may reach me through GitHub.
 
-## 25 Jul 2023 macOS version patched and working
+## 25 Jul 2023 - macOS version patched and working
 
 I managed to get the code back together from an unwanted pull of future commits, I had things mis-configured on my side. The patches are applied and it just needs some testing.  So far I haev only really briefly tested with a llama 30B 4bit quantized model and I am getting very reasonable resoponse times, though there it is running a range of 1-12 tokens per second. It seemed like more yesterday, but it's still reasonable.
 
@@ -28,13 +37,13 @@ I have not tested much more tahn a basic llama qhich was 4 bit qualtized. I will
 
 If anyone else is interested in testing and validating what works and what doesn't, please let me know.
 
-## 25 Jul 2023 Wrong Commit Point
+## 25 Jul 2023 - Wrong Commit Point
 
 I merged with one commit too far ahead whe I created the created the dev-ms branch with a merge back to the oobabooga main branch. I'll need a bit of time to sort th ecode out.  Until then, I don't know of a working version around. I'll have to sort through my local repository and see if I have smoething I can create a new repository with or revert to a previous commit.
 
 I'll update the statua on my repository and here when I get it sorted out.
 
-## 24 Jul 2023 macOS Broken with oobabooga Llama2 support
+## 24 Jul 2023 - macOS Broken with oobabooga Llama2 support
 
 The new oobabooga does not support macOS anymore.  I am removing the fork I was working on because there are code changeds speciffically for Windows and Linux which are not installed onn macOS, so the default repository is now the one I generated a pull resuest for to fix things so Apple Silicon M1 and M2 machines would use GPU's.  It's going to get it sorted out, but I will do it as soon as I can.  Here's teh command to clone the repository and if you have any problems with it, let me know.
 
@@ -42,7 +51,7 @@ The new oobabooga does not support macOS anymore.  I am removing the fork I was 
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git
 ```
 
-## 24 July 2023 LLaMa Python Package Bumped
+## 24 July 2023 - LLaMa Python Package Bumped
 
 New Python llama-cpp-python out. Need to be installed before loading running th enew version of oobabooga with Llama2 support.
 
@@ -50,7 +59,7 @@ Same command top update as yesterday, it will grab llama-cpp-python.0.1.77.
 
 I'm trying things out now here.
 
-## 23 Jul 2023 LLaMA support in llama-cpp-python
+## 23 Jul 2023 - LLaMA support in llama-cpp-python
 
 Ok, a big week for LLaMa users, increased context size roiling out with RoPE and LLaMA 2.  I think I have a new recioe whih worksfor getting the llama-cpp-python package working with MPS/Metal support on Apple Silicon.  I will go into it in more detail in a nother document, but wanted to get this out to as many as possible, as soon as possible.  It seems to work and I am getting reasonable response times, though some hallucinating. CAn't be sure where the hallucinations are coming from, my hyperparameter settings, or incompatibilities in various submodule versions which wil take a bit of time to catch up. Here's how to update llama-cpp-python quickly. I will go into more detail later.
 
@@ -83,7 +92,7 @@ CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=Ope
 
 **NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it shoudl be at least one for teh GGML library to allocate space in the Applie Silicon M1 or M2 GPU space.
 
-## 23 Jul 2023 Things are in a state of flux for Llamas
+## 23 Jul 2023 - Things are in a state of flux for Llamas
 
 It seems that there have been many updates th epast few days to account for handling the LLaMa 2 release and the software is so new, not all th ebugs are out yet. In th epast three days, I have updated my llama-cpp-python module about 3 times and now I'm on release 0.1.74. I'm not sure when thigs will stabilize, but right befor ethe fluury of LLaMa updates, I saw much improved performance on language models using the modules and packages installed using my procedures here.  My token generation was up to a fairly consistent 6 tokens/sec with good response time for inference. I'm going to see how this new llama-cpp-python works and then turn my attenion elsewhere until the dust settles.
 
