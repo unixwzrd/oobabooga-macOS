@@ -9,15 +9,15 @@ I will likely turn this into information on acceleratuon using the Apple Silicon
 ## TL;DR
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
-2. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
-3. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
-4. **NumPy**: Install NumPy in two ways:
+1. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
+1. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
+1. **NumPy**: Install NumPy in two ways:
    - Build it from source, ensuring it uses the OpenBLAS library you built.
    - Install it quickly using Conda or Pip.
-5. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
-6. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
-7. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
-8. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
+1. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
+1. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
+1. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
+1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
 
 Cheeck out [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md) for the short method without explanations.
 
@@ -37,7 +37,7 @@ Please note that the guide is incomplete and is expected to be continued.
   - [NumPy - Everything or Quickly](#numpy---everything-or-quickly)
     - [NymPy Build Everything - OpenBLAS](#nympy-build-everything---openblas)
     - [NumPy](#numpy)
-    - [Numpy Quicker - Use Conda or Pip](#numpy-quicker---use-conda-or-pip)
+    - [NumPy Quicker - Use Conda or Pip](#numpy-quicker---use-conda-or-pip)
   - [PyTorch](#pytorch)
   - [oobabooga Base - Everything Else](#oobabooga-base---everything-else)
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
@@ -126,7 +126,7 @@ Apologies for the confusion. Here's the edited version:
 
 **NOTE:** If Conda is already installed on your machine, skip this step.
 
-During this process, be cautious as some libraries require the properly compiled version rather than the version that comes with pip or conda. This is important because some extensions for oobabooga may uninstall perfectly fine versions of libraries and downgrade them due to dependencies. This can lead to performance loss and troubleshooting issues. This has happened to me with NumPy and llama-cpp. My goal here is to pay close attention to the libraries during the construction of the environment for running and managing LLMs using oobabooga. I aim to catch as many potential issues as possible.
+During this process, be cautious as some libraries require the properly compiled version rather than the version that comes with pip or conda. This is important because some extensions for oobabooga may uninstall perfectly fine versions of libraries and downgrade them due to dependencies. This can lead to performance loss and troubleshooting issues. This has happened to me with NumPy and llama.cpp. My goal here is to pay close attention to the libraries during the construction of the environment for running and managing LLMs using oobabooga. I aim to catch as many potential issues as possible.
 
 One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (venv), then switch to the new one before making any potentially harmful changes.
 
@@ -163,7 +163,7 @@ Ensure you have CMake installed. Many dependencies rely on CMake, which is benef
 
 You can find it here: <https://cmake.org/download/>
 
-CMake is easy to install and will be needed for later steps like llama-cpp, llama-cpp-python, and other modules.
+CMake is easy to install and will be needed for later steps like llama.cpp, llama-cpp-python, and other modules.
 
 Download the latest source version of CMake. Avoid using the packages as they are universal binaries, and you might accidentally end up building something with x86_64 architecture. This is unverified, but it's better to be safe.
 
@@ -231,7 +231,7 @@ import numpy
 numpy.show_config()
 ```
 
-### Numpy Quicker - Use Conda or Pip
+### NumPy Quicker - Use Conda or Pip
 
 Clone the untouched python3.10. I've found that teh following naming convention woeks well for being able to roll back:
 
@@ -331,15 +331,15 @@ conda activate tgen.02.oobaboogabase
 pip install -r requirements.txt
 ```
 
-Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama-cpp and llama-cpp-python as we may need to build them ourselves.
+Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama.cpp and llama-cpp-python as we may need to build them ourselves.
 
 ## Llama for macOS and MPS
 
 The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi at this time.
 
-You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama-cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
+You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama.cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
-The application llama-cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
+The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
 conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
@@ -348,7 +348,7 @@ conda activate tgen.03.reblds
 pip uninstall -y llama-cpp-python
 CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
+    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python==0.1.74
 ```
 
 ### Buiklding llama-cpp-pythin from source

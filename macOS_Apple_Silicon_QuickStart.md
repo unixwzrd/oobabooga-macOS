@@ -63,7 +63,7 @@ pip uninstall -y llama-cpp-python
 # If necessary, reinstall llama-cpp-python with specific CMake arguments to enable Metal support
 CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
+    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python==0.1.74
 
 # Uninstall any existing version of pandas
 
