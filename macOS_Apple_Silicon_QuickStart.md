@@ -69,7 +69,7 @@ pip uninstall -y pandas
 
 # If necessary, reinstall pandas with specific CMake arguments to enable Metal support
 
-FOECE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
+FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
 
 # If necessary, reinstall PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
 conda install pytorch torchvision torchaudio -c pytorch
