@@ -6,6 +6,8 @@ Make sure Xcode at the minimum is installed.
 # Install Miniconda MAke sure it is arm64
 curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
 sh miniconda.sh
+# After sucessful install of Conda you may remove miniconda.sh
+rm miniconda.sh
 
 # Get a new login Shell
 exec bash -l
