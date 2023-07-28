@@ -216,7 +216,7 @@ With the installation of NumPy, we begin to change the nature of the Python envi
 To create a clone of my baseline to this point, just in case something goes wrong, like other modules being updated or for some reason we want to roll this back. This one is fairly easy, since pip only installs one module for NumPy, however using conda, will install several modules, presumably as dependencies though pip doesn't. One thing which is included separately in the conda install is the OpenBLAS libraries.
 
 ```bash
-conda cradte --clone python3.10 -n tgeb.00.numpy
+conda create --clone python3.10 -n tgeb.00.numpy
 conda deactivate
 conda activate tgen.00.numpy
 pip install --no-cache --no-binary :all: --compile numpy
@@ -252,7 +252,7 @@ conda info -e  | grep -v \# | sort
 This will list your environments in th eorder they weer created if you use the sequence number and can help you determine what you might want to roll back.  Adding a .n.nn to th enumber could also signify a branch.  This si a lot to maintain manually, but is helpful when tracking down module dependencies and helping to keep one's view of the envirnments clear.
 
 ```bash
-conda cradte --clone python3.10 -n tgeb.00.numpy
+conda create --clone python3.10 -n tgeb.00.numpy
 conda deactivate
 conda activate tgen.00.numpy
 conda install numpy
@@ -348,7 +348,7 @@ conda activate tgen.03.reblds
 pip uninstall -y llama-cpp-python
 CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python==0.1.74
+    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
 ```
 
 ### Buiklding llama-cpp-pythin from source
@@ -377,7 +377,7 @@ conda create --clone tgen.03.reblds -n tgen.04.pandas
 conda deactivate
 conda activate tgen.04.pandas
 pip uninstall -y pandas
-pip install --no-cache --no-binary :all: --compile llama-cpp-python
+pip install --no-cache --no-binary :all: --compile pandas
 ```
 
 ## PyTorch for macOS and MPS
