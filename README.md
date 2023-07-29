@@ -8,6 +8,14 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 28 Jul 2023 More Testers (QA)
+
+I've had a fe more people contact me with issues and that's agood thing because it shows me theer is an interest in what I am trying to do here and that people are actually trying my procedures out and having decent success.
+
+I want to start getting more features into the fork I created like Llama2 support. If I can do that, the next ting I will likely do is start looking at some of the performance enhancements I have thought of as well as trying to fix a couple of UI/UX annoyances and a scripted inatallation and...
+
+If anyone would like to help out, please let me know.
+
 ## 27 Jul 2023 - More llama.cpp Testing
 
 Earlier problems with the new llama-cpp-python worked out. Seems setting **--n-gpu-layers** to very big numbers is not good anymore. It will result in overallocation of the context's memory pool and this error:
