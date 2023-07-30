@@ -8,6 +8,14 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahcked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
+## 30 Jul 2023
+
+I forked the last workng oobagooba/text-generation-webui I knew of that worked with macOS. I had to make some change=s to its code so it would process most of the model using Appke Silicon M1/M2 GPU. I am working on adding some of the new features of the latest oobabooga release, and have found further areas for optimization with Apple Silicon and macOS. I am working as fast as I can to get it upgraded as GGML encoded models are working quite well in my release. I have found soem issues with object references in Python being corrupted and causing some processing to fall back to CPU. This is likely a problem for CUDA users due to the extensive use of global variables in the core oobabooga code. It's taking quite a bit of effort to decouple things, but after I do soem of that, performance should improve even more.  Once I have that done, I want to incorporate RoPE, SuprtHOT 8K context windows, and new Llama2 support. the last item shoudln't be terribly difficult sinnce it's built into the GGML libraries whic hare part of llama.cpp.
+
+If you are intersted in trying out the macOS patched version, please grab it from here: [text-generation-webui-macos](https://github.com/unixwzrd/text-generation-webui-macos)
+
+I hope to have an update out within the week. Again, anyone who want to test, provide feedback, comments, or ideas, let me knwo or use the "Discussions", at the top of the GitHub page and add to the discussion or start a new one. Let's help the personal AI on Apple Silicon and macOS grow together.
+
 ## 28 Jul 2023 More Testers (QA)
 
 I've had a fe more people contact me with issues and that's agood thing because it shows me theer is an interest in what I am trying to do here and that people are actually trying my procedures out and having decent success.
