@@ -8,7 +8,7 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahchackedked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
 
-## 3 Aug 2023 Coming Soon oobabooga 1.5 integration and Coqui for macOS
+## 3 Aug 2023 - Coming Soon oobabooga 1.5 integration and Coqui for macOS
 
 Currently I am finishing up changes to the release 1.5 oobabooga and integrating them into my fork and may or may not have additional performance improvements I have identified for Apple Silicon M1/M2 GPU acceleration.  I hope by the end of this week.  I will release it in my test fork I created to allow people to test and provide feedback.
 
@@ -16,7 +16,7 @@ I also got distracted earlier in the week by looking for another TTS alternative
 
 As always, please leave comments, suggestions and issues you find so I can make sure they are addressed. Testers, developers and volunteers are also welcome to help out.  Please let me know if you would like to help out.
 
-## 30 Jul 2023
+## 30 Jul 2023 - Patched and wWrking
 
 I forked the last workng oobagooba/text-generation-webui I knew of that worked with macOS. I had to make some change=s to its code so it would process most of the model using Apple Silicon M1/M2 GPU. I am working on adding some of the new features of the latest oobabooga release, and have found further areas for optimization with Apple Silicon and macOS. I am working as fast as I can to get it upgraded as GGML encoded models are working quite well in my release. I have found some issues with object references in Python being corrupted and causing some processing to fall back to CPU. This is likely a problem for CUDA users due to the extensive use of global variables in the core oobabooga code. It's taking quite a bit of effort to decouple things, but after I do some of that, performance should improve even more.  Once I have that done, I want to incorporate RoPE, SuprtHOT 8K context windows, and new Llama2 support. the last item shouldn’t be terribly difficult since it's built into the GGML libraries which hare part of llama.cpp.
 
@@ -24,7 +24,7 @@ If you are interested in trying out the macOS patched version, please grab it fr
 
 I hope to have an update out within the week. Again, anyone who want to test, provide feedback, comments, or ideas, let me know or use the "Discussions", at the top of the GitHub page and add to the discussion or start a new one. Let's help the personal AI on Apple Silicon and macOS grow together.
 
-## 28 Jul 2023 More Testers (QA)
+## 28 Jul 2023 - More Testers (QA)
 
 I've had a fe more people contact me with issues and that's a good thing because it shows me theer is an interest in what I am trying to do here and that people are actually trying my procedures out and having decent success.
 
