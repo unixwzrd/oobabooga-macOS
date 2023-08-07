@@ -339,7 +339,7 @@ The one loaded with the requirements for oobabooga is not compiled for MPS (Meta
 
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama.cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
-The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the lamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
+The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the lamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled lamma-cpp in order to compare its performance to the lamma-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
 conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
@@ -353,7 +353,7 @@ CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
 
 ### Buiklding llama-cpp-pythin from source
 
-This amy also be guilt from the latest source if you want to and installe and installed directly from your local repositoiry.
+This may also be guilt from the latest source if you want to installed directly from your local repository.
 
 ```bash
 conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
@@ -382,7 +382,7 @@ pip install --no-cache --no-binary :all: --compile pandas
 
 ## PyTorch for macOS and MPS
 
-It may be necessary to re-install NumPy or at least upgrade it due to another module having different requiremnts and a diffrent version of a module like NumPy. The OpenWhisper python modules is incompatible with the latest NumPy, at least at the tiem I wrote this, but please let me know if you have additional information.
+It may be necessary to re-install NumPy or at least upgrade it due to another module having different requirements and a different version of a module like NumPy. The OpenWhisper python modules is incompatible with the latest NumPy, at least at the time I wrote this, but please let me know if you have additional information.
 
 This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
 
