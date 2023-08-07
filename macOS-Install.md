@@ -2,9 +2,9 @@
 
 This guide provides instructions on how to build and run the oobabooga text-generation-webui on macOS, specifically on Apple Silicon.
 
-While this is primarily for oobabooga users at the moment, many of the Python ibraries and packages used heer may also be used for Data Analytics, Machine Learning and other purposes.
+While this is primarily for oobabooga users at the moment, many of the Python libraries and packages used here may also be used for Data Analytics, Machine Learning and other purposes.
 
-I will likely turn this into information on acceleratuon using the Apple Silicon GPU.
+I will likely turn this into information on acceleration using the Apple Silicon GPU.
 
 ## TL;DR
 
@@ -17,9 +17,9 @@ I will likely turn this into information on acceleratuon using the Apple Silicon
 1. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
 1. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
 1. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
-1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
+  1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
 
-Cheeck out [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md) for the short method without explanations.
+Check out [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md) for the short method without explanations.
 
 Throughout the process, you're advised to create clones of your Conda environments at various stages. This allows you to easily roll back to a previous state if something goes wrong.
 
@@ -92,13 +92,13 @@ Before you begin, there are a few things you'll need.
 
     **IMPORTANT NOTE:** This is a universal application. Before you run it, find the application where you installed it, "Right Click" on it, select "Get Info", and ensure that "Open using Rosetta" is not checked. If it is, iTerm will think it's running on an Intel machine, which can cause problems during software builds.
 
-2. **XCode**
+2. **Xcode**
 
     You'll need a compiler. While it would be ideal if GCC ran on macOS, Xcode is a sufficient alternative.
 
     You can download Xcode from the App Store.
 
-    **IMPORTANT NOTE:** If you ONLY want the command line tools and not the complete Xcode IDE, you can get just the command line tools for Xcode by running the xcode-select command. Open up the iTerm2 you downloaded and installed earlier or Terminal.app in /Applications/Utilities and get the command line tools for XCode like this:
+    **IMPORTANT NOTE:** If you ONLY want the command line tools and not the complete Xcode IDE, you can get just the command line tools for Xcode by running the xcode-select command. Open up the iTerm2 you downloaded and installed earlier or Terminal.app in /Applications/Utilities and get the command line tools for Xcode like this:
 
       ```bash
       xcode-select --install
@@ -106,7 +106,7 @@ Before you begin, there are a few things you'll need.
 
 3. **VSCode**
 
-    Yes, two IDE's, but there are many plugins for VSCode. Unless you're developing macOS or other Apple apps, this is a great IDE. I like it because there's a Vi/Vim mode for it. If you're familiar with the keystrokes for Vi, you're good to go. An integrated terminal means you can run a command line while in the IDE, and it can even do ssh tunneling so you can develop on aremote machine apearing as though everything was local. There are many options, settings, and plugins for this, and finding the right ones may be challenging. However, if you're working with AI or Data Science, you'll likely want this for the Jupyter Notebooks support alone. It also integrates seamlessly with GitHub.
+    Yes, two IDE's, but there are many plugins for VSCode. Unless you're developing macOS or other Apple apps, this is a great IDE. I like it because there's a Vi/Vim mode for it. If you're familiar with the keystrokes for Vi, you're good to go. An integrated terminal means you can run a command line while in the IDE, and it can even do ssh tunneling so you can develop on a remote machine appearing as though everything was local. There are many options, settings, and plugins for this, and finding the right ones may be challenging. However, if you're working with AI or Data Science, you'll likely want this for the Jupyter Notebooks support alone. It also integrates seamlessly with GitHub.
 
     Make sure you get the "Apple Silicon" zip file. The universal and the Intel version caused me problems when I migrated from my Intel Mac to Apple Silicon because it would run in Rosetta, and everything on the system would report that it was running on Intel when using the terminal. Universal could possibly run inside Rosetta as there is an option on some applications, like iTerm, where when you open the "Get Info" for the application, there is an option to run it using Rosetta. Make sure you don't have the universal build and this box is unchecked.
 
@@ -233,15 +233,15 @@ numpy.show_config()
 
 ### NumPy Quicker - Use Conda or Pip
 
-Clone the untouched python3.10. I've found that teh following naming convention woeks well for being able to roll back:
+Clone the untouched python3.10. I've found that the following naming convention works well for being able to roll back:
 
   tgen.00.numpy
 
 - appcode, a code for the application.
-- sequence, this number will give me the sequence the venv was craeted in as a reference and is incremented for each recovery milestone.
-- milestone, this is an identifier for the milestone, suc as here "numpy" we are about to install numpy on top of our environment.
+- sequence, this number will give me the sequence the venv was created in as a reference and is incremented for each recovery milestone.
+- milestone, this is an identifier for the milestone, such as here "numpy" we are about to install numpy on top of our environment.
 
- This convention allows us to easilky identify what the packages were or the significance of the milestobe in th eenvironment build process.  Removing the venv will remove fron that milestone forward, at least symbolically. The later venvs will still be installed, but I've found it's good to remove them too as I roll back, thoug hsome might be left in place for testing purposes.
+ This convention allows us to easily identify what the packages were or the significance of the milestone in the environment build process.  Removing the venv will remove from that milestone forward, at least symbolically. The later venvs will still be installed, but I've found it's good to remove them too as I roll back, though some might be left in place for testing purposes.
 
  The sequence number will help in understanding what happened every step along the way, and can also be useful if you decide to list the venvs using:
 
@@ -249,7 +249,7 @@ Clone the untouched python3.10. I've found that teh following naming convention 
 conda info -e  | grep -v \# | sort
  ```
 
-This will list your environments in th eorder they weer created if you use the sequence number and can help you determine what you might want to roll back.  Adding a .n.nn to th enumber could also signify a branch.  This si a lot to maintain manually, but is helpful when tracking down module dependencies and helping to keep one's view of the envirnments clear.
+This will list your environments in the order they were created if you use the sequence number and can help you determine what you might want to roll back.  Adding a .n.nn to the number could also signify a branch.  This is a lot to maintain manually, but is helpful when tracking down module dependencies and helping to keep one's view of the environments clear.
 
 ```bash
 conda create --clone python3.10 -n tgeb.00.numpy
@@ -298,11 +298,11 @@ conda info -e
 
 ### Clone The oobabooga GitHub Repository
 
-At this ppoint, get started setting up oobabooga in your working location, we'll use it later, referring to the requirements.txt to see which Python modules we will need.
+At this point, get started setting up oobabooga in your working location, we'll use it later, referring to the requirements.txt to see which Python modules we will need.
 
 Pick a good location for your clone of the project. I have a projects directory with several sub-directories off of it to contain certain projects and source code, but you can pick any place you want. For me, I use ~/.projects/AI as the location where I place anything related to AI. So, open up iTerm and create a location and get the oobabooga text-generation-webui repository.
 
-This will pull clone my repository which has some changes that allow it to run with GPU acceleration.  This is unsuported, by th eoobabooga people, but I will try to keep my information as up-to-date as possible along with merging code into the repository on a regular basis.
+This will pull clone my repository which has some changes that allow it to run with GPU acceleration.  This is unsupported, by the oobabooga people, but I will try to keep my information as up-to-date as possible along with merging code into the repository on a regular basis.
 
 ```bash
 cd
@@ -339,7 +339,7 @@ The one loaded with the requirements for oobabooga is not compiled for MPS (Meta
 
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama.cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
-The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in th elamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I dodn't have to specify any flags andit just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
+The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the lamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I comipled lamma-cpp in order to compare its performance to the lamma-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
 conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
@@ -365,11 +365,11 @@ CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=Ope
     pip install --no-cache --no-binary :all: --upgrade --compile -e .
 ```
 
-**NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it shoudl be at least one for teh GGML library to allocate space in the Applie Silicon M1 or M2 GPU space.
+**NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it should be at least one for the GGML library to allocate space in the Apple Silicon M1 or M2 GPU space.
 
 ## Pandas
 
-Pandas is now on the requirements list and I belieev it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
+Pandas is now on the requirements list and I believe it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
 
 ```bash
 # Optional, but will give finer granularity of you need to rollback.
@@ -395,29 +395,29 @@ conda install pytorch torchvision torchaudio -c pytorch
 
 ## Where We Are
 
-This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot o fmodules and a lot of dependecies, so expect breakage from time to time.  Making checkpoints fo rrollback along the way will help a lot if you get a bad modulke, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
+This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot of modules and a lot of dependencies, so expect breakage from time to time.  Making checkpoints for rollback along the way will help a lot if you get a bad module, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
 
-Once you feel comfortable with your checkpoints and working venv, you can remove some of th eones you aren't using and this will improve Conda's performance.
+Once you feel comfortable with your checkpoints and working venv, you can remove some of theones you aren't using and this will improve Conda's performance.
 
-At his point, LLaMA models dhold start up just fine as long as they are GGML formatted models and you shoul see a noticiable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+At his point, LLaMA models dhold start up just fine as long as they are GGML formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
 
 ## Extensions
 
-There are a number of extensions you can use with oobabooga textgen, but som ebreak other things with their requirements. At this point, here are the extensions I have had no problems with so far:
+There are a number of extensions you can use with oobabooga textgen, but som break other things with their requirements. At this point, here are the extensions I have had no problems with so far:
 
-- elevenlabs
-- silero
+- Elevenlabs
+- Silero
 
-    These are both for TTS, Text To Speech, one reies on ElevenLabs to generate the speech, and the other runs locally using a torch speech model. I'd be interested in discovering other TTS ackages available which could be hosted locally withoutr relying on th eInternet.
+    These are both for TTS, Text To Speech, one relies on ElevenLabs to generate the speech, and the other runs locally using a torch speech model. I'd be interested in discovering other TTS packages available which could be hosted locally without relying on th eInternet.
 
 - Whisper
 
-  This is the speech to text utility, modules or libraries from OpenAI, which I believe may be hosted locally as th emodel it uses is fairly small, though I haven't had a chance to check it out yet.
+  This is the speech to text utility, modules or libraries from OpenAI, which I believe may be hosted locally as the model it uses is fairly small, though I haven't had a chance to check it out yet.
 
-  The issue with Whisper is that it requires some older Python packages wihch will cause NumPy to be downgraded and there you have a problem.  Hopefully this will be sorted out soon.
+  The issue with Whisper is that it requires some older Python packages which will cause NumPy to be downgraded and there you have a problem.  Hopefully this will be sorted out soon.
 
 ## NOTE THIS IS INCOMPLETE- To be continued
 
-There are a number of other modules like Pandas and SciPy wihich need review on Apple Silicon, many of these are usetd in oobababooga and elsewhere.
+There are a number of other modules like Pandas and SciPy which need review on Apple Silicon, many of these are used in oobabooga and elsewhere.
 
 Please run through the steps and feel free to comment, update, clarify, or contribute.

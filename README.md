@@ -6,7 +6,14 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 ## If you hate standing in line at the bank: [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md)
 
-In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just ahchackedked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
+In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
+
+## 6 Jul 2023 - Performance issues and Python Packages.
+
+**THIS IS IMPORTANT**
+Whatever terminal package you use to access the command line, make absolutely sure the "Open using Rosetta" checkbox is unchecked in the "Get Info" pop-up.  Someone reported an issue with the pip installation instructions, and I was able to replicate the issue I believe because I had set iTerm2 to open in Rosetta a while back to do some testing and forgot to change it back. I was in the process of rebuilding my venvs have to rebuild a couple of them because running in Rosetta can produce inconsistent results, especially for things like builds. Also, if your Python packages and libraries are installed in this manner, they will perform slower because the Intel code has to be translated to run.
+
+Another thing, NOT DO the macOS 13.5 update, it is broken in many ways. WebKit crashes every now and then, Private Relay breaks things like accessing OpenAI and more, there are issues with the overall UI as well.
 
 ## 3 Aug 2023 - Coming Soon oobabooga 1.5 integration and Coqui for macOS
 
@@ -16,9 +23,9 @@ I also got distracted earlier in the week by looking for another TTS alternative
 
 As always, please leave comments, suggestions and issues you find so I can make sure they are addressed. Testers, developers and volunteers are also welcome to help out.  Please let me know if you would like to help out.
 
-## 30 Jul 2023 - Patched and wWrking
+## 30 Jul 2023 - Patched and Working
 
-I forked the last workng oobagooba/text-generation-webui I knew of that worked with macOS. I had to make some change=s to its code so it would process most of the model using Apple Silicon M1/M2 GPU. I am working on adding some of the new features of the latest oobabooga release, and have found further areas for optimization with Apple Silicon and macOS. I am working as fast as I can to get it upgraded as GGML encoded models are working quite well in my release. I have found some issues with object references in Python being corrupted and causing some processing to fall back to CPU. This is likely a problem for CUDA users due to the extensive use of global variables in the core oobabooga code. It's taking quite a bit of effort to decouple things, but after I do some of that, performance should improve even more.  Once I have that done, I want to incorporate RoPE, SuprtHOT 8K context windows, and new Llama2 support. the last item shouldn’t be terribly difficult since it's built into the GGML libraries which hare part of llama.cpp.
+I forked the last workng oobagooba/text-generation-webui I knew of that worked with macOS. I had to make some change=s to its code so it would process most of the model using Apple Silicon M1/M2 GPU. I am working on adding some of the new features of the latest oobabooga release, and have found further areas for optimization with Apple Silicon and macOS. I am working as fast as I can to get it upgraded as GGML encoded models are working quite well in my release. I have found some issues with object references in Python being corrupted and causing some processing to fall back to CPU. This is likely a problem for CUDA users due to the extensive use of global variables in the core oobabooga code. It's taking quite a bit of effort to decouple things, but after I do some of that, performance should improve even more.  Once I have that done, I want to incorporate RoPE, SupertHOT 8K context windows, and new Llama2 support. the last item shouldn’t be terribly difficult since it's built into the GGML libraries which hare part of llama.cpp.
 
 If you are interested in trying out the macOS patched version, please grab it from here: [text-generation-webui-macos](https://github.com/unixwzrd/text-generation-webui-macos)
 
@@ -69,7 +76,7 @@ I'll update the status on my repository and here when I get it sorted out.
 
 ## 24 Jul 2023 - macOS Broken with oobabooga Llama2 support
 
-The new oobabooga does not support macOS anymore.  I am removing the fork I was working on because there are code changeds speciffically for Windows and Linux which are not installed on macOS, so the default repository is now the one I generated a pull request for to fix things so Apple Silicon M1 and M2 machines would use GPU's.  It's going to get it sorted out, but I will do it as soon as I can.  Here's teh command to clone the repository and if you have any problems with it, let me know.
+The new oobabooga does not support macOS anymore.  I am removing the fork I was working on because there are code changed specifically for Windows and Linux which are not installed on macOS, so the default repository is now the one I generated a pull request for to fix things so Apple Silicon M1 and M2 machines would use GPU's.  It's going to get it sorted out, but I will do it as soon as I can.  Here's the command to clone the repository and if you have any problems with it, let me know.
 
 ```bash
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git
