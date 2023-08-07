@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+
+import numpy as np
+import time
+
+np.show_config()
+
+size = 2000
+A = np.random.rand(size, size)
+B = np.random.rand(size, size)
+
+# Number of iterations
+iterations = 10
+
+# Matrix multiplication
+start = time.time()
+for _ in range(iterations):
+    np.dot(A, B)
+end = time.time()
+print(f"Time for matrix multiplication: {(end - start)/iterations:.4f} seconds")
+
+# Matrix transposition
+start = time.time()
+for _ in range(iterations):
+    np.transpose(A)
+end = time.time()
+print(f"Time for matrix transposition: {(end - start)/iterations:.4f} seconds")
+
+# Eigenvalue computation
+start = time.time()
+for _ in range(iterations):
+    np.linalg.eigvals(A)
+end = time.time()
+print(f"Time for eigenvalue computation: {(end - start)/iterations:.4f} seconds")
+
+# Fourier transformation
+start = time.time()
+for _ in range(iterations):
+    np.fft.fft(A)
+end = time.time()
+print(f"Time for Fourier transformation: {(end - start)/iterations:.4f} seconds")
+
+# Summation
+start = time.time()
+for _ in range(iterations):
+    np.sum(A)
+end = time.time()
+print(f"Time for summation: {(end - start)/iterations:.4f} seconds")
+
