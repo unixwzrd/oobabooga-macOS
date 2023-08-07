@@ -34,7 +34,7 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Pre-requisites](#pre-requisites)
   - [Get Conda (Miniconda)](#get-conda-miniconda)
   - [CMake](#cmake)
-  - [NumPy - Everything or Quickly](#numpy---everything-or-quickly)
+  - [NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGe SOON - UPDATeS COMING**](#numpy---everything-or-quickly--this-section-on-numpy-will-change-soon---updates-coming)
     - [NymPy Build Everything - OpenBLAS](#nympy-build-everything---openblas)
     - [NumPy](#numpy)
     - [NumPy Quicker - Use Conda or Pip](#numpy-quicker---use-conda-or-pip)
@@ -43,7 +43,7 @@ Please note that the guide is incomplete and is expected to be continued.
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS](#llama-for-macos-and-mps)
-    - [Buiklding llama-cpp-pythin from source](#buiklding-llama-cpp-pythin-from-source)
+    - [Building llama-cpp-python from source](#building-llama-cpp-python-from-source)
   - [Pandas](#pandas)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
@@ -188,7 +188,7 @@ make install
 
 This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
 
-## NumPy - Everything or Quickly
+## NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGe SOON - UPDATeS COMING**
 
 ### NymPy Build Everything - OpenBLAS
 
@@ -351,7 +351,7 @@ CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
 ```
 
-### Buiklding llama-cpp-pythin from source
+### Building llama-cpp-python from source
 
 This may also be guilt from the latest source if you want to installed directly from your local repository.
 
@@ -397,9 +397,9 @@ conda install pytorch torchvision torchaudio -c pytorch
 
 This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot of modules and a lot of dependencies, so expect breakage from time to time.  Making checkpoints for rollback along the way will help a lot if you get a bad module, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
 
-Once you feel comfortable with your checkpoints and working venv, you can remove some of theones you aren't using and this will improve Conda's performance.
+Once you feel comfortable with your checkpoints and working venv, you can remove some of the ones you aren't using and this will improve Conda's performance.
 
-At his point, LLaMA models dhold start up just fine as long as they are GGML formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+At his point, LLaMA models should start up just fine as long as they are GGML formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
 
 ## Extensions
 

@@ -29,7 +29,7 @@ make -j24
 make install
 cd ..
 
-# Clone, build, and install OpenBLAS
+# Clone, build, and install OpenBLAS **OPENBLAS THROUGH NUMPY WILL CHANgE SOON, NEW INFOiRMATION**
 git clone https://github.com/xianyi/OpenBLAS
 cd OpenBLAS
 cmake .
