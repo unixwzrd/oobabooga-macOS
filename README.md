@@ -6,7 +6,13 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 ## If you hate standing in line at the bank: [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md)
 
-In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing.
+In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. There's now a script which does some simple timing of matrix manipulation so you may compare different BLAS and LAPACK libraries.
+
+## 07 Aug 2023 - Numpy Accelerated with Apple Silicon
+
+I Spent a good portion of today and yesterday evening rebuilding my machine learning and data analytics Python packages required for oobabooga support, the information is also helpful for anyone who uses Apple Silicon Macs for these purposes.
+
+Need to look into this some more.  Don't want to lead anyone down a blind alley, but I think I have found a significant performance solution for Python Data Analytics and AI packages. I'll need to collect more information, but I have repeatable tests which show dramatic increases and performance with NumPy and very reduced CPU utilization. More to come...
 
 ## 07 Aug 2023 - Optimizing The Environment, Silver Lining in macOS  13.5
 
