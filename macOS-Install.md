@@ -360,6 +360,8 @@ conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
 conda deactivate
 conda activate tgen.03.reblds
 pip uninstall -y llama-cpp-python
+git clone --recurse-submodules git@github.com:abetlen/llama-cpp-python.git
+cd llama-cpp-python
 CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
     FORCE_CMAKE=1 \
     pip install --no-cache --no-binary :all: --upgrade --compile -e .

@@ -8,6 +8,18 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. There's now a script which does some simple timing of matrix manipulation so you may compare different BLAS and LAPACK libraries.
 
+## 10 Aug 2023 - Have Something Interesting
+
+Wanted to give an update. Have found an issue with re-installing and installing new modules and packages. All seems to be linked back to BLAS and LAPACK.  it seems the installation order affects how the BLAS and LAPACK libraries are handles, even when not doing a recompile of the module or package. I'm able to reproduce my results, but haven't found any definite answer to the performance issues encountered using oobabooga. Many people with many different opinions on the cause, but I haven't seen a real solution yet.
+
+I've been combing through anything I can find, but it's all very limited in content. Apple doesn't seem to be talking about how to use their high performance architecture and I even found in the release notes for NumPy that they had issues a couple of releases ago regarding inconsistent results from the Accelerate Framework, advising anyone who had a problem with this to contact Apple. Not cool on either party's part in pointing fingers. From what I can tell, no one from the NumPy team or Apple has actually tried to sit down and resolve the issues together, though this is speculation gathered from what I have read and been able to find on the Internet, which is sparse.
+
+I have other conjectures as well, that the whole reason that llama-cpp-python exists if due to this dependency issue and it comes with its own required linear algebra support library. Probably due to what I discovered that packages which need this will bring it along and drop it in the Python library, but also don't uninstall it when they are installed, so there's a libblas sitting in the lib directory of your venv's "root" hierarchy.
+
+After looking at the release notes for NumPy, I figured it would be a good idea to get the source for NumPy and try the regression tests from the various configurations I find being installed. I even just today found a new one which gets configured and not really mentioned anywhere I can recall,of "openblas64_" which was pulled from my /usr/local/lib build I did of OpenBLAS. To muddy things further, depending on which libraries and where they come from, there are differences in the  results of regression testing. Even when using the stock standard NumPy install. All needs tracking down which I am working on doing as quickly as possible.
+
+Not alone in this, several have approached me willing to assist in testing in with various configurations. So far, we replicated my results, but still not sure how to proceed. Bottom line is, I am hopeful regarding using the Accelerate Framework, but I must do more testing on the combinations, ordering and dependencies of the Python modules and packages. I'll keep updating here with my progress. More to come...
+
 ## 07 Aug 2023 - Numpy Accelerated with Apple Silicon
 
 I Spent a good portion of today and yesterday evening rebuilding my machine learning and data analytics Python packages required for oobabooga support, the information is also helpful for anyone who uses Apple Silicon Macs for these purposes.
