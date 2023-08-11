@@ -8,6 +8,18 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. There's now a script which does some simple timing of matrix manipulation so you may compare different BLAS and LAPACK libraries.
 
+## 11 Aug 2023 This Kind of Explains the Issue With pip, conda, etc al...
+
+Well, I haven't tried the latest main branch of oobagooba as I'm still on a working1.3.1 I have in my repository.  I'm sorting some performance and library compatibility issues out now, but hope to be a=back to getting a 1.5 release which is texted and running on macOS using Metal.  Metal also happens to be the piece I'm looking into deeply because there seem yo be issues about it using GPU or CPU or both, I have just about got a test framework setup for different combinations of things like NumPy, Pandas, PyTorch, and will test them in various configurations.
+
+One item I discovered is depending on what was installed when and whether you have BLAS and LAPACK libraries, you can get distinctly different  results, so I'll also run the regression tests for NymPy especially.
+
+There are two options for matrix manipulation, use GGML (in llama.cpp) or use LAPACK and BLAS, all available from different places. I have not found a BLAS/LAPACK which runs on the Apple Silicon GPU, which is why GGML exists, as far as I can read. The only thing which does run on the M1/M2 GPU is the BLAS and LAPACK Apple includes with their Accelerate Framework.  NumPy does not recommend using this as it gives inconsistent results past version 1.20.1 of NumPy, however, I'm trying the newer versions of the libraries because the speedup is about 5-7x.
+
+There are so many funny interdependencies in the libraries and library managers between pip and conda, sometimes they leave bits of what they installed after you uninstall them.  This only makes matters worse, because if you are using NumPy, you could be using a library from just about anywhere.
+
+I'm also writing the Apple Dev Team a letter letting them know I am not particularly thrilled with their response to problems with Accelerate being basically the same as the NumPy, PyTorch and SciPy people give is "Oh, it's not out problem, contact the vendor (Apple)"  When I look at Apple's site, their response is, "Oh, it's not our problem, contact the developer (Open Source Team)."  Both groups need to talk with each other otherwise nothing will get done. and  Apple should be much more supportive of the OpenSource Community or they will loose out to Nvidia and Hugging Face.
+
 ## 10 Aug 2023 - Have Something Interesting
 
 Wanted to give an update. Have found an issue with re-installing and installing new modules and packages. All seems to be linked back to BLAS and LAPACK.  it seems the installation order affects how the BLAS and LAPACK libraries are handles, even when not doing a recompile of the module or package. I'm able to reproduce my results, but haven't found any definite answer to the performance issues encountered using oobabooga. Many people with many different opinions on the cause, but I haven't seen a real solution yet.
