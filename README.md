@@ -10,7 +10,7 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 ## 11 Aug 2023 This Kind of Explains the Issue With pip, conda, etc al...
 
-Well, I haven't tried the latest main branch of oobagooba as I'm still on a working1.3.1 I have in my repository.  I'm sorting some performance and library compatibility issues out now, but hope to be a=back to getting a 1.5 release which is texted and running on macOS using Metal.  Metal also happens to be the piece I'm looking into deeply because there seem yo be issues about it using GPU or CPU or both, I have just about got a test framework setup for different combinations of things like NumPy, Pandas, PyTorch, and will test them in various configurations.
+Well, I haven't tried the latest main branch of oobagooba as I'm still on a working 1.3.1 I have in my repository.  I'm sorting some performance and library compatibility issues out now, but hope to be back to getting a 1.5 release which is tested and running on macOS using Metal.  Metal also happens to be the piece I'm looking into deeply because there seem yo be issues about it using GPU or CPU or both, I have just about got a test framework setup for different combinations of things like NumPy, Pandas, PyTorch, and will test them in various configurations.
 
 One item I discovered is depending on what was installed when and whether you have BLAS and LAPACK libraries, you can get distinctly different  results, so I'll also run the regression tests for NymPy especially.
 
