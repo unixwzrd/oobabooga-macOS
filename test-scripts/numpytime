@@ -2,7 +2,7 @@
 
 import numpy as np
 import os
-import timit
+import timeit
 
 def main():
     size = 2000
@@ -41,6 +41,5 @@ if __name__ == "__main__":
     if os.getenv('NO_TEST') == "1":
         print("############### Skipping performance checks.")
     else:
-        main();
-
+        main()
 
