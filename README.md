@@ -26,7 +26,7 @@ So far it's taken a bit more than a week and I've been in contact with a few oth
 ### Some things I've learned along the way
 
 - NumPy rejected using the Apple Accelerate Framework, stating it was giving inaccurate results during testing, so in their 1.20.1 release, they deprecated its use.
-- There are numerous BLAS and LAPACK packages, including BLIS, which I have tested, though primarily to see if they were using the BPU for processing and so far I cannot see any using it.
+- There are numerous BLAS and LAPACK packages, including BLIS, which I have tested, though primarily to see if they were using the GPU for processing and so far I cannot see any using it.
 - Apple's Accelerate Framework is "kinda" built into many of the numerical analysis packages, but it is difficult to see if they actually support it or not.
 - NumPy who officially state they do not approve use of Accelerate, include it in their build, if you build it in a particular manner. I discovered this by accident after doing a recompile without any BLAS/LAPACK libraries in a searchable location for it to link with.  It linked with the Accelerate framework.
 - While things seem to compile with the Accelerate Framework, it is unclear to me where the libraries are I am linking to exist. Running otool on my final linked package reveals that I am linking to a location where symbolic links exist for the libraries, but they are all broken.
