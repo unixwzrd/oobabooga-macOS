@@ -34,7 +34,7 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Pre-requisites](#pre-requisites)
   - [Get Conda (Miniconda)](#get-conda-miniconda)
   - [CMake](#cmake)
-  - [NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGe SOON - UPDATeS COMING**](#numpy---everything-or-quickly--this-section-on-numpy-will-change-soon---updates-coming)
+  - [NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGE SOON - UPDATES COMING**](#numpy---everything-or-quickly--this-section-on-numpy-will-change-soon---updates-coming)
     - [NymPy Build Everything - OpenBLAS](#nympy-build-everything---openblas)
     - [NumPy](#numpy)
     - [NumPy Quicker - Use Conda or Pip](#numpy-quicker---use-conda-or-pip)
@@ -120,8 +120,6 @@ Before you begin, there are a few things you'll need.
 
     My theory is they are trying to actively discourage people from using the command line.
 
-Apologies for the confusion. Here's the edited version:
-
 ## Get Conda (Miniconda)
 
 **NOTE:** If Conda is already installed on your machine, skip this step.
@@ -188,7 +186,7 @@ make install
 
 This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
 
-## NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGe SOON - UPDATeS COMING**
+## NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGE SOON - UPDATES COMING**
 
 ### NymPy Build Everything - OpenBLAS
 
