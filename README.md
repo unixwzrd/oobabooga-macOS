@@ -8,7 +8,36 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. There's now a script which does some simple timing of matrix manipulation so you may compare different BLAS and LAPACK libraries.
 
-## 11 Aug 2023 This Kind of Explains the Issue With pip, conda, etc al...
+Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
+
+## 14 Aug 2023 New Direction Forward
+
+So far it's taken a bit more than a week and I've been in contact with a few others to tests do of our ideas on optimizing the various Python modules/packages on Apple Silicon and here my progress so far:
+
+### My progress so far
+
+- Put development and work on next release of oobabooga for macOS on hold until performance issues are investigated. This means merging oobagooba code for their 1.5 release into my codebase is on hold along with any changes I am putting into the code until there was an explanation or understanding of the performance issues.
+- Test a full build of the environment using modules which are required by the oobabooga/text-generation-webui.
+- Collecting some basic timing metrics along the way as the environment is built up.
+- Look for changes in those metrics in order to identify possible issues.
+- Compare GGML models running in obabooga and native llama.cpp to see if there is any difference between them.
+- Gather as much information from as many sources regarding performance and issues arising from using the M1/M2 GPU.
+
+### Some things I've learned along the way
+
+- NumPy rejected using the Apple Accelerate Framework, stating it was giving inaccurate results during testing, so in their 1.20.1 release, they deprecated its use.
+- There are numerous BLAS and LAPACK packages, including BLIS, which I have tested, though primarily to see if they were using the BPU for processing and so far I cannot see any using it.
+- Apple's Accelerate Framework is "kinda" built into many of the numerical analysis packages, but it is difficult to see if they actually support it or not.
+- NumPy who officially state they do not approve use of Accelerate, include it in their build, if you build it in a particular manner. I discovered this by accident after doing a recompile without any BLAS/LAPACK libraries in a searchable location for it to link with.  It linked with the Accelerate framework.
+- While things seem to compile with the Accelerate Framework, it is unclear to me where the libraries are I am linking to exist. Running otool on my final linked package reveals that I am linking to a location where symbolic links exist for the libraries, but they are all broken.
+
+My conclusions so far is there are performance issues related to inefficient processing is,  there are problems, they need more investigation, there is much contradictory information floating around, there is more testing to be done. These issues should not hold up further release of code into the "dev" tree for my branch of oobabooga. I intend to do this very soon, in the next day or two. After that, it will be available for download by anyone to test and report any issues related to running on macOS. I will go back to looking for performance issues again in the various modules.
+
+My reasons for releasing is to allow people to use and test some of the new features like increased context length, and llama2 support mainly. This seems to make sense because the issues will still be with us in the near future, and holding up any software release doesn't change that. Further, even though NumPy doesn't "officially" support the Accelerate Framework, the latest releases of PyTorch and I assume SciPy as well both support Apple Silicon and both of these sit on top of NumPy, so, if they certify things work on Apple Silicon, then I can only assume they are happy with the NumPy ability to work with it too.
+
+I'll continue testing and benchmarking things and will try to get some real numbers produced and presented soon. No matter what, keep watching this spot for my latest updates on this issue.
+
+## 11 Aug 2023 This Kind of Explains the Issue With pip, conda, etc al.
 
 Well, I haven't tried the latest main branch of oobagooba as I'm still on a working 1.3.1 I have in my repository.  I'm sorting some performance and library compatibility issues out now, but hope to be back to getting a 1.5 release which is tested and running on macOS using Metal.  Metal also happens to be the piece I'm looking into deeply because there seem yo be issues about it using GPU or CPU or both, I have just about got a test framework setup for different combinations of things like NumPy, Pandas, PyTorch, and will test them in various configurations.
 
