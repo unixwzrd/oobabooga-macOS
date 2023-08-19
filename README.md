@@ -10,6 +10,14 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
+## 18 Aug 2023 Current Status of Testing and Configuring
+
+While most of this may seem like a moving target, I have discovered inconsistencies in how packages will overlay each other's dynamic linked libraries  and will also not completely uninstall themselves using either Pip or Conda. I have searched most everywhere I can find information about linear algebra and matrix manipulation. It was way more than I ever really wanted to, but it's given me more understanding of how things work inside language models and given me a deeper appreciation for understanding less about how they store and retrieve information the way they do. I completely understand the theory of how they are seeking a minima in the matrix space, but exactly how things get coded in their matrix and how they can retrieve things, still amazes me. I suppose those who say they are simply statistical models which are good at predicting the next token in sequence, but even considering that, it opens up a whole can of worms, technically and even philosophically. Maybe everything is deterministic and it's tru we have no free will, only the illusion of it. Anyway, that's an entirely different discussion.
+
+I am texting my VENV build, benchmarking, and regression test automation.  I have run through the process manually for a few iterations, but it quickly become error-prone to continue manually. I have automated all aspects of the VENV build down to the BLAS libraries I'll be using.  I know I keep saying it will be just another few days, but I want to make sure everything is tested and I have a flexible enough build and test framework constructed so if new conditions arise, the framework is still usable or rather re-usable when new situations arise.
+
+I also updated the information in the build process regarding some of my findings about package managers which only support my view that they can cause more problems than they solve if they are not carefully coordinated between various packages and package build teams. Sometimes common areas are subject to pollution.
+
 ## 14 Aug 2023 New Direction Forward
 
 So far it's taken a bit more than a week and I've been in contact with a few others to tests do of our ideas on optimizing the various Python modules/packages on Apple Silicon and here my progress so far:

@@ -30,6 +30,7 @@ Please note that the guide is incomplete and is expected to be continued.
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
   - [TL;DR](#tldr)
   - [Table of Contents](#table-of-contents)
+    - [Status of Testing](#status-of-testing)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
   - [Get Conda (Miniconda)](#get-conda-miniconda)
@@ -51,6 +52,10 @@ Please note that the guide is incomplete and is expected to be continued.
   - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
 
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
+
+### Status of Testing
+
+Through this process it lead me to doing benchmarking along the way of installing packages and libraries on top of each other. Some of the advice and information I gathered along the way suggested uninstalling a package with Pip and then reinstalling it. I began to notice anomalies in configurations of the new installed modules or packages, I also observed that one package manager or another doesn't always respect another packages requirements and dependencies when it comes to "support" packages, especially binary support packages like dynamic libraries. Uninstalling does not always remove the dynamic library, and sometimes a package can install a binary dynamic library which overlays, or links with another package inadvertently. This was especially the case with the BLAS libraries. Sometimes packages will install a library and it will reside in the Python library hierarchy in a "central" location appearing as a "package' but will not be removed when the package is uninstalled.  Later installations may find that library instead of one placed in /usr/local/lib which was custom built for a site and will be ignored when the Conda or Pip installed library is dropped in, this especially becomes a problem when using the --compile option with Pip. I have set about benchmarking and documenting this along the way and will soon be finished with the layered benchmarking.  I also plan to make sure to run regression tests for every configuration. This whole process is taking a lot longer than I anticipated, but I intend to be thorough.
 
 ## Building for macOS and Apple Silicon
 
