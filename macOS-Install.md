@@ -25,27 +25,22 @@ Throughout the process, you're advised to create clones of your Conda environmen
 
 Please note that the guide is incomplete and is expected to be continued.
 
-## Table of Contents
-
+# Table of Contents
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
   - [TL;DR](#tldr)
-  - [Table of Contents](#table-of-contents)
-    - [Status of Testing](#status-of-testing)
+- [Table of Contents](#table-of-contents)
+    - [Status of Testing and BLAS](#status-of-testing-and-blas)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
-  - [Get Conda (Miniconda)](#get-conda-miniconda)
   - [CMake](#cmake)
-  - [NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGE SOON - UPDATES COMING**](#numpy---everything-or-quickly--this-section-on-numpy-will-change-soon---updates-coming)
-    - [NymPy Build Everything - OpenBLAS](#nympy-build-everything---openblas)
-    - [NumPy](#numpy)
-    - [NumPy Quicker - Use Conda or Pip](#numpy-quicker---use-conda-or-pip)
-  - [PyTorch](#pytorch)
+  - [BLAS Libraries, Everyone Uses These.](#blas-libraries-everyone-uses-these)
+  - [Get Conda (Miniconda)](#get-conda-miniconda)
   - [oobabooga Base - Everything Else](#oobabooga-base---everything-else)
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
-  - [Llama for macOS and MPS](#llama-for-macos-and-mps)
+  - [Llama for macOS and MPS (Metal Performance Shaders)](#llama-for-macos-and-mps-metal-performance-shaders)
     - [Building llama-cpp-python from source](#building-llama-cpp-python-from-source)
-  - [Pandas](#pandas)
+  - [PyTorch](#pytorch)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
   - [Extensions](#extensions)
@@ -53,9 +48,15 @@ Please note that the guide is incomplete and is expected to be continued.
 
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
 
-### Status of Testing
+### Status of Testing and BLAS
 
-Through this process it lead me to doing benchmarking along the way of installing packages and libraries on top of each other. Some of the advice and information I gathered along the way suggested uninstalling a package with Pip and then reinstalling it. I began to notice anomalies in configurations of the new installed modules or packages, I also observed that one package manager or another doesn't always respect another packages requirements and dependencies when it comes to "support" packages, especially binary support packages like dynamic libraries. Uninstalling does not always remove the dynamic library, and sometimes a package can install a binary dynamic library which overlays, or links with another package inadvertently. This was especially the case with the BLAS libraries. Sometimes packages will install a library and it will reside in the Python library hierarchy in a "central" location appearing as a "package' but will not be removed when the package is uninstalled.  Later installations may find that library instead of one placed in /usr/local/lib which was custom built for a site and will be ignored when the Conda or Pip installed library is dropped in, this especially becomes a problem when using the --compile option with Pip. I have set about benchmarking and documenting this along the way and will soon be finished with the layered benchmarking.  I also plan to make sure to run regression tests for every configuration. This whole process is taking a lot longer than I anticipated, but I intend to be thorough.
+The benchmarking project is going fairly well.  It took much more time to gather all the information on the linear algebra libraries, discovering other projects who use linear algebra, matrix manipulation, vector and tensor processing to discover that everyone is pretty much working in their own sandboxes. I was very surprised to see that there are no BLAS (Basic Linear Algebra Subroutines/System/Software) which would build or are built, at this time, other than the Apple Accelerate Framework, which appears to have little support from apple for the mathematical and scientific community, instead focusing more on consumer products like the iPhone. It seems a good deal of effort is put to consumer goods as they have a larger market share than Macs do.
+
+Some people have built their own libraries like it seems with PyTorch, SciPy, and even GGML/GGUF are using their own libraries to handle the matrix manipulation. I'm very surprised at this and how little support there seems to come from Apple, but that's their market they are playing to. Macs make up around 6% of their revenue, and it's unlikely they will ever enter the Datacenter market for other than their own hardware. People it seems have found a way around what seems through my research to be a two or three year period where Apple was doing little in helping the Open Source data science people, AI people, or the mathematics community. Never mind the apparent lack off cooperation between the various project teams and not pointing any fingers here, it seems to me there could have been a bit more collaboration. Reading their PR's here on GitHub was rather interesting as it seems one project or another would be keeping tabs on what another project was doing, but there was never any coordinated effort to Open Source the whole thing for everyone. This may be one of the weaknesses of Open Source in not having any sort of central governing body helping to connect and guide resources in a particular direction to solve a problem for the common good. I might have missed something in the few weeks of research I did, but that was my impression, each group of developers watching the others and finally when one group started working on Apple Silicon support, they would take that as their cue to work on theirs instead of working together, maybe I'm wrong.
+
+I have gathered a lot of information and it seems somewhat anticlimactic, but I seem to have found the best way I can to get the best performance possible from has been a moving target the past couple of weeks and will probably continue to be that way. It seems that at the core of the issue is NumPy is used by pretty much everyone to define core data types, and some other things I haven't discovered as my focus was in getting the most performance I could out of the Apple Silicon. I started down the path of eventually putting together a package building script in Bash and only near the end, discovered manipulating the graph data structure of layered and branching packages and libraries in a VENV was more than I could easily and simply handle in Bash. It does give consistent repeatable builds using a configuration file, and I am moving to Python in order to traverse the graph structure. Anyway, I will be opening another repository in a few days to throw everything in there.  My plan id to also use the package benchmark and regression testing suites to see different stacking, libraries and other issues will compare for compatibility, performance and overall function.
+
+I'd hoped to have all this out by now, but I kept finding new information, but for now, I can at least give what seems to be my best possible configuration for running LLM's on Apple Silicon, and the few libraries I've looked at. As I mentioned NumPy seemed to be the bottle neck in all this, but they were also the project which gave me a clue as to what I was trying to achieve and that is all out raw BLAS performance. For now it's time to give this document a refresh and update it with new information. I will say that performance I am seeing is somewhere between 2-5 tokens/sec, maybe more at times, and it's very usable and that's with the 70B LLaMa2 model with four bit quantization. I do not have hard numbers, but wanted to get my build out there as soon as possible. The hardware is a MacBook Pro M2 Max with 96GB RAM.
 
 ## Building for macOS and Apple Silicon
 
@@ -125,41 +126,6 @@ Before you begin, there are a few things you'll need.
 
     My theory is they are trying to actively discourage people from using the command line.
 
-## Get Conda (Miniconda)
-
-**NOTE:** If Conda is already installed on your machine, skip this step.
-
-During this process, be cautious as some libraries require the properly compiled version rather than the version that comes with pip or conda. This is important because some extensions for oobabooga may uninstall perfectly fine versions of libraries and downgrade them due to dependencies. This can lead to performance loss and troubleshooting issues. This has happened to me with NumPy and llama.cpp. My goal here is to pay close attention to the libraries during the construction of the environment for running and managing LLMs using oobabooga. I aim to catch as many potential issues as possible.
-
-One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (venv), then switch to the new one before making any potentially harmful changes.
-
-```bash
-   cd
-   mkdir tmp
-   cd tmp
-   curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
-   sh miniconda.sh
-   # Replace the shell name below with your preferred shell. The -l switch gives you a login shell and, contrary to what you may heard, you don't have to log out or exit the terminal. Simply exec the shell and it will reload your environment variables with the additional Conda ones set. This also works in Linux and most other Unix-like POSIX operating systems.
-   exec bash -l
-```
-
-After installing miniconda and conda, you may get a message indicating it needs updating. It's a good idea to go ahead and update the environment.
-
-```bash
-conda update -n base -c defaults conda
-```
-
-Create a new venv using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
-
-```bash
-conda create -n python3.10 python==3.10.*
-conda activate python3.10
-```
-
-This gives us a clean environment to return to as a base. I tend to clone my conda venvs so it's easy to roll back any changes that have negatively impacted my environment. It saves time to be able to roll back to a known good environment and move forward again. These venvs are useful for rolling back to a known configuration. I recommend cloning your good venv, activating it, and applying any changes to that. Many packages or updates affect multiple python modules at once, and this is an easy way to roll back and then move forward, creating a new venv cloned from the previous one. Then, new items are installed into that venv. When it's working, clone that one, activate it, and do the next round of updates or changes. At any point, venvs can be completely removed and even renamed. So, you can take your final venv, if you're happy with it, and rename it back to the base for your application. I will try to do this as I go along in this installation, taking venv checkpoints which I can roll back to if needed.
-
-Cloning a venv can also help you quickly determine if a compile, or some other module, provides any performance advantage. I can explain some of these techniques at another time.
-
 ## CMake
 
 Ensure you have CMake installed. Many dependencies rely on CMake, which is beneficial as it builds based on the original hardware and software configuration of your machine.
@@ -174,7 +140,7 @@ A lot of issues surrounding getting all this to work stem from various machines 
 
 **NOTE:** I am using a recent copy of GNU Make, which is a parallelizing make. Apple's make with macOS is an older version of GNU Make - 3.81, so it should be fine as well.
 
-**NOTE:** This will want to install in /usr/local. You may not want it installing there, and there are some special things you may have to do for it to install there. I will update this later with information on how to get it installed in something like ${HOME}/local/bin, which works just fine too.
+**NOTE:** This will want to install in /usr/local. You may not want it installing there, and there are some special things you may have to do for it to install there. I will update this later with information on how to get it installed in something like ${HOME}/local/bin, which works just fine too, as long as it's in your PATH.
 
 The steps are pretty simple and only take about 5 minutes:
 
@@ -183,7 +149,10 @@ The steps are pretty simple and only take about 5 minutes:
 # cd cmake_source
 ./bootstrap
 # I do this on the 12 core M2 Max and it flies. My last build I
-# did -j30, it was fine.
+# did -j30, it was fine. You may use -j without any number and it
+# will create as many threads as it can, though I found iTerm couldn't
+# keep up and kept wanting to print the output every now and then.
+# 2 * ( N_CPU -1 ) seems to work quite well.
 make -j24
 make test
 make install
@@ -191,11 +160,9 @@ make install
 
 This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
 
-## NumPy - Everything or Quickly  **THIS SECTION ON NUMPY WILL CHANGE SOON - UPDATES COMING**
+## BLAS Libraries, Everyone Uses These.
 
-### NymPy Build Everything - OpenBLAS
-
-Building OpenBLAS might be optional, but it can be built for incorporation into your own build of NumPy. If you want to get down into the nuts and bolts, then go ahead and build your own NumPy. However, installing using Conda will bring down a number of other libraries and Python modules, so you're probably best using conda to do this. However, if you compile and link your own, you can be 100% sure it will use the OpenBLAS and LAPACK you build here. I will show how to build OpenBLAS and NumPy using your library for OpenBLAS.
+Building OpenBLAS might be optional, but the Apple Accelerate Framework seems to blow everything out of the water based on my simple testing, and here's also where things break down is the NUmPy team were getting inconsistent results from Apple's Accelerate Framework and deprecated it shortly after adding the feature, though they didn't disable it. However, installing using Conda will bring down a number of other libraries and Python modules, so you're probably best using conda to do this. However, if you compile and link your own, you can be 100% sure it will use the OpenBLAS and LAPACK you build here. I will show how to build OpenBLAS and NumPy using your library for OpenBLAS. I plan to revisit this at soon, once I have the VENV build and test tool written, I will be able to test more configurations.  Again, if you know of any libraries which should be considered, please let me know and I can try to add them to the mix.
 
 OpenBLAS (BLAS) and LAPACK - Basic Linear Algebra and Linear Algebra Pack. These were originally built in FORTRAN, and you may find them on netlib.org.  I didn't have the GNU Fortran compiler available and the GNU compiler collection has been a problem on macOS for quite a while since they changed their binary formats and use LLVM.  You must use their C compiler, but it works pretty well.  Make sure you have Xcode and the Xcode command line utilities loaded. (Actually before you begin any of this.)
 
@@ -211,92 +178,55 @@ make -j24
 make test
 make install
 ```
+## Get Conda (Miniconda)
 
-### NumPy
+**NOTE:** If Conda is already installed on your machine, skip this step, but this will also ensure your Conda setup is up-to-date. We're going to skip over the NumPy rebuild here because the llama-cpp-python build will bring NumPy along with it, and the Conda installation of PyTorch also brings along a different NumPy with support libraries in a "hidden" package called "numpy-base".
 
-With the installation of NumPy, we begin to change the nature of the Python environment and from here on, we will be making clones of the venv's in order to roll back anything which we need to change or fix before moving forward.
+During this process, be cautious as some libraries require the properly compiled version rather than the version that comes with pip or conda. This is important because some extensions for oobabooga may uninstall perfectly fine versions of libraries and downgrade them due to dependencies. This can lead to performance loss and troubleshooting issues. This has happened to me with NumPy and llama.cpp. My goal here is to pay close attention to the libraries during the construction of the environment for running and managing LLMs using oobabooga. I aim to catch as many potential issues as possible.
 
-To create a clone of my baseline to this point, just in case something goes wrong, like other modules being updated or for some reason we want to roll this back. This one is fairly easy, since pip only installs one module for NumPy, however using conda, will install several modules, presumably as dependencies though pip doesn't. One thing which is included separately in the conda install is the OpenBLAS libraries.
-
-```bash
-conda create --clone python3.10 -n tgeb.00.numpy
-conda deactivate
-conda activate tgen.00.numpy
-pip install --no-cache --no-binary :all: --compile numpy
-```
-
-You can check to see if this worked by opening up an interactive python session on the command line type the following:
+One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (venv), then switch to the new one before making any potentially harmful changes.
 
 ```bash
-python
+    cd
+    mkdir tmp
+    cd tmp
+    curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
+    # Do a non-destructive Conda install whcih will preserve existing VENV's
+    sh miniconda.sh -b -u
 
-import numpy
-numpy.show_config()
+    # Activate the conda environment.
+    . ${HOME}/miniconda3/bin/activate
+
+    # Initialize Conda which will add initialization functions to your shell's profile.
+    conda init $(basename ${SHELL})
+
+    # Update your Conda environment with the latest updates to th ebase environment
+    conda update -n base -c defaults conda -y
+
+    # Grab a new login shell - this will work for any shell aand you wil enter back in the
+    # tmp directory we just created..
+    exec $( basename ${SHELL})sh -l
 ```
 
-### NumPy Quicker - Use Conda or Pip
-
-Clone the untouched python3.10. I've found that the following naming convention works well for being able to roll back:
-
-  tgen.00.numpy
-
-- appcode, a code for the application.
-- sequence, this number will give me the sequence the venv was created in as a reference and is incremented for each recovery milestone.
-- milestone, this is an identifier for the milestone, such as here "numpy" we are about to install numpy on top of our environment.
-
- This convention allows us to easily identify what the packages were or the significance of the milestone in the environment build process.  Removing the venv will remove from that milestone forward, at least symbolically. The later venvs will still be installed, but I've found it's good to remove them too as I roll back, though some might be left in place for testing purposes.
-
- The sequence number will help in understanding what happened every step along the way, and can also be useful if you decide to list the venvs using:
-
- ```bash
-conda info -e  | grep -v \# | sort
- ```
-
-This will list your environments in the order they were created if you use the sequence number and can help you determine what you might want to roll back.  Adding a .n.nn to the number could also signify a branch.  This is a lot to maintain manually, but is helpful when tracking down module dependencies and helping to keep one's view of the environments clear.
+Create a new venv using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
 
 ```bash
-conda create --clone python3.10 -n tgeb.00.numpy
-conda deactivate
-conda activate tgen.00.numpy
-conda install numpy
+conda create -n python3.10 python==3.10.*
+conda activate python3.10
 ```
 
-Either one of these options is viable, but if you go the OpenBLAS route, you definitely know what you have and it was built in your environment.
+This gives us a clean environment to return to as a base. I tend to clone my conda venvs so it's easy to roll back any changes that have negatively impacted my environment. It saves time to be able to roll back to a known good environment and move forward again. These venvs are useful for rolling back to a known configuration. I recommend cloning your good venv, activating it, and applying any changes to that. Many packages or updates affect multiple python modules at once, and this is an easy way to roll back and then move forward, creating a new venv cloned from the previous one. Then, new items are installed into that venv. When it's working, clone that one, activate it, and do the next round of updates or changes. At any point, venvs can be completely removed and even renamed. So, you can take your final venv, if you're happy with it, and rename it back to the base for your application. I will try to do this as I go along in this installation, taking venv checkpoints which I can roll back to if needed.
 
-The main point of this installation was that during my build-up of the environment, I had a version of NumPy which was not configured correctly. So, whichever way you decide, make sure you validate nothing has pulled out your modules and put in ones you don't want or are questionable.
-
-## PyTorch
-
-Let's now install PyTorch or Torch and see what happens by using either pip, conda, or the instructions on the PyTorch site. PyTorch says there are two ways to install PyTorch/Torch. One using pip and the other with conda. They are slightly different builds. PyTorch is probably the most important package we install for oobabooga and most any other AI/ML application.
-
-Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
-
-```bash
-conda create --clone tgeb.00.numpy -n tgeb.01.torch
-conda deactivate 
-conda activate tgeb.01.torch
-conda install pytorch torchvision torchaudio -c pytorch
-```
-
-Method 2 is with pip. After it's complete, we should clone the environment as a checkpoint for rolling back.
-
-```bash
-conda create --clone tgeb.00.numpy -n tgeb.01.torch
-conda deactivate 
-conda activate tgeb.01.torch
-pip install torch torchvision torchaudio
-```
-
-Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
-
-Create the venv for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
+Cloning a venv can also help you quickly determine if a compile, or some other module, provides any performance advantage. I can explain some of these techniques at another time. 
 
 ## oobabooga Base - Everything Else
 
-Pick one of the venv's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active, use the following:
+Pick one of the venv's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
 
 ```bash
 conda info -e
+conda activate python3.10
+conda create --clone python3.10 -n webui.00.base
 ```
 
 ### Clone The oobabooga GitHub Repository
@@ -311,7 +241,8 @@ This will pull clone my repository which has some changes that allow it to run w
 cd
 mkdir -p projects/AI
 cd projects/AI
-git clone https://github.com/unixwzrd/text-generation-webui-macos.git
+# clone the repository into a directory "webui" - it's shorter to type and works just fine.
+git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macos
 ```
 
 Alternately, you could get the original oobabooga and try running it using this set of installation instructions.
@@ -320,7 +251,7 @@ Alternately, you could get the original oobabooga and try running it using this 
 cd
 mkdir -p projects/AI
 cd projects/AI
-git clone https://github.com/oobabooga/text-generation-webui.git
+git clone https://github.com/oobabooga/text-generation-webui.git webui
 ```
 
 ### Install oobabooga Requirements
@@ -328,30 +259,31 @@ git clone https://github.com/oobabooga/text-generation-webui.git
 Change into the oobabooga text-generation-webui directory you cloned from GitHub earlier. Due to the structure of the file, it must be done with pip.
 
 ```bash
-conda create --clone tgen.01.torch -n tgen.02.oobaboogabase
+conda create --clone webui.00.base  -n webui.01.oobabase
 conda deactivate
-conda activate tgen.02.oobaboogabase 
+conda activate webui.01.oobabase 
 pip install -r requirements.txt
 ```
 
 Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama.cpp and llama-cpp-python as we may need to build them ourselves.
 
-## Llama for macOS and MPS
+## Llama for macOS and MPS (Metal Performance Shaders)
 
-The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi at this time.
+The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi at this time. It is also probably best to build your own anyway.
 
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama.cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
 The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the lamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled lamma-cpp in order to compare its performance to the lamma-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
-conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
+conda create --clone webui.01.oobabase -n webui.02.llamacpp
 conda deactivate
-conda activate tgen.03.reblds
+conda activate webui.02.llamacpp
 pip uninstall -y llama-cpp-python
-CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
-    FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
+NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
+  CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+  pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
+  
 ```
 
 ### Building llama-cpp-python from source
@@ -359,31 +291,34 @@ CMAKE_ARGS="-DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
 This may also be guilt from the latest source if you want to installed directly from your local repository.
 
 ```bash
-conda create --clone tgen.02.oobaboogabase -n tgen.03.reblds
+conda create --clone webui.01.oobabase -n webui.02.llamacpp
 conda deactivate
-conda activate tgen.03.reblds
+conda activate webui.02.llamacpp
 pip uninstall -y llama-cpp-python
 git clone --recurse-submodules git@github.com:abetlen/llama-cpp-python.git
 cd llama-cpp-python
-CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
-    FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --upgrade --compile -e .
+NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
+  CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+  pip install --force-reinstall --no-cache --no-binary :all: --compile -e .
 ```
 
 **NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it should be at least one for the GGML library to allocate space in the Apple Silicon M1 or M2 GPU space.
 
-## Pandas
+## PyTorch
 
-Pandas is now on the requirements list and I believe it was being installed prior to that.  It's probably a good idea, just like some of the other modules to do a forced recompile  I haven't investigated whether or not it uses MPS, but it should probably be included.
+Let's now install PyTorch or Torch and see what happens by using either pip, conda, or the instructions on the PyTorch site. PyTorch says there are two ways to install PyTorch/Torch. One using pip and the other with conda. They are slightly different builds. PyTorch is probably the most important package we install for oobabooga and most any other AI/ML application.
+
+Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
 
 ```bash
-# Optional, but will give finer granularity of you need to rollback.
-conda create --clone tgen.03.reblds -n tgen.04.pandas
+conda create --clone webui.01.oobabase -n webui.02.llamacpp
 conda deactivate
-conda activate tgen.04.pandas
-pip uninstall -y pandas
-pip install --no-cache --no-binary :all: --compile pandas
+conda activate webui.02.llamacpp
 ```
+
+Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
+
+Create the venv for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
 
 ## PyTorch for macOS and MPS
 
@@ -392,10 +327,10 @@ It may be necessary to re-install NumPy or at least upgrade it due to another mo
 This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
 
 ```bash
-conda create --clone tgen.04.pandas -n tgen.05.torch2
+conda create --clone webui.02.llamacpp -n webui.03.torch
 conda deactivate
-conda activate tgen.05.torch2
-conda install pytorch torchvision torchaudio -c pytorch
+conda activate webui.03.torch
+conda install pytorch torchvision -c pytorch
 ```
 
 ## Where We Are
@@ -405,6 +340,14 @@ This is a lot to cover, but there are more modules which get mis-installed and n
 Once you feel comfortable with your checkpoints and working venv, you can remove some of the ones you aren't using and this will improve Conda's performance.
 
 At his point, LLaMA models should start up just fine as long as they are GGML formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+
+Some other numbers, and parameters of note which I have verified through testing.  If you have others, please let me know and I'll have a look at them and add them is they work well.
+
+| Parameter    |  Value                                                                           |
+| ------------ | -------------------------------------------------------------------------------- |
+| n_gpu_layers | Set this to the number of n_layers in the output of llama.cpp when it starts     |
+| mlock        | Set this on, this will pin the memory so it doesn't get paged out or compressed  |
+| n_batch      | the number of batches for each iteration, if someone has guidance for this, please let me know. |
 
 ## Extensions
 
@@ -425,4 +368,8 @@ There are a number of extensions you can use with oobabooga textgen, but som bre
 
 There are a number of other modules like Pandas and SciPy which need review on Apple Silicon, many of these are used in oobabooga and elsewhere.
 
-Please run through the steps and feel free to comment, update, clarify, or contribute.
+Please run through the steps and feel free to comment, update, clarify, or contribute. My goal is to make this oobagooba macOS community grow and thrive, it can if everyone helps out a little bit.
+
+Thank you to all who have helped out in the past and continue to do so, and thanks to the Original oobagooba team for their Brilliant work, and all the other teams who have contributed to making this work.
+
+There many others too and I will eventually get to everyone here.
