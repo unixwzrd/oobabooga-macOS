@@ -12,6 +12,8 @@ Anyone wishing to provide any additional information or assistance, pleas feel f
 
 ## 28 Aug 2023 Performance Improvements And LLaMa2 works.
 
+* UPDATED QUICK INSTALL. PLEASE NOTE REGARDING GGML FILES, 0.1.78 llama-cpp-python must be used with GGML files. Both that version and the latest will work with LLaMa2.
+
 Have spent much time looking at Python packages for numerical analysis, data analytics and AI. There are many different combinations of libraries, depending on which order you install them and whether you compile in the Accelerate Framework. I believe it is working for the most part, but I haven't tested it completely. However, PyTorch now fully supports Apple Silicon, but other Python modules dance on some of the libraries installed by NumPy and PyTorch, specifically the BLAS libraries. I have a configuration tool I was putting together in Bash, but the logic ran me into a wall regarding graph traversal, so I am planning to have that re-done in Python.
 
 I will be putting up the Bash script, likely in its own repository, since other VENV build tools will be added and I plan to add benchmarking and regression testing to the process. There is value in it now as it can help simplify your builds for your VENVs and create consistent builds every time and in a sequence you configure. It also contains a portion for setting up/updating your personal Conda. Through this process I have discovered a lot about the state of Linear Algebra packages available, who uses them and what configurations they support.

@@ -36,20 +36,7 @@ cmake .
 make -j24
 make install
 
-# Install NumPy using pip with no cache, no binary, and compile
-pip install --no-cache --no-binary :all: --compile numpy
 
-# Alternatively, install NumPy using Conda
-conda install numpy
-
-# Install PyTorch using Conda
-conda install pytorch torchvision torchaudio -c pytorch
-
-# Alternatively, install PyTorch using pip
-pip install torch torchvision torchaudio
-
-# Clone the my slightly modified GitHub repository or use the clone after
-# this to get the original oobabooga.
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git
 
 # git clone https://github.com/oobabooga/text-generation-webui.git
@@ -60,20 +47,24 @@ pip install -r requirements.txt
 # Uninstall any existing version of llama-cpp-python
 pip uninstall -y llama-cpp-python
 
-# If necessary, reinstall llama-cpp-python with specific CMake arguments to enable Metal support
-CMAKE_ARGS="--fresh -DLLAMA_METAL=ON -DLLAMA_OPENBLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" \
-    FORCE_CMAKE=1 \
-    pip install --no-cache --no-binary :all: --upgrade --compile llama-cpp-python
+### NOTE: if you aren't converting your GGML files over to th enew GGUF
+### format, use version 0.1.78 of the llama-cpp-python.
+#
+# If it's been installed bt oobaboogs, do this for 0.1.78.  
+ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
+   CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+   pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.1.78
 
-# Uninstall any existing version of pandas
+### NOTE: If you have or weill be converting your GGML files to GGUF format, use this.
+#
+ # This will get the latest which qill no longer work with GGML files until you convert them.
+ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
+   CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+   pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
 
-pip uninstall -y pandas
 
-# If necessary, reinstall pandas with specific CMake arguments to enable Metal support
-
-FORCE_CMAKE=1 pip install --no-cache --no-binary :all: --compile pandas
-
-# If necessary, reinstall PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
+# It may already be installed from a previous step, but we will need PyTorch re-installed.
+# PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
 conda install pytorch torchvision torchaudio -c pytorch
 ```
 
