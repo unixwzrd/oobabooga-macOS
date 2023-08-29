@@ -10,6 +10,24 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
+## 29 Aug 2023 - GGML -> GGUF
+
+**NOTICE GGML File Format Change to GGUF**
+
+The new llama.cpp is quite fast now and seems to take advantage of MPS now nicely. But in order to use the latest, any GGML files will need to be converted to GGUF files. It's quite simple to do. The script to do the conversion is in the llama.cpp repo and there is only one requirement is to import gguf into your Python installation.
+
+[pip install gguf](https://github.com/ggerganov/llama.cpp/tree/master/gguf-py)
+
+then run the script:
+
+[convert-llama-ggmlv3-to-gguf.py](https://github.com/ggerganov/llama.cpp/blob/master/convert-llama-ggmlv3-to-gguf.py)
+
+There are other conversion scripts in the [llama.ccp](https://github.com/ggerganov/llama.cpp/blob/gguf/convert-llama-ggmlv3-to-gguf.py) for converting other formats. There is a notice regarding the latest repository to support GGML and that GGUF will be given a priority for now. This is great news for everyone who wants to use models.
+
+Last llama.cpp commit to support GGML: [master-ef3f333](https://github.com/ggerganov/llama.cpp/releases/tag/master-ef3f333)
+
+THis is the PR Discussing the new GGUF format: [PR: #2398](https://github.com/ggerganov/llama.cpp/pull/2398)
+
 
 ## 29 Aug 2023 - Updated Instructions
 
