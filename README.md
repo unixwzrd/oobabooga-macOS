@@ -10,7 +10,14 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
-## 28 Aug 2023 Performance Improvements And LLaMa2 works.
+
+## 29 Aug 2023 - Updated Instructions
+
+Added and changed a few things in the instructions. Updated the dev and main repositories with new requirements. A few other items, not really significant. Continuing to test performance and for any issues or problems.
+
+There does seem to be an inconsistency with one of my llama builds with torch, and I'm tracking it down now, but the one which is the base packages before rebuilding anything is due to the SciPy support that gets loaded with the oobabooga requirements, they took a different approach to their builds and combining their own Numpy embedded with the SciPy package somehow, or at least that's what it appears to be to me.  I will continue to investigate and have an update soon.
+
+## 28 Aug 2023 - Performance Improvements And LLaMa2 works.
 
 * UPDATED QUICK INSTALL. PLEASE NOTE REGARDING GGML FILES, 0.1.78 llama-cpp-python must be used with GGML files. Both that version and the latest will work with LLaMa2.
 
@@ -26,7 +33,7 @@ I know it's been a little while since I had anything to write, but there's a lot
 
 Thank you to all who have helped support me in working on this project, your kind assistance is very much appreciated, of all varieties.
 
-## 18 Aug 2023 Current Status of Testing and Configuring
+## 18 Aug 2023 - Current Status of Testing and Configuring
 
 While most of this may seem like a moving target, I have discovered inconsistencies in how packages will overlay each other's dynamic linked libraries  and will also not completely uninstall themselves using either Pip or Conda. I have searched most everywhere I can find information about linear algebra and matrix manipulation. It was way more than I ever really wanted to, but it's given me more understanding of how things work inside language models and given me a deeper appreciation for understanding less about how they store and retrieve information the way they do. I completely understand the theory of how they are seeking a minima in the matrix space, but exactly how things get coded in their matrix and how they can retrieve things, still amazes me. I suppose those who say they are simply statistical models which are good at predicting the next token in sequence, but even considering that, it opens up a whole can of worms, technically and even philosophically. Maybe everything is deterministic and it's tru we have no free will, only the illusion of it. Anyway, that's an entirely different discussion.
 
@@ -61,7 +68,7 @@ My reasons for releasing is to allow people to use and test some of the new feat
 
 I'll continue testing and benchmarking things and will try to get some real numbers produced and presented soon. No matter what, keep watching this spot for my latest updates on this issue.
 
-## 11 Aug 2023 This Kind of Explains the Issue With pip, conda, etc al.
+## 11 Aug 2023 - This Kind of Explains the Issue With pip, conda, etc al.
 
 Well, I haven't tried the latest main branch of oobagooba as I'm still on a working 1.3.1 I have in my repository.  I'm sorting some performance and library compatibility issues out now, but hope to be back to getting a 1.5 release which is tested and running on macOS using Metal.  Metal also happens to be the piece I'm looking into deeply because there seem yo be issues about it using GPU or CPU or both, I have just about got a test framework setup for different combinations of things like NumPy, Pandas, PyTorch, and will test them in various configurations.
 

@@ -82,7 +82,7 @@ These points illustrate why package managers can be both good and not so good. I
 
 Building is sometimes the best option, such as when you need special options built in or want to use a version other than what is typically distributed. There are many ways to do this, but I'm going to present one method. While it may not be the best, could probably be improved upon, or there's always another way, this is what we're going to do and hopefully, it's simple enough for anyone to follow the directions. In fact, as I am updating this file, I have completely torn down my build environment (making a backup) and am going to follow the steps through here to validate.
 
-I did it the long way so I could ensure I had the proper versions of libraries and modules which, for many reasons, get overlaid, reverted, or uninstalled, and a different version gets installed from a different repository. Some repositories are better in sync than others, but I tried going to the source for these things. I mention using the --dry-run argument, but sometimes the output is difficult to sift through. I will also explain setting up virtual environments or venv using Conda.
+I did it the long way so I could ensure I had the proper versions of libraries and modules which, for many reasons, get overlaid, reverted, or uninstalled, and a different version gets installed from a different repository. Some repositories are better in sync than others, but I tried going to the source for these things. I mention using the --dry-run argument, but sometimes the output is difficult to sift through. I will also explain setting up virtual environments or VENV using Conda.
 
 ## Pre-requisites
 
@@ -184,7 +184,7 @@ make install
 
 During this process, be cautious as some libraries require the properly compiled version rather than the version that comes with pip or conda. This is important because some extensions for oobabooga may uninstall perfectly fine versions of libraries and downgrade them due to dependencies. This can lead to performance loss and troubleshooting issues. This has happened to me with NumPy and llama.cpp. My goal here is to pay close attention to the libraries during the construction of the environment for running and managing LLMs using oobabooga. I aim to catch as many potential issues as possible.
 
-One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (venv), then switch to the new one before making any potentially harmful changes.
+One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (VENV), then switch to the new one before making any potentially harmful changes.
 
 ```bash
     cd
@@ -208,20 +208,20 @@ One way to avoid conflicts, downgrades, and other issues is to use the "--dry-ru
     exec $( basename ${SHELL})sh -l
 ```
 
-Create a new venv using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
+Create a new VENV using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
 
 ```bash
 conda create -n python3.10 python==3.10.*
 conda activate python3.10
 ```
 
-This gives us a clean environment to return to as a base. I tend to clone my conda venvs so it's easy to roll back any changes that have negatively impacted my environment. It saves time to be able to roll back to a known good environment and move forward again. These venvs are useful for rolling back to a known configuration. I recommend cloning your good venv, activating it, and applying any changes to that. Many packages or updates affect multiple python modules at once, and this is an easy way to roll back and then move forward, creating a new venv cloned from the previous one. Then, new items are installed into that venv. When it's working, clone that one, activate it, and do the next round of updates or changes. At any point, venvs can be completely removed and even renamed. So, you can take your final venv, if you're happy with it, and rename it back to the base for your application. I will try to do this as I go along in this installation, taking venv checkpoints which I can roll back to if needed.
+This gives us a clean environment to return to as a base. I tend to clone my conda VENVs so it's easy to roll back any changes that have negatively impacted my environment. It saves time to be able to roll back to a known good environment and move forward again. These VENVs are useful for rolling back to a known configuration. I recommend cloning your good VENV, activating it, and applying any changes to that. Many packages or updates affect multiple python modules at once, and this is an easy way to roll back and then move forward, creating a new VENV cloned from the previous one. Then, new items are installed into that VENV. When it's working, clone that one, activate it, and do the next round of updates or changes. At any point, VENVs can be completely removed and even renamed. So, you can take your final VENV, if you're happy with it, and rename it back to the base for your application. I will try to do this as I go along in this installation, taking VENV checkpoints which I can roll back to if needed.
 
-Cloning a venv can also help you quickly determine if a compile, or some other module, provides any performance advantage. I can explain some of these techniques at another time. 
+Cloning a VENV can also help you quickly determine if a compile, or some other module, provides any performance advantage. I can explain some of these techniques at another time. 
 
 ## oobabooga Base - Everything Else
 
-Pick one of the venv's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
+Pick one of the VENV's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
 
 ```bash
 conda info -e
@@ -273,7 +273,7 @@ The one loaded with the requirements for oobabooga is not compiled for MPS (Meta
 
 You're going to need the llama library and the Python module for it. You should recompile it, and I have validated that my build using OpenBLAS. I will also add instructions later for building a stand-alone llama.cpp which can run by itself. This is handy in case you don't want the entire UI running, you want to use it for testing, or you only need the stand-alone version.
 
-The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the lamma-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled lamma-cpp in order to compare its performance to the lamma-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
+The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the llama-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled llama-cpp in order to compare its performance to the llama-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
 conda create --clone webui.01.oobabase -n webui.02.llamacpp
@@ -318,7 +318,7 @@ conda activate webui.02.llamacpp
 
 Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
 
-Create the venv for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
+Create the VENV for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
 
 ## PyTorch for macOS and MPS
 
@@ -330,14 +330,14 @@ This seems to be the best method rather than using pip to install, the collectio
 conda create --clone webui.02.llamacpp -n webui.03.torch
 conda deactivate
 conda activate webui.03.torch
-conda install pytorch torchvision -c pytorch
+conda install --force-reinstall pytorch torchvision -c pytorch
 ```
 
 ## Where We Are
 
-This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot of modules and a lot of dependencies, so expect breakage from time to time.  Making checkpoints for rollback along the way will help a lot if you get a bad module, you won't have to destroy your whole venv or figure out which modules need to be uninstalled and re-installed.
+This is a lot to cover, but there are more modules which get mis-installed and need to be repaired, re-installed, or built from source. This package has a lot of modules and a lot of dependencies, so expect breakage from time to time.  Making checkpoints for rollback along the way will help a lot if you get a bad module, you won't have to destroy your whole VENV or figure out which modules need to be uninstalled and re-installed.
 
-Once you feel comfortable with your checkpoints and working venv, you can remove some of the ones you aren't using and this will improve Conda's performance.
+Once you feel comfortable with your checkpoints and working VENV, you can remove some of the ones you aren't using and this will improve Conda's performance.
 
 At his point, LLaMA models should start up just fine as long as they are GGML formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
 
