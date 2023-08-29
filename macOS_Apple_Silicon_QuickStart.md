@@ -109,13 +109,13 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 
 # It may already be installed from a previous step, but we will need PyTorch re-installed.
 # PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
-conda create --clone webui.01.llama-0.1.78 -n webui.02.llama-new
-conda activate webui.00.llama-new
+conda create --clone webui.01.llama-0.1.78 -n webui.02.torch-oldllama
+conda activate webui.02.torch-oldllama
 conda install pytorch torchvision torchaudio -c pytorch
 
 ### Do these if you installed the newest llama-cpp-python
-conda create --clone webui.001ooba-macOS-dev -n webui.02.torch-newllama
-conda activate webui.00.torch-newllama
+conda create --clone webui.01.llama-new -n webui.02.torch-newllama
+conda activate webui.02.torch-newllama
 conda install pytorch torchvision torchaudio -c pytorch
 ```
 
