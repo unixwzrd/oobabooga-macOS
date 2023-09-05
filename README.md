@@ -10,6 +10,18 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
+## 05 Sep 2023 - Testing and Updates
+
+GPT-4 was offline a good portion of the week last week, and I have my Internet connection upgraded. The upgrade to my connection was so I could download more than 1.2TB per month. The good folks at Comcast/Xfinity were kind enough to add an additional $25 to my monthly bill for this. I've never heard of a cap like this and it was amazing that about 20 years ago in Japan, I could get Fibre to MY HOUSE for about $70/month with 100MB speed up and down. Toss in an extra $10 and you could get 1GB up and down (Yes, that's Giga).  That was way more than mu WiFi router could handle, but the machines directly connected, it was AMAZING! There were about 5 companies all competing for business, wchih was good for the consumer and drove prices down. With Comcast/Xfinity, I pay more and get worse service, they are the only provider I can get where I live, so they have me over the proverbial barrel.
+
+I've updated the instructions quite a bit and I've been given some feedback from testing and walkthroughs of the instructions. I haven't had much time to get things running and play with the new llama.cpp, but it is quite fast and looks like it has many new features, including being able to convert just about any model into the new GGUF format.
+
+Still working on the scripted VENV builds. Hope to have them up this week, but that';s the hope every week. I also and working through the GitHub Workflows to determine what needs to be done to create pre-built binaries and installs for the llama.cpp,python wheels to support oobabooga and macOS. Ive never created GitHub workflows before or wheels for Python, it may take a bit to get this going, but doesn't look like too much to get done.
+
+It's been a very busy couple of weeks for me as things change quickly every day.  Please feel free to comment in the discussions, and as always thanks goes out to the oobabooga team.
+
+Living the dream of high speed Internet and unlimited data.
+
 ## 29 Aug 2023 - GGML -> GGUF
 
 * **NOTICE GGML File Format Change to GGUF**
@@ -27,7 +39,6 @@ There are other conversion scripts in the [llama.cpp](https://github.com/ggergan
 Last llama.cpp commit to support GGML: [master-ef3f333](https://github.com/ggerganov/llama.cpp/releases/tag/master-ef3f333)
 
 This is the PR Discussing the new GGUF format: [PR: #2398](https://github.com/ggerganov/llama.cpp/pull/2398)
-
 
 ## 29 Aug 2023 - Updated Instructions
 

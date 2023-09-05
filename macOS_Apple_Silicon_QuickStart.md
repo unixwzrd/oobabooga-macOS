@@ -2,7 +2,9 @@
 
 Make sure Xcode at the minimum is installed.
 
-If you are really in a rush and feeling brave, copy all of these lines into a text file and edit the uncomment line for version for the type of install you want. Uncomment 
+If you are really in a rush and feeling brave, copy all of these lines into a text file and edit the uncomment line for version for the type of install you want. Uncomment the lines you wish to use and paste them in one at at time into a terminal session of your choice. Use the script created as a template for your start script.
+
+**DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS**
 
 ```bash
 #!/bin/bash
@@ -67,7 +69,16 @@ cd webui-macOS
 pip install -r requirements.txt
 cd ..
 
-# OR get the DEV version
+# Get the TEST version
+# conda create --clone python3.10 -n webui.00.ooba-macOS-dev
+# conda activate webui.00.ooba-macOS-dev
+### macOS development
+# git clone -b test --single-branch https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS-dev
+# cd webui-macOS
+# pip install -r requirements.txt
+# cd ..
+
+# Get the DEV version
 # conda create --clone python3.10 -n webui.00.ooba-macOS-dev
 # conda activate webui.00.ooba-macOS-dev
 ### macOS development
@@ -117,6 +128,56 @@ conda install pytorch torchvision torchaudio -c pytorch
 conda create --clone webui.01.llama-new -n webui.02.torch-newllama
 conda activate webui.02.torch-newllama
 conda install pytorch torchvision torchaudio -c pytorch
+
+# As a last step, you may want to clone this VENV in order to protect it from having
+# packages accidently dropped into it.
+
+# If you used the old LLAMA-CPP-PYTHON, user this line
+conda craete --clone webui.02.torch-oldllama -n webui.03.final-ggnml
+
+# If you used the NEW LLAMA-CPP-PYTHON, user this line
+conda craete --clone webui.02.torch-newllama -n webui.03.final-gguf
+
+# Pick whcih one of these you wish to make your preferred VENV.
+# PREFERRED_VENV=webui.03.final-ggml
+PREFERRED_VENV=webui.03.final-gguf
+
+# Add any startup options you wich to this here:
+START_OPTIONS="--chat"
+#START_OPTIONS="--chat --verbose "
+#START_OPTIONS="--chat --verbose --listen"
+
+# This assumes you followed the instructions abobe for installing teh Conda or upgrading
+# the Conda oackage manager in your homme directory.  If you changed it to someting else,
+# you'll need to make appropriate changes here.
+cat <<_EOT_
+#!/bin/bash
+
+# >>> conda initialize >>>
+__conda_setup="$('${HOME}/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "${HOME}/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="${HOME}/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+conda activate ${PREFERRED_VENV}
+
+python server.py ${START_OPTIONS}
+_EOT_ > star-webui.sh
+chmod +x start-webui.sh
+
+# Cleanup any unneeded VENV's once we are happy with th ebuild and everytihng is running
+# smoothly
+conda uninstall --all -n webui.00.ooba-macOS
+conda uninstall --all -n webui.01.ooba-macOS
+conda uninstall --all -n webui.02.ooba-macOS
 ```
 
 Add the --upgrade flag to upgrade any of the pip or conda commands if necessary.

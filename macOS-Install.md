@@ -2,22 +2,18 @@
 
 This guide provides instructions on how to build and run the oobabooga text-generation-webui on macOS, specifically on Apple Silicon.
 
-While this is primarily for oobabooga users at the moment, many of the Python libraries and packages used here may also be used for Data Analytics, Machine Learning and other purposes.
+This repository is primarily for oobabooga users at the moment, many of the Python libraries and packages used here may also be used for Data Analytics, Machine Learning and other purposes.
 
-I will likely turn this into information on acceleration using the Apple Silicon GPU.
+I have a new repository on the way to assist with Apple Silicon M1/M2 and GPU performance VENV builds. This will produce configurable, repeatable, consistent VENV builds for Python packages and modules in all types of layering/stacking and at some point soon, branching builds. This will allow different installation procedures to be compared and evaluated for performance and through regression tests. Getting these consistent, working builds has been a bit difficult as new packages come out all the time and there are many cross-module/package dependencies, some incompatible, and some in conflict.
 
 ## TL;DR
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
 1. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
 1. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
-1. **NumPy**: Install NumPy in two ways:
-   - Build it from source, ensuring it uses the OpenBLAS library you built.
-   - Install it quickly using Conda or Pip.
-1. **PyTorch**: Install PyTorch using either Conda or Pip. PyTorch is a key package for machine learning applications.
 1. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
 1. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
-  1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
+1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
 
 Check out [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md) for the short method without explanations.
 
