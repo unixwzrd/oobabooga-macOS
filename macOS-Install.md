@@ -31,14 +31,14 @@ Please note that the guide is incomplete and is expected to be continued.
   - [CMake](#cmake)
   - [BLAS Libraries, Everyone Uses These.](#blas-libraries-everyone-uses-these)
   - [Get Conda (Miniconda)](#get-conda-miniconda)
+  - [PyTorch](#pytorch)
+    - [Using Conda for PyTorch](#using-conda-for-pytorch)
+    - [Using Pip for PyTorch](#using-pip-for-pytorch)
   - [oobabooga Base - Everything Else](#oobabooga-base---everything-else)
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS (Metal Performance Shaders)](#llama-for-macos-and-mps-metal-performance-shaders)
     - [Building llama-cpp-python from source](#building-llama-cpp-python-from-source)
-  - [PyTorch](#pytorch)
-    - [Using Conda for PyTorch](#using-conda-for-pytorch)
-    - [Using Pip for PyTorch](#using-pip-for-pytorch)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
   - [Extensions](#extensions)
@@ -203,13 +203,13 @@ One way to avoid conflicts, downgrades, and other issues is to use the "--dry-ru
 
     # Grab a new login shell - this will work for any shell aand you wil enter back in the
     # tmp directory we just created..
-    exec $( basename ${SHELL})sh -l
+    exec $( basename ${SHELL}) -l
 ```
 
 Create a new VENV using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
 
 ```bash
-conda create -n python3.10 python==3.10.*
+conda create -n python3.10 python==3.10.* -y
 conda activate python3.10
 ```
 
@@ -217,6 +217,43 @@ This gives us a clean environment to return to as a base. I tend to clone my con
 
 Cloning a VENV can also help you quickly determine if a compile, or some other module, provides any performance advantage. I can explain some of these techniques at another time. 
 
+## PyTorch
+
+Pick one of the VENV's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
+
+Create the VENV for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
+
+```bash
+conda info -e
+conda activate python3.10
+conda create --clone python3.10 -n webui.00.baase
+```
+
+### Using Conda for PyTorch
+
+Let's now install PyTorch or Torch and see what happens by using either pip, conda, or the instructions on the PyTorch site. PyTorch says there are two ways to install PyTorch/Torch. One using pip and the other with conda. They are slightly different builds. PyTorch is probably the most important package we install for oobabooga and most any other AI/ML application.
+
+Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
+
+```bash
+conda create --clone webui.00.base -n webui.01.pytorch
+conda deactivate
+conda activate webui.03.pytorch
+conda install --force-reinstall pytorch torchvision torchaudio -c pytorch
+```
+
+Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
+
+### Using Pip for PyTorch
+
+Method 2, uses Pip to install PyTorch.  It's  bit of a different build as the install from the PyTorch distribution has extra NumPy which comes along with it.  This may affect other things if you are using NumPy for other things. Something to be aware of and I haven't tested the difference between the two with regression tests yet.
+
+```bash
+conda create --clone webui.00.llamacpp -n webui.01.pip-torch
+conda deactivete
+conda activate webui.03.pip-torch
+pip install torch torchvision torchaudio --no-cache --force-reinstall
+```
 ## oobabooga Base - Everything Else
 
 Pick one of the VENV's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
@@ -224,7 +261,7 @@ Pick one of the VENV's from the Torch install you wish to use, or use both of th
 ```bash
 conda info -e
 conda activate python3.10
-conda create --clone python3.10 -n webui.00.base
+conda create --clone webui.01.pytorch -n webui.02.base
 ```
 
 ### Clone The oobabooga GitHub Repository
@@ -236,11 +273,11 @@ Pick a good location for your clone of the project. I have a projects directory 
 This will pull clone my repository which has some changes that allow it to run with GPU acceleration.  This is unsupported, by the oobabooga people, but I will try to keep my information as up-to-date as possible along with merging code into the repository on a regular basis.
 
 ```bash
-cd
 mkdir -p projects/AI
 cd projects/AI
 # clone the repository into a directory "webui" - it's shorter to type and works just fine.
-git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macos
+git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS
+cd webui-macOS
 ```
 
 Alternately, you could get the original oobabooga and try running it using this set of installation instructions.
@@ -250,6 +287,7 @@ cd
 mkdir -p projects/AI
 cd projects/AI
 git clone https://github.com/oobabooga/text-generation-webui.git webui
+cd webui
 ```
 
 ### Install oobabooga Requirements
@@ -257,9 +295,9 @@ git clone https://github.com/oobabooga/text-generation-webui.git webui
 Change into the oobabooga text-generation-webui directory you cloned from GitHub earlier. Due to the structure of the file, it must be done with pip.
 
 ```bash
-conda create --clone webui.00.base  -n webui.01.oobabase
+conda create --clone webui.01.pytorch  -n webui.02.oobabase
 conda deactivate
-conda activate webui.01.oobabase 
+conda activate webui.02.oobabase 
 pip install -r requirements.txt
 ```
 
@@ -274,9 +312,9 @@ You're going to need the llama library and the Python module for it. You should 
 The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the llama-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled llama-cpp in order to compare its performance to the llama-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
-conda create --clone webui.01.oobabase -n webui.02.llamacpp
+conda create --clone webui.02.oobabase -n webui.03.llamacpp
 conda deactivate
-conda activate webui.02.llamacpp
+conda activate webui.03.llamacpp
 pip uninstall -y llama-cpp-python
 NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
   CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
@@ -289,9 +327,9 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 This may also be built from the latest source if you want to installed directly from your local repository.
 
 ```bash
-conda create --clone webui.01.oobabase -n webui.02.llamacpp
+conda create --clone webui.02.oobabase -n webui.03.llamacpp
 conda deactivate
-conda activate webui.02.llamacpp
+conda activate webui.03.llamacpp
 pip uninstall -y llama-cpp-python
 git clone --recurse-submodules git@github.com:abetlen/llama-cpp-python.git
 cd llama-cpp-python
@@ -302,35 +340,6 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 
 **NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it should be at least one for the GGML library to allocate space in the Apple Silicon M1 or M2 GPU space.
 
-## PyTorch
-
-Let's now install PyTorch or Torch and see what happens by using either pip, conda, or the instructions on the PyTorch site. PyTorch says there are two ways to install PyTorch/Torch. One using pip and the other with conda. They are slightly different builds. PyTorch is probably the most important package we install for oobabooga and most any other AI/ML application.
-
-### Using Conda for PyTorch
-
-Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
-
-```bash
-conda create --clone webui.02.llamacpp -n webui.03.pytorch
-conda deactivate
-conda activate webui.03.pytorch
-conda install --force-reinstall pytorch torchvision -c pytorch
-```
-
-Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
-
-Create the VENV for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
-
-### Using Pip for PyTorch
-
-Method 2, uses Pip to install PyTorch.  It's  bit of a different build as the install from the PyTorch distribution has extra NumPy which comes along with it.  This may affect other things if you are using NumPy for other things. Something to be aware of and I haven't tested the difference between the two with regression tests yet.
-
-```bash
-conda create --clone webui.02.llamacpp -n webui.03.pip-torch
-conda deactivete
-conda activate webui.03.pip-torch
-pip install torch torchvision --no-cache --force-reinstall
-```
 
 ## PyTorch for macOS and MPS
 
@@ -339,10 +348,10 @@ It may be necessary to re-install NumPy or at least upgrade it due to another mo
 This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
 
 ```bash
-conda create --clone webui.02.llamacpp -n webui.03.torch
+conda create --clone webui.03.llamacpp -n webui.04.torch
 conda deactivate
 conda activate webui.03.torch
-conda install --force-reinstall pytorch torchvision -c pytorch
+conda install --force-reinstall --nodeps pytorch torchvision torchaudio -c pytorch
 ```
 
 ## Where We Are
