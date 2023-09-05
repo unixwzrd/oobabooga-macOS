@@ -343,16 +343,7 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 
 ## PyTorch for macOS and MPS
 
-It may be necessary to re-install NumPy or at least upgrade it due to another module having different requirements and a different version of a module like NumPy. The OpenWhisper python modules is incompatible with the latest NumPy, at least at the time I wrote this, but please let me know if you have additional information.
-
-This seems to be the best method rather than using pip to install, the collection seems more up to date and more comprehensive than PyPi, this is actually coming from the source of PyTorch itself, so they are most likely the most up-to-date.  They also have nightly builds of you like to live on the edge.
-
-```bash
-conda create --clone webui.03.llamacpp -n webui.04.torch
-conda deactivate
-conda activate webui.03.torch
-conda install --force-reinstall --nodeps pytorch torchvision torchaudio -c pytorch
-```
+It may be necessary to re-install one of these libraries at some point, when one of the packages/modules is updated, it may, like PyTorch, install its own version of NumPy. I'll keep the latest information here. I have had some people test, but I am still building my VENV build, benchmarking, and regression test harness.  The first repository will be out soon.  The repository is created, it's not public yet.
 
 ## Where We Are
 
