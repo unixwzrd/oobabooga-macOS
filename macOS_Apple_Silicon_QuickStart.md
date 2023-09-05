@@ -176,8 +176,10 @@ chmod +x start-webui.sh
 # Cleanup any unneeded VENV's once we are happy with th ebuild and everytihng is running
 # smoothly
 conda uninstall --all -n webui.00.ooba-macOS
-conda uninstall --all -n webui.01.ooba-macOS
-conda uninstall --all -n webui.02.ooba-macOS
+conda uninstall --all -n webui.01.ooba-llama-0.1.78
+conda uninstall --all -n webui.01.ooba-llama-new
+conda uninstall --all -n webui.02.ooba-torch-oldllama
+conda uninstall --all -n webui.02.ooba-torch-newllama
 ```
 
 Add the --upgrade flag to upgrade any of the pip or conda commands if necessary.
