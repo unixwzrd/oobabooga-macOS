@@ -41,6 +41,8 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Llama for macOS and MPS (Metal Performance Shaders)](#llama-for-macos-and-mps-metal-performance-shaders)
     - [Building llama-cpp-python from source](#building-llama-cpp-python-from-source)
   - [PyTorch](#pytorch)
+    - [Using Conda for PyTorch](#using-conda-for-pytorch)
+    - [Using Pip for PyTorch](#using-pip-for-pytorch)
   - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
   - [Where We Are](#where-we-are)
   - [Extensions](#extensions)
@@ -288,7 +290,7 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 
 ### Building llama-cpp-python from source
 
-This may also be guilt from the latest source if you want to installed directly from your local repository.
+This may also be built from the latest source if you want to installed directly from your local repository.
 
 ```bash
 conda create --clone webui.01.oobabase -n webui.02.llamacpp
@@ -308,17 +310,31 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 
 Let's now install PyTorch or Torch and see what happens by using either pip, conda, or the instructions on the PyTorch site. PyTorch says there are two ways to install PyTorch/Torch. One using pip and the other with conda. They are slightly different builds. PyTorch is probably the most important package we install for oobabooga and most any other AI/ML application.
 
+### Using Conda for PyTorch
+
 Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
 
 ```bash
-conda create --clone webui.01.oobabase -n webui.02.llamacpp
+conda create --clone webui.02.llamacpp -n webui.03.pytorch
 conda deactivate
-conda activate webui.02.llamacpp
+conda activate webui.03.pytorch
+conda install --force-reinstall pytorch torchvision -c pytorch
 ```
 
 Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
 
 Create the VENV for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
+
+### Using Pip for PyTorch
+
+Method 2, uses Pip to install PyTorch.  It's  bit of a different build as the install from the PyTorch distribution has extra NumPy which comes along with it.  This may affect other things if you are using NumPy for other things. Something to be aware of and I haven't tested the difference between the two with regression tests yet.
+
+```bash
+conda create --clone webui.02.llamacpp -n webui.03.pip-torch
+conda deactivete
+conda activate webui.03.pip-torch
+pip install torch torchvision --no-cache --force-reinstall
+```
 
 ## PyTorch for macOS and MPS
 
