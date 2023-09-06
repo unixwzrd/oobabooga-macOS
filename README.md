@@ -10,6 +10,14 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
+## 06 Spe 2023 This thread...
+
+[Exacty this. PR #1728](https://github.com/oobabooga/text-generation-webui/issues/1728#issuecomment-1708455881)
+
+Follow the link to the PR, and I was wrong in my reply, it's been almost two months. Time certainly does fly by...
+
+@101is5 you get a special mention here because this made my day.
+
 ## 06 Sep 2023
 
 Some people have reviewed the installation instructions and given me changes. They have been updated. Hopefully you were able to work through it, though comments and suggestions are always welcome. The scripted method for installing is coming soon.  I know I keep saying this, but I am in final testing of it and will let everyone know here when it's complete.
