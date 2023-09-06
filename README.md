@@ -10,6 +10,12 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
+## 06 Sep 2023
+
+Some people have reviewed the installation instructions and given me changes. They have been updated. Hopefully you were able to work through it, though comments and suggestions are always welcome. The scripted method for installing is coming soon.  I know I keep saying this, but I am in final testing of it and will let everyone know here when it's complete.
+
+Thanks again to all who have helped out!
+
 ## 05 Sep 2023 - Testing and Updates
 
 GPT-4 was offline a good portion of the week last week, and I have my Internet connection upgraded. The upgrade to my connection was so I could download more than 1.2TB per month. The good folks at Comcast/Xfinity were kind enough to add an additional $25 to my monthly bill for this. I've never heard of a cap like this and it was amazing that about 20 years ago in Japan, I could get Fibre to MY HOUSE for about $70/month with 100MB speed up and down. Toss in an extra $10 and you could get 1GB up and down (Yes, that's Giga).  That was way more than mu WiFi router could handle, but the machines directly connected, it was AMAZING! There were about 5 companies all competing for business, wchih was good for the consumer and drove prices down. With Comcast/Xfinity, I pay more and get worse service, they are the only provider I can get where I live, so they have me over the proverbial barrel.

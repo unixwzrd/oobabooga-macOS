@@ -61,8 +61,21 @@ cd ..
 # cw ../..
 
 # Make a checkpoint VENV for rollback
-conda create --clone python3.10 -n webui.00.ooba-macOS
-conda activate webui.00.ooba-macOS 
+onda activate python3.10
+conda create --clone python3.10 -n webui.00.base
+
+# It may already be installed from a previous step, but we will need PyTorch re-installed.
+# PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
+conda create --clone webui.00.base -n webui.01.torch
+conda activate webui.02.torch-oldllama
+conda install pytorch torchvision torchaudio -c pytorch
+
+
+# Create a new VENV for rollback before installing th erequirements fo rthe webui.
+conda create --clone webui.01.pytorch -n webui.02.oobabase
+conda deactivate
+conda activate webui.02.oobabase 
+
 ### Get the macOS repo or see the commented lines and use them to get the development or original.
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS
 cd webui-macOS
@@ -101,8 +114,8 @@ cd ..
 ### NOTE: if you aren't converting your GGML files over to th enew GGUF
 ### format, use version 0.1.78 of the llama-cpp-python.
 #
-conda create --clone webui.00.ooba-macOS -n webui.01.llama-0.1.78
-conda activate webui.01.llama-0.1.78
+conda create --clone webui.02.oobabase -n webui.03.oldllama
+conda activate webui.03.oldllama
 # If it's been installed by oobaboogs, do this for 0.1.78.  
 NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
     CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
@@ -111,36 +124,25 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 ### NOTE: If you have or weill be converting your GGML files to GGUF format, use this.
 ###
 ### This will get the latest which will no longer work with GGML files until you convert them.
-conda create --clone webui.00.ooba-macOS-dev -n webui.01.llama-new
-conda activate webui.01.llama-new
+conda create --clone webui.02.oobabase -n webui.03.llama-new
+conda activate webui.03.newllama
 NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
     CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
     pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
 
 
-# It may already be installed from a previous step, but we will need PyTorch re-installed.
-# PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
-conda create --clone webui.01.llama-0.1.78 -n webui.02.torch-oldllama
-conda activate webui.02.torch-oldllama
-conda install pytorch torchvision torchaudio -c pytorch
-
-### Do these if you installed the newest llama-cpp-python
-conda create --clone webui.01.llama-new -n webui.02.torch-newllama
-conda activate webui.02.torch-newllama
-conda install pytorch torchvision torchaudio -c pytorch
-
 # As a last step, you may want to clone this VENV in order to protect it from having
 # packages accidently dropped into it.
-
+#
 # If you used the old LLAMA-CPP-PYTHON, user this line
-conda craete --clone webui.02.torch-oldllama -n webui.03.final-ggnml
+conda craete --clone webui.03.torch-oldllama -n webui.04.final-ggnml
 
 # If you used the NEW LLAMA-CPP-PYTHON, user this line
-conda craete --clone webui.02.torch-newllama -n webui.03.final-gguf
+conda craete --clone webui.03.torch-newllama -n webui.04.final-gguf
 
 # Pick whcih one of these you wish to make your preferred VENV.
 # PREFERRED_VENV=webui.03.final-ggml
-PREFERRED_VENV=webui.03.final-gguf
+PREFERRED_VENV=webui.04.final-gguf
 
 # Add any startup options you wich to this here:
 START_OPTIONS="--chat"
@@ -170,7 +172,7 @@ unset __conda_setup
 conda activate ${PREFERRED_VENV}
 
 python server.py ${START_OPTIONS}
-_EOT_ > star-webui.sh
+_EOT_ > start-webui.sh
 chmod +x start-webui.sh
 
 # Cleanup any unneeded VENV's once we are happy with th ebuild and everytihng is running

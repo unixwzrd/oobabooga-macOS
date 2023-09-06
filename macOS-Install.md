@@ -39,7 +39,7 @@ Please note that the guide is incomplete and is expected to be continued.
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS (Metal Performance Shaders)](#llama-for-macos-and-mps-metal-performance-shaders)
     - [Building llama-cpp-python from source](#building-llama-cpp-python-from-source)
-  - [PyTorch for macOS and MPS](#pytorch-for-macos-and-mps)
+  - [](#)
   - [Where We Are](#where-we-are)
   - [Extensions](#extensions)
   - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
@@ -143,17 +143,17 @@ A lot of issues surrounding getting all this to work stem from various machines 
 The steps are pretty simple and only take about 5 minutes:
 
 ```bash
-# untar the tar file, it will create a cmake_source directory.
-# cd cmake_source
-./bootstrap
-# I do this on the 12 core M2 Max and it flies. My last build I
-# did -j30, it was fine. You may use -j without any number and it
-# will create as many threads as it can, though I found iTerm couldn't
-# keep up and kept wanting to print the output every now and then.
-# 2 * ( N_CPU -1 ) seems to work quite well.
-make -j24
-make test
-make install
+  # untar the tar file, it will create a cmake_source directory.
+  # cd cmake_source
+  ./bootstrap
+  # I do this on the 12 core M2 Max and it flies. My last build I
+  # did -j30, it was fine. You may use -j without any number and it
+  # will create as many threads as it can, though I found iTerm couldn't
+  # keep up and kept wanting to print the output every now and then.
+  # 2 * ( N_CPU -1 ) seems to work quite well.
+  make -j24
+  make test
+  make install
 ```
 
 This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
@@ -169,12 +169,13 @@ OpenBLAS (BLAS) and LAPACK - Basic Linear Algebra and Linear Algebra Pack. These
 Download the OpenBLAS repo and build it, then install.
 
 ```bash
-git clone https://github.com/xianyi/OpenBLAS
-cd OpenBLAS
-cmake .
-make -j24
-make test
-make install
+  git clone https://github.com/xianyi/OpenBLAS
+  mkdir -p OpenBLAS/build
+  cd OpenBLAS/build
+  cmake .
+  make -j24
+  make install
+  cw ../..
 ```
 ## Get Conda (Miniconda)
 
@@ -185,32 +186,32 @@ During this process, be cautious as some libraries require the properly compiled
 One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (VENV), then switch to the new one before making any potentially harmful changes.
 
 ```bash
-    cd
-    mkdir tmp
-    cd tmp
-    curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
-    # Do a non-destructive Conda install whcih will preserve existing VENV's
-    sh miniconda.sh -b -u
+  cd
+  mkdir tmp
+  cd tmp
+  curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
+  # Do a non-destructive Conda install whcih will preserve existing VENV's
+  sh miniconda.sh -b -u
 
-    # Activate the conda environment.
-    . ${HOME}/miniconda3/bin/activate
+  # Activate the conda environment.
+  . ${HOME}/miniconda3/bin/activate
 
-    # Initialize Conda which will add initialization functions to your shell's profile.
-    conda init $(basename ${SHELL})
+  # Initialize Conda which will add initialization functions to your shell's profile.
+  conda init $(basename ${SHELL})
 
-    # Update your Conda environment with the latest updates to th ebase environment
-    conda update -n base -c defaults conda -y
+  # Update your Conda environment with the latest updates to th ebase environment
+  conda update -n base -c defaults conda -y
 
-    # Grab a new login shell - this will work for any shell aand you wil enter back in the
-    # tmp directory we just created..
-    exec $( basename ${SHELL}) -l
+  # Grab a new login shell - this will work for any shell aand you wil enter back in the
+  # tmp directory we just created..
+  exec $( basename ${SHELL}) -l
 ```
 
 Create a new VENV using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
 
 ```bash
-conda create -n python3.10 python==3.10.* -y
-conda activate python3.10
+  conda create -n python3.10 python==3.10.* -y
+  conda activate python3.10
 ```
 
 This gives us a clean environment to return to as a base. I tend to clone my conda VENVs so it's easy to roll back any changes that have negatively impacted my environment. It saves time to be able to roll back to a known good environment and move forward again. These VENVs are useful for rolling back to a known configuration. I recommend cloning your good VENV, activating it, and applying any changes to that. Many packages or updates affect multiple python modules at once, and this is an easy way to roll back and then move forward, creating a new VENV cloned from the previous one. Then, new items are installed into that VENV. When it's working, clone that one, activate it, and do the next round of updates or changes. At any point, VENVs can be completely removed and even renamed. So, you can take your final VENV, if you're happy with it, and rename it back to the base for your application. I will try to do this as I go along in this installation, taking VENV checkpoints which I can roll back to if needed.
@@ -221,13 +222,14 @@ Cloning a VENV can also help you quickly determine if a compile, or some other m
 
 Pick one of the VENV's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
 
+```bash
+  conda info -e
+  conda activate python3.10
+  conda create --clone python3.10 -n webui.00.baase
+```
+
 Create the VENV for whichever PyTorch installation you wish to use going forward, or use both of them and build them up as separate environments for testing purposes. Either should work, and I'll soon have some scripts which stress test MPS with dummy data for tensors, but can validate the GPU for MPS is used.
 
-```bash
-conda info -e
-conda activate python3.10
-conda create --clone python3.10 -n webui.00.baase
-```
 
 ### Using Conda for PyTorch
 
@@ -236,10 +238,10 @@ Let's now install PyTorch or Torch and see what happens by using either pip, con
 Method 1 is with Conda and is the preferred way to install, according to the [PyTorch documentation](https://pytorch.org/get-started/locally/#macos-version). Then clone the environment it was built in so we can roll back and move forward or fork if we want.
 
 ```bash
-conda create --clone webui.00.base -n webui.01.pytorch
-conda deactivate
-conda activate webui.03.pytorch
-conda install --force-reinstall pytorch torchvision torchaudio -c pytorch
+  conda create --clone webui.00.base -n webui.01.pytorch
+  conda deactivate
+  conda activate webui.01.pytorch
+  conda install --force-reinstall pytorch torchvision torchaudio -c pytorch
 ```
 
 Later library and module installations may require re-installs of PyTorch or numpy. For instance, I know that as it is now, Open Whisper downgrades and uses a different NumPy and the latest version of the Whisper modules will not use the latest NumPy.
@@ -249,19 +251,21 @@ Later library and module installations may require re-installs of PyTorch or num
 Method 2, uses Pip to install PyTorch.  It's  bit of a different build as the install from the PyTorch distribution has extra NumPy which comes along with it.  This may affect other things if you are using NumPy for other things. Something to be aware of and I haven't tested the difference between the two with regression tests yet.
 
 ```bash
-conda create --clone webui.00.llamacpp -n webui.01.pip-torch
-conda deactivete
-conda activate webui.03.pip-torch
-pip install torch torchvision torchaudio --no-cache --force-reinstall
+  conda create --clone webui.00.base -n webui.01.pip-torch
+  conda deactivete
+  conda activate webui.01.pip-torch
+  pip install torch torchvision torchaudio --no-cache --force-reinstall
 ```
 ## oobabooga Base - Everything Else
 
 Pick one of the VENV's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
 
 ```bash
-conda info -e
-conda activate python3.10
-conda create --clone webui.01.pytorch -n webui.02.base
+  conda info -e
+  conda activate webui.01.pytorch
+  conda create --clone webui.01.pytorch -n webui.02.oobabase
+  conda deactivate
+  conda activate webui.02.oobabase 
 ```
 
 ### Clone The oobabooga GitHub Repository
@@ -273,32 +277,29 @@ Pick a good location for your clone of the project. I have a projects directory 
 This will pull clone my repository which has some changes that allow it to run with GPU acceleration.  This is unsupported, by the oobabooga people, but I will try to keep my information as up-to-date as possible along with merging code into the repository on a regular basis.
 
 ```bash
-mkdir -p projects/AI
-cd projects/AI
-# clone the repository into a directory "webui" - it's shorter to type and works just fine.
-git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS
-cd webui-macOS
+  mkdir -p projects/AI
+  cd projects/AI
+  # clone the repository into a directory "webui" - it's shorter to type and works just fine.
+  git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS
+  cd webui-macOS
 ```
 
 Alternately, you could get the original oobabooga and try running it using this set of installation instructions.
 
 ```bash
-cd
-mkdir -p projects/AI
-cd projects/AI
-git clone https://github.com/oobabooga/text-generation-webui.git webui
-cd webui
+  cd
+  mkdir -p projects/AI
+  cd projects/AI
+  git clone https://github.com/oobabooga/text-generation-webui.git webui
+  cd webui
 ```
 
 ### Install oobabooga Requirements
 
-Change into the oobabooga text-generation-webui directory you cloned from GitHub earlier. Due to the structure of the file, it must be done with pip.
+You should already be in the oobabooga text-generation-webui directory and the Conda VENV you created from the previous step. Due to the structure of the file, it must be done with pip.
 
 ```bash
-conda create --clone webui.01.pytorch  -n webui.02.oobabase
-conda deactivate
-conda activate webui.02.oobabase 
-pip install -r requirements.txt
+  pip install -r requirements.txt
 ```
 
 Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama.cpp and llama-cpp-python as we may need to build them ourselves.
@@ -312,13 +313,13 @@ You're going to need the llama library and the Python module for it. You should 
 The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the llama-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled llama-cpp in order to compare its performance to the llama-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
-conda create --clone webui.02.oobabase -n webui.03.llamacpp
-conda deactivate
-conda activate webui.03.llamacpp
-pip uninstall -y llama-cpp-python
-NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
-  CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-  pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
+  conda create --clone webui.02.oobabase -n webui.03.llamacpp
+  conda deactivate
+  conda activate webui.03.llamacpp
+  pip uninstall -y llama-cpp-python
+  NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
+    CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
   
 ```
 
@@ -327,23 +328,56 @@ NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
 This may also be built from the latest source if you want to installed directly from your local repository.
 
 ```bash
-conda create --clone webui.02.oobabase -n webui.03.llamacpp
-conda deactivate
-conda activate webui.03.llamacpp
-pip uninstall -y llama-cpp-python
-git clone --recurse-submodules git@github.com:abetlen/llama-cpp-python.git
-cd llama-cpp-python
-NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
-  CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-  pip install --force-reinstall --no-cache --no-binary :all: --compile -e .
+  conda create --clone webui.02.oobabase -n webui.03.llamacpp
+  conda deactivate
+  conda activate webui.03.llamacpp
+  pip uninstall -y llama-cpp-python
+  git clone --recurse-submodules git@github.com:abetlen/llama-cpp-python.git
+  cd llama-cpp-python
+  NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
+    CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+    pip install --force-reinstall --no-cache --no-binary :all: --compile -e .
 ```
 
 **NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it should be at least one for the GGML library to allocate space in the Apple Silicon M1 or M2 GPU space.
 
+##
 
-## PyTorch for macOS and MPS
+While there are more advanced instructions in the "QuickStart" guide, basically you are now finished. In the command window you are in, you can set the preferred VENV to use, and the start options for the webui. This creates a short script for starting the webui from the command line or you may open Finder to the location you gave installed and simply double click on the file "start-webui.sh and it should run in a terminal window. The options may be edited later in the start-webui.sh created here.
 
-It may be necessary to re-install one of these libraries at some point, when one of the packages/modules is updated, it may, like PyTorch, install its own version of NumPy. I'll keep the latest information here. I have had some people test, but I am still building my VENV build, benchmarking, and regression test harness.  The first repository will be out soon.  The repository is created, it's not public yet.
+```bash
+  # Pick whcih one of these you wish to make your preferred VENV.
+  # PREFERRED_VENV=webui.03.final-ggml
+  PREFERRED_VENV=webui.04.final-gguf
+
+  # Add any startup options you wich to this here:
+  START_OPTIONS="--chat"
+  #START_OPTIONS="--chat --verbose "
+  #START_OPTIONS="--chat --verbose --listen"
+
+  cat <<_EOT_
+  #!/bin/bash
+
+  # >>> conda initialize >>>
+  __conda_setup="$('${HOME}/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+  if [ $? -eq 0 ]; then
+      eval "$__conda_setup"
+  else
+      if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
+          . "${HOME}/miniconda3/etc/profile.d/conda.sh"
+      else
+          export PATH="${HOME}/miniconda3/bin:$PATH"
+      fi
+  fi
+  unset __conda_setup
+  # <<< conda initialize <<<
+
+  conda activate ${PREFERRED_VENV}
+
+  python server.py ${START_OPTIONS}
+  _EOT_ > start-webui.sh
+  chmod +x start-webui.sh
+```
 
 ## Where We Are
 
