@@ -10,7 +10,28 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
-## 12 Sep 2023 Dependency Hell... Again
+## 15 Sep 2023 - They aren't making this easy
+
+So many dependencies between packages each needing the other version of each other sometimes incompatible. Containers and VENV's offer a good way of handling all this, but here's the latest news in moving targets.  It seems llama.cpp is moving very quickly, and the llama-cpp-python is behind, or there are bad links to vendor packages on GitHub, or really who knows.  Bottom line is things don't work. After a bit of debugging and chasing package chasing here's what I have as the latest information on building a stack which will run oobabooga on macOS with Apple Silicon M1/M2 GPU Acceleration.
+
+Basically, there's no change from my last update.  The order is still the same, but the versions are moving targets right now. SO, real quickly, just a few paragraphs down, thee are the actual instruction in the proper order for stacking the libraries and packages.
+
+- Build a clean VENV with Python 3.10
+- pip install the daily PyTorch build. It will not have total Apple Silicon GPU support in it, and it adds some libraries for BLAS and LAPACK. These are opaque and might link with something else you use as they are kind of drop-in replacements for the NumPy libraries, in a sub-package called nnumpy-base which is installed with their flavor of NumPy. I have experienced problems removing PyTorch's NumPy completely due to this.
+- pip install the oobabooga requirements.txt
+- pip rebuild in one shot llama-cpp-python and NumPu together with Metal/Accelerate Framework. Using anything else will be considerably slower.
+
+The only thing new to add is to specify which version of llama-cpp-python you need like this for version 0.2.5 which his the most current and works as far as my testing is concerned. The line for llama-cpp-python needs to have the version number put on the end like this (works for every other package this way for version numbers too):
+
+```bash
+    llama-cpp-python==0.2.5
+```
+
+That's it for llama.cpp and the Python API. Nothing else as it seems that some versions didn't. Be aware that the llama.cpp person/team, is not the same as the llama-cpp-python. llama.cpp is cranking out code with commits sometimes hourly throughout the day. With this quick a release cycle, you have to expect something may not go as planned, especially with all the moving ports.  No package is necessarily better than another right now, things are changing that quickly.  But this is one argument in favor of not always being on the latest and greatest version of software as it may not be fully integrated or tested yet.
+
+I'm guilty of this to some extent, I have things I need to get released, but something else pops up.  Right now, my oobabooga webui "main" branch is a bit stale, and probably best left alone.  Right now the most stable version is in my "test" branch, dev is fairly stable, but might break as I am working on it. both dev and test branches need to be promoted. So, if you want it, grab the test branch until I announce a change, but I will likely promote dev all the way up to "main" since version 1.5 is no longer very relevant and I've squashed a few macOS issues with CUDA code.
+
+## 12 Sep 2023 - Dependency Hell... Again
 
 For some reason the distribution of PyTorch, llama-cpp-python, and something in the oobabooga requirements.txt, all conflict with each other, including installing over an existing NumPy install or even downgrading it from 1.25.3 to 1.24.0. The PyTorch distribution at PyTorch also had some conflicting dependencies with other things as well, so you can't just do a --force-reinstall/install with things, and get the daily build of PyTorch because something has change in the distribution. I did manage to fins a combination which works solves the problems ad posted it in the #macOS-setup of the oobabooga Discord server. To save a bit, here's what I wrote:
 
