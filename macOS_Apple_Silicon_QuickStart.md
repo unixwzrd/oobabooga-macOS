@@ -128,7 +128,7 @@ conda create --clone webui.02.oobabase -n webui.03.llama-new
 conda activate webui.03.newllama
 NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
     CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
+    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.2.6
 
 
 # As a last step, you may want to clone this VENV in order to protect it from having

@@ -319,7 +319,7 @@ The application llama.cpp compiles with MPS support. I'm not sure if the cmake c
   pip uninstall -y llama-cpp-python
   NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
     CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python
+    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.2.6
   
 ```
 
