@@ -10,6 +10,10 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
+## 17 Sep 2023 - Too many moving parts.
+
+Ok, so lots of things broke over the weekend.  llama-cpp-python went to 02.26, NumPy sometime this morning went to 1.26.0 and I need to gather the Metal/MPS build instructions and test. Guaranteed there will be something else this week that breaks things. People gotta figure out whether they want the latest and greatest or "stable and works." then pick the one that meets your needs.  The latest and greatest may have cool new features, but at the cost of time.  I will have updates later, probably tomorrow.
+
 ## 15 Sep 2023 - They aren't making this easy
 
 So many dependencies between packages each needing the other version of each other sometimes incompatible. Containers and VENV's offer a good way of handling all this, but here's the latest news in moving targets.  It seems llama.cpp is moving very quickly, and the llama-cpp-python is behind, or there are bad links to vendor packages on GitHub, or really who knows.  Bottom line is things don't work. After a bit of debugging and chasing package chasing here's what I have as the latest information on building a stack which will run oobabooga on macOS with Apple Silicon M1/M2 GPU Acceleration.
