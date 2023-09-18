@@ -6,6 +6,10 @@ This repository is primarily for oobabooga users at the moment, many of the Pyth
 
 I have a new repository on the way to assist with Apple Silicon M1/M2 and GPU performance VENV builds. This will produce configurable, repeatable, consistent VENV builds for Python packages and modules in all types of layering/stacking and at some point soon, branching builds. This will allow different installation procedures to be compared and evaluated for performance and through regression tests. Getting these consistent, working builds has been a bit difficult as new packages come out all the time and there are many cross-module/package dependencies, some incompatible, and some in conflict.
 
+## 17 Sep 2023 - lots changed in the past 24 hours or so.  NumPy no longer builds on Metal/ MPS like it did in these instructions, and there have been issues with llama-cpp-python, I've bumped the version up to 0.2.6 which is the latest working version. I need to validate and verify everything.
+
+Latest != Greatest, Latest + Greatest != Best, Stable == None
+
 ## TL;DR
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
@@ -21,10 +25,9 @@ Throughout the process, you're advised to create clones of your Conda environmen
 
 Please note that the guide is incomplete and is expected to be continued.
 
-# Table of Contents
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
+  - [17 Sep 2023 - lots changed in the past 24 hours or so.  NumPy no longer builds on Metal/ MPS like it did in these instructions, and there have been issues with llama-cpp-python, I've bumped the version up to 0.2.6 which is the latest working version. I need to validate and verify everything.](#17-sep-2023---lots-changed-in-the-past-24-hours-or-so--numpy-no-longer-builds-on-metal-mps-like-it-did-in-these-instructions-and-there-have-been-issues-with-llama-cpp-python-ive-bumped-the-version-up-to-026-which-is-the-latest-working-version-i-need-to-validate-and-verify-everything)
   - [TL;DR](#tldr)
-- [Table of Contents](#table-of-contents)
     - [Status of Testing and BLAS](#status-of-testing-and-blas)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)

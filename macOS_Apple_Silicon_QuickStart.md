@@ -6,6 +6,10 @@ If you are really in a rush and feeling brave, copy all of these lines into a te
 
 **DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS**
 
+## 17 Sep 2023 - lots changed in the past 24 hours or so.  NumPy no longer builds on Metal/ MPS like it did in these instructions, and there have been issues with llama-cpp-python, I've bumped the version up to 0.2.6 which is the latest working version. I need to validate and verify everything.
+
+Latest != Greatest, Latest + Greatest != Best, Stable == None
+
 ```bash
 #!/bin/bash
 
