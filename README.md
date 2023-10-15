@@ -23,6 +23,8 @@ I haven't gone away, still around, but waiting on the dust to settle before upda
 
 Basically, I was bouncing from one update to the next and hardly time to take a break. The repo I have for oobabooga-macos had a buglet or two patched, but it does llama2 support, though with configurations I have specified below and on my instructions, it is supported to version 1.6 as far as I can tell, and should run fine.  If you have any problems with it, feel free to reach out and let me know.
 
+I'm also staying away from macOS 14.0 until I am sure everything works.  MAcGPG MAil is broken with the new release, Mail.app changed the way it handles plugins.  I'm waiting until that works before I upgrade my OS. A lot of things have changed in macSO 14, but I'll wait a bit until everything works for me.
+
 ## 17 Sep 2023 - Too many moving parts
 
 Ok, so lots of things broke over the weekend.  llama-cpp-python went to 02.26, NumPy sometime this morning went to 1.26.0 and I need to gather the Metal/MPS build instructions and test. Guaranteed there will be something else this week that breaks things. People gotta figure out whether they want the latest and greatest or "stable and works." then pick the one that meets your needs.  The latest and greatest may have cool new features, but at the cost of time.  I will have updates later, probably tomorrow.
