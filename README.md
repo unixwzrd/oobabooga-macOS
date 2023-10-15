@@ -10,7 +10,20 @@ In the test-scripts directory, there are some random Python scripts using tensor
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
 
-## 17 Sep 2023 - Too many moving parts.
+## 15 Oct 2023 - Update coming soon
+
+I haven't gone away, still around, but waiting on the dust to settle before updating.  Lots of things have changed.
+
+* PyTorch has had a few updates and is for-the-most-part, able to run using Apple Silicon M1/M2 GPU
+* NumPy has had a major update, but last time I updated, the Python distributions did not have NumPy using Apple Silicon GPU by default.
+* llama.cpp is using the Apple Silicon GPU and has reasonable performance. While for llama-cpp-python there is a dependency for NumPy, it doesn't require it for integrating it into oobaboogs, though other things require NumPy.
+* BLAS/LAPACK for NumPy, last I checked, point to the Accelerate Framework in macOS 13.5 (I have tested 13.5 thru 13.6.) and higher.
+* macOS sent it an upgrade for their OS macOS 14.0.  I have not tested this but I had numerous things change on my system and break with the 13.6 update. So, I decided to give things a rest until things settled down. Everything was running in my config below, and I didn't need the latest and greatest features of anything, so I decided to wait until things stabilized.
+* iOS Updates. Yeah, that too.  If it wasn't enough for everything else, Apple also put out iOS updates to iOS 17.
+
+Basically, I was bouncing from one update to the next and hardly time to take a break. The repo I have for oobabooga-macos had a buglet or two patched, but it does llama2 support, though with configurations I have specified below and on my instructions, it is supported to version 1.6 as far as I can tell, and should run fine.  If you have any problems with it, feel free to reach out and let me know.
+
+## 17 Sep 2023 - Too many moving parts
 
 Ok, so lots of things broke over the weekend.  llama-cpp-python went to 02.26, NumPy sometime this morning went to 1.26.0 and I need to gather the Metal/MPS build instructions and test. Guaranteed there will be something else this week that breaks things. People gotta figure out whether they want the latest and greatest or "stable and works." then pick the one that meets your needs.  The latest and greatest may have cool new features, but at the cost of time.  I will have updates later, probably tomorrow.
 
@@ -21,7 +34,7 @@ So many dependencies between packages each needing the other version of each oth
 Basically, there's no change from my last update.  The order is still the same, but the versions are moving targets right now. SO, real quickly, just a few paragraphs down, thee are the actual instruction in the proper order for stacking the libraries and packages.
 
 - Build a clean VENV with Python 3.10
-- pip install the daily PyTorch build. It will not have total Apple Silicon GPU support in it, and it adds some libraries for BLAS and LAPACK. These are opaque and might link with something else you use as they are kind of drop-in replacements for the NumPy libraries, in a sub-package called nnumpy-base which is installed with their flavor of NumPy. I have experienced problems removing PyTorch's NumPy completely due to this.
+- pip install the daily PyTorch build. It will not have total Apple Silicon GPU support in it, and it adds some libraries for BLAS and LAPACK. These are opaque and might link with something else you use as they are kind of drop-in replacements for the NumPy libraries, in a sub-package called numpy-base which is installed with their flavor of NumPy. I have experienced problems removing PyTorch's NumPy completely due to this.
 - pip install the oobabooga requirements.txt
 - pip rebuild in one shot llama-cpp-python and NumPu together with Metal/Accelerate Framework. Using anything else will be considerably slower.
 
