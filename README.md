@@ -6,9 +6,21 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 ## If you hate standing in line at the bank: [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md)
 
-In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. There's now a script which does some simple timing of matrix manipulation so you may compare different BLAS and LAPACK libraries.
+In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. BLAS and LAPACK are no longer required to be build, and in fact the new build/compile for NumPy will seek out and use whatever BLAS/LAPACK it finds, rather than use the ones in the Accelerate Framework.  So, if you're building/compiling NumPy, I would suggest moving those libraries away from /usr/local/lib as that's one of the first places it goes to look for them - ***EVEN*** if you have "accelerate" explicitly selected.
 
 Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
+
+## 20 Oct 2023 - Where things stand right now.
+
+I have the discussions turned on for this repository and the subject was brought up regarding CoreML and I weighed with a rather lengthy response. Please feel free to add to the discussion if you like.  it was regarding this paper about [Swift and CoreML LLMs](https://huggingface.co/blog/swift-coreml-llm) and rather use an Apple native solution rather than the patchwork of python and C libraries we have here.  Well, [it's complicated, you can read all about it here](https://github.com/unixwzrd/oobabooga-macOS/discussions/2#discussioncomment-7286842). GPT-4 was nice enough to give this...
+
+### TL;DR:
+* Apple's CoreML is powerful but remains largely within the Apple ecosystem, making it niche.
+* llama.cpp aims for model portability and could become a standard for running models, especially with its GGUF file format.
+* oobabooga is feature-rich but has performance and stability issues, and it's too PC-focused.
+* Dependency hell and update cycles are significant challenges, especially with libraries like NumPy and PyTorch.
+* ctransformers could be a game-changer, but you haven't had a chance to explore it yet.
+* You're considering a new project that would be more modular and flexible than oobabooga, possibly using a message-passing architecture.
 
 ## 15 Oct 2023 - Update coming soon
 
