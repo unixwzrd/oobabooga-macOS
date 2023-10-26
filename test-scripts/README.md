@@ -7,7 +7,7 @@ Enjoy.
 
 The only one which really gives any information is this:
 
-There are now several scripts which give timing and profiling information for comparing different VENV's configurations, bit in setup and config and with some timing and profiling. For now, these are fro NumPy.
+There are now several scripts which give timing and profiling information for comparing different VENV's configurations, bit in setup and config and with some timing and profiling. For now, these are for NumPy.
 
 numpybench  - displays numpy config and times tests using time.
 numpyprof   - displays numpy config and profiles tests using cProf.
