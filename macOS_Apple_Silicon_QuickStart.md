@@ -2,7 +2,7 @@
 
 Make sure Xcode at the minimum is installed.
 
-If you are really in a rush and feeling brave, copy all of these lines into a text file and edit the uncomment line for version for the type of install you want. Uncomment the lines you wish to use and paste them in one at at time into a terminal session of your choice. Use the script created as a template for your start script.
+If you are really in a rush and feeling brave, copy all of these lines into a text file and edit the uncomment line for version for the type of install you want. Uncomment the lines you wish to use and paste them in one at time into a terminal session of your choice. Use the script created as a template for your start script.
 
 **DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS**
 
