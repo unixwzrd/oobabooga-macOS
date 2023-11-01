@@ -1,46 +1,92 @@
 #!/usr/bin/env python3
-
-import numpy as np
+"""
+This will give a high level overview of teh performance of various
+matrix operations on an array and iterate throught he calculktions
+a number of times. There is nothing useful in these calculations,
+this is simply to run throug soem calcutions a number of times to
+see the relative performance of the GPU or CPU on larce matrices.
+"""
 import os
-import timit
+import sys
+import time
+from argparse import ArgumentParser
+from datetime import datetime
+from io import StringIO
+import numpy as np
 
-def main():
-    size = 2000
+# Initialize argparse
+parser = ArgumentParser(description="Run NumPy benchmarks and output results.")
+parser.add_argument("-d", "--datafile", type=str, nargs='?',
+                    default=f"{os.getenv('CONDA_DEFAULT_ENV', 'default')}-timing.txt",
+                    help="Specify the datafile to write the output to.")
+parser.add_argument("-s", "--skip-tests", action="store_true", help="Skip time-consuming tests.")
+parser.add_argument("-c", "--count", type=int, default=1, help="Number of iterations.")
+
+# Parse the arguments
+args = parser.parse_args()
+
+datafile = None
+if args.datafile:
+    datafile = open(args.datafile, 'w', encoding="utf-8")
+
+def print_with_timestamp(message, file=None):
+    """ Function to print messages with a timestamp """
+    output = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}"
+    print(output)
+    if file:
+        file.write(output + '\n')
+
+
+def do_tests():
+    """ Perform all the basic tests """
+    size = 2500
     A = np.random.rand(size, size)
     B = np.random.rand(size, size)
 
     # Number of iterations
-    iterations = 10
+    iterations = args.count
 
-    # Matrix multiplication
-    multiplication_time = timeit.timeit(lambda: np.dot(A, B), number=iterations)
-    print(f"Time for matrix multiplication: {multiplication_time/iterations:.4f} seconds")
+    tests = [
+        ("Matrix multiplication", lambda: np.dot(A, B)),
+        ("Matrix transposition", lambda: np.transpose(A)),
+        ("Eigenvalue computation", lambda: np.linalg.eigvals(A)),
+        ("Fourier transformation", lambda: np.fft.fft(A)),
+        ("Summation", lambda: np.sum(A))
+    ]
 
-    # Matrix transposition
-    transposition_time = timeit.timeit(lambda: np.transpose(A), number=iterations)
-    print(f"Time for matrix transposition: {transposition_time/iterations:.4f} seconds")
+    for name, test_func in tests:
+        print_with_timestamp(f"BEGIN TEST: {name}", file=datafile)
+        start = time.time()
+        for _ in range(iterations):
+            test_func()
+        end = time.time()
+        print_with_timestamp(f"Time for {name.lower()}: {(end - start):.4f} seconds",
+                             file=datafile)
+        print_with_timestamp("END TEST / BEGIN NEXT TEST", file=datafile)
 
-    # Eigenvalue computation
-    eigenvalue_time = timeit.timeit(lambda: np.linalg.eigvals(A), number=iterations)
-    print(f"Time for eigenvalue computation: {eigenvalue_time/iterations:.4f} seconds")
 
-    # Fourier transformation
-    fft_time = timeit.timeit(lambda: np.fft.fft(A), number=iterations)
-    print(f"Time for Fourier transformation: {fft_time/iterations:.4f} seconds")
+def main():
+    """ Main script """
+    print_with_timestamp(f"Producing information for VENV ----> {os.getenv('CONDA_DEFAULT_ENV')}",
+                         file=datafile)
 
-    # Summation
-    summation_time = timeit.timeit(lambda: np.sum(A), number=iterations)
-    print(f"Time for summation: {summation_time/iterations:.4f} seconds")
+    # Capture np.show_config() output and print it line by line with timestamps
+    old_stdout = sys.stdout
+    new_stdout = StringIO()
+    sys.stdout = new_stdout
+    np.show_config()
+    sys.stdout = old_stdout
+
+    for line in new_stdout.getvalue().split("\n"):
+        print_with_timestamp(line, file=datafile)
+
+    if args.skip_tests:
+        print_with_timestamp("############### SKIPPING PERFORMANCE CHECKS", file=datafile)
+    else:
+        do_tests()
+
+    if datafile:
+        datafile.close()
 
 if __name__ == "__main__":
-
-    print("Producing information for VENV ----> ", os.getenv("CONDA_DEFAULT_ENV"))
-
-    np.show_config()
-
-    if os.getenv('NO_TEST') == "1":
-        print("############### Skipping performance checks.")
-    else:
-        main();
-
-
+    main()

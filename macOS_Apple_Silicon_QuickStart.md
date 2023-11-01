@@ -6,7 +6,7 @@ If you are really in a rush and feeling brave, copy all of these lines into a te
 
 **DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS**
 
-## 17 Sep 2023 - lots changed in the past 24 hours or so.  NumPy no longer builds on Metal/ MPS like it did in these instructions, and there have been issues with llama-cpp-python, I've bumped the version up to 0.2.6 which is the latest working version. I need to validate and verify everything.
+## 01 Nov 2023 - Only a single llama-cpp-python and new pip install for NumPy which should be done at the very end.
 
 Latest != Greatest, Latest + Greatest != Best, Stable == None
 
@@ -53,17 +53,6 @@ make -j24
 make install
 cd ..
 
-### Clone, build, and install OpenBLAS **OPENBLAS THROUGH NUMPY WILL CHANGE SOON, NEW INFOiRMATION**
-### NOTE: This will install in your /usr/local directory tree.
-### UN-COMMENT the next six lines to build th eoptional OpenBLAS
-# git clone https://github.com/xianyi/OpenBLAS
-# mkdir -p OpenBLAS/build
-# cd OpenBLAS/build
-# cmake .
-# make -j24
-# make install
-# cw ../..
-
 # Make a checkpoint VENV for rollback
 onda activate python3.10
 conda create --clone python3.10 -n webui.00.base
@@ -86,11 +75,9 @@ cd webui-macOS
 pip install -r requirements.txt
 cd ..
 
-# Get the TEST version
-# conda create --clone python3.10 -n webui.00.ooba-macOS-dev
-# conda activate webui.00.ooba-macOS-dev
+# conda activate webui.00.ooba-macOS-test
 ### macOS development
-# git clone -b test --single-branch https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS-dev
+# git clone -b test --single-branch https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS-test
 # cd webui-macOS
 # pip install -r requirements.txt
 # cd ..
@@ -113,33 +100,22 @@ cd ..
 # pip install -r requirements.txt
 # cd ..
 
-# Install the Python modules listed in oobabooga's requirements.txt file
-
-### NOTE: if you aren't converting your GGML files over to th enew GGUF
-### format, use version 0.1.78 of the llama-cpp-python.
-#
-conda create --clone webui.02.oobabase -n webui.03.oldllama
-conda activate webui.03.oldllama
-# If it's been installed by oobaboogs, do this for 0.1.78.  
-NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
-    CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.1.78
 
 ### NOTE: If you have or weill be converting your GGML files to GGUF format, use this.
 ###
 ### This will get the latest which will no longer work with GGML files until you convert them.
 conda create --clone webui.02.oobabase -n webui.03.llama-new
 conda activate webui.03.newllama
-NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
-    CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
     pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.2.6
 
 
-# As a last step, you may want to clone this VENV in order to protect it from having
-# packages accidently dropped into it.
-#
-# If you used the old LLAMA-CPP-PYTHON, user this line
-conda craete --clone webui.03.torch-oldllama -n webui.04.final-ggnml
+# Now is a good spot to make sure the latest NumPy is installed.
+pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --compile \
+    -Csetup-args=-Dblas=accelerate \
+    -Csetup-args=-Dlapack=accelerate \
+    -Csetup-args=-Duse-ilp64=true
+
 
 # If you used the NEW LLAMA-CPP-PYTHON, user this line
 conda craete --clone webui.03.torch-newllama -n webui.04.final-gguf
@@ -149,7 +125,8 @@ conda craete --clone webui.03.torch-newllama -n webui.04.final-gguf
 PREFERRED_VENV=webui.04.final-gguf
 
 # Add any startup options you wich to this here:
-START_OPTIONS="--chat"
+START_OPTIONS="--verbose"
+#START_OPTIONS="--chat"
 #START_OPTIONS="--chat --verbose "
 #START_OPTIONS="--chat --verbose --listen"
 

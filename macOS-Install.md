@@ -6,7 +6,7 @@ This repository is primarily for oobabooga users at the moment, many of the Pyth
 
 I have a new repository on the way to assist with Apple Silicon M1/M2 and GPU performance VENV builds. This will produce configurable, repeatable, consistent VENV builds for Python packages and modules in all types of layering/stacking and at some point soon, branching builds. This will allow different installation procedures to be compared and evaluated for performance and through regression tests. Getting these consistent, working builds has been a bit difficult as new packages come out all the time and there are many cross-module/package dependencies, some incompatible, and some in conflict.
 
-## 17 Sep 2023 - lots changed in the past 24 hours or so.  NumPy no longer builds on Metal/ MPS like it did in these instructions, and there have been issues with llama-cpp-python, I've bumped the version up to 0.2.6 which is the latest working version. I need to validate and verify everything.
+## 01 Nov 2023 - This is updated with new build instructions for everything really. Lots has changed and more is stable now.
 
 Latest != Greatest, Latest + Greatest != Best, Stable == None
 
@@ -26,26 +26,28 @@ Throughout the process, you're advised to create clones of your Conda environmen
 Please note that the guide is incomplete and is expected to be continued.
 
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
-  - [17 Sep 2023 - lots changed in the past 24 hours or so.  NumPy no longer builds on Metal/ MPS like it did in these instructions, and there have been issues with llama-cpp-python, I've bumped the version up to 0.2.6 which is the latest working version. I need to validate and verify everything.](#17-sep-2023---lots-changed-in-the-past-24-hours-or-so--numpy-no-longer-builds-on-metal-mps-like-it-did-in-these-instructions-and-there-have-been-issues-with-llama-cpp-python-ive-bumped-the-version-up-to-026-which-is-the-latest-working-version-i-need-to-validate-and-verify-everything)
+  - [01 Nov 2023 - This is updated with new build instructions for everything really. Lots has changed and more is stable now.](#01-nov-2023---this-is-updated-with-new-build-instructions-for-everything-really-lots-has-changed-and-more-is-stable-now)
   - [TL;DR](#tldr)
     - [Status of Testing and BLAS](#status-of-testing-and-blas)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
   - [CMake](#cmake)
-  - [BLAS Libraries, Everyone Uses These.](#blas-libraries-everyone-uses-these)
   - [Get Conda (Miniconda)](#get-conda-miniconda)
   - [PyTorch](#pytorch)
+    - [Skip the Conda install for now, you'll likely want the daily build.](#skip-the-conda-install-for-now-youll-likely-want-the-daily-build)
     - [Using Conda for PyTorch](#using-conda-for-pytorch)
+      - [Skip to the Pip install which will get the daily build of PyTorch](#skip-to-the-pip-install-which-will-get-the-daily-build-of-pytorch)
     - [Using Pip for PyTorch](#using-pip-for-pytorch)
   - [oobabooga Base - Everything Else](#oobabooga-base---everything-else)
     - [Clone The oobabooga GitHub Repository](#clone-the-oobabooga-github-repository)
     - [Install oobabooga Requirements](#install-oobabooga-requirements)
   - [Llama for macOS and MPS (Metal Performance Shaders)](#llama-for-macos-and-mps-metal-performance-shaders)
     - [Building llama-cpp-python from source](#building-llama-cpp-python-from-source)
-  - [](#)
+  - [NunPy](#nunpy)
   - [Where We Are](#where-we-are)
   - [Extensions](#extensions)
-  - [NOTE THIS IS INCOMPLETE- To be continued](#note-this-is-incomplete--to-be-continued)
+
+
 
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
 
@@ -161,25 +163,6 @@ The steps are pretty simple and only take about 5 minutes:
 
 This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
 
-## BLAS Libraries, Everyone Uses These.
-
-Building OpenBLAS might be optional, but the Apple Accelerate Framework seems to blow everything out of the water based on my simple testing, and here's also where things break down is the NUmPy team were getting inconsistent results from Apple's Accelerate Framework and deprecated it shortly after adding the feature, though they didn't disable it. However, installing using Conda will bring down a number of other libraries and Python modules, so you're probably best using conda to do this. However, if you compile and link your own, you can be 100% sure it will use the OpenBLAS and LAPACK you build here. I will show how to build OpenBLAS and NumPy using your library for OpenBLAS. I plan to revisit this at soon, once I have the VENV build and test tool written, I will be able to test more configurations.  Again, if you know of any libraries which should be considered, please let me know and I can try to add them to the mix.
-
-OpenBLAS (BLAS) and LAPACK - Basic Linear Algebra and Linear Algebra Pack. These were originally built in FORTRAN, and you may find them on netlib.org.  I didn't have the GNU Fortran compiler available and the GNU compiler collection has been a problem on macOS for quite a while since they changed their binary formats and use LLVM.  You must use their C compiler, but it works pretty well.  Make sure you have Xcode and the Xcode command line utilities loaded. (Actually before you begin any of this.)
-
-**NOTE** This will want to install in /usr/local you may not want it installing there and there are some special things you may have to do in order for it to install there. I will update this later with information on how to get it installed in something like ${HOME}/local/bin which works just fine too.
-
-Download the OpenBLAS repo and build it, then install.
-
-```bash
-  git clone https://github.com/xianyi/OpenBLAS
-  mkdir -p OpenBLAS/build
-  cd OpenBLAS/build
-  cmake .
-  make -j24
-  make install
-  cw ../..
-```
 ## Get Conda (Miniconda)
 
 **NOTE:** If Conda is already installed on your machine, skip this step, but this will also ensure your Conda setup is up-to-date. We're going to skip over the NumPy rebuild here because the llama-cpp-python build will bring NumPy along with it, and the Conda installation of PyTorch also brings along a different NumPy with support libraries in a "hidden" package called "numpy-base".
@@ -223,6 +206,7 @@ Cloning a VENV can also help you quickly determine if a compile, or some other m
 
 ## PyTorch
 
+### Skip the Conda install for now, you'll likely want the daily build.
 Pick one of the VENV's from the Torch install you wish to use, or use both of them. If at any time you wish to see what Conda environments you have along with the one which is active. If it's not the python one, let's go ahead and make it active and create a clone of it so we can roil back everything to there, leaving a fresh Python 3.10 VENV for use with another project. Use the following:
 
 ```bash
@@ -235,6 +219,8 @@ Create the VENV for whichever PyTorch installation you wish to use going forward
 
 
 ### Using Conda for PyTorch
+
+#### Skip to the Pip install which will get the daily build of PyTorch
 
 Let's now install PyTorch or Torch and see what happens by using either pip, conda, or the instructions on the PyTorch site. PyTorch says there are two ways to install PyTorch/Torch. One using pip and the other with conda. They are slightly different builds. PyTorch is probably the most important package we install for oobabooga and most any other AI/ML application.
 
@@ -257,7 +243,9 @@ Method 2, uses Pip to install PyTorch.  It's  bit of a different build as the in
   conda create --clone webui.00.base -n webui.01.pip-torch
   conda deactivete
   conda activate webui.01.pip-torch
-  pip install torch torchvision torchaudio --no-cache --force-reinstall
+  #pip install torch torchvision torchaudio --no-cache --force-reinstall
+  # This will pull PyTorch from th edaily build rather tha a repository like Conda or PyPi
+  pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
 ```
 ## oobabooga Base - Everything Else
 
@@ -320,10 +308,8 @@ The application llama.cpp compiles with MPS support. I'm not sure if the cmake c
   conda deactivate
   conda activate webui.03.llamacpp
   pip uninstall -y llama-cpp-python
-  NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
-    CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.2.6
-  
+  CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.2.11
 ```
 
 ### Building llama-cpp-python from source
@@ -337,21 +323,35 @@ This may also be built from the latest source if you want to installed directly 
   pip uninstall -y llama-cpp-python
   git clone --recurse-submodules git@github.com:abetlen/llama-cpp-python.git
   cd llama-cpp-python
-  NPY_BLAS_ORDER='accelerate' NPY_LAPACK_ORDER='accelerate' \
-    CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
+  CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
     pip install --force-reinstall --no-cache --no-binary :all: --compile -e .
 ```
 
 **NOTE** when you run this you will need to make sure whatever application is using this is specifying number of GPU or GPU layers greater than zero, it should be at least one for the GGML library to allocate space in the Apple Silicon M1 or M2 GPU space.
 
-##
+## NunPy
+
+NumPy is finally supporting Apple Silicon. You will have to compile it on install. Many packages I've found want to install their preferred version of NumPy or other NumPy support libraries. This will likely uninstall your NumPy in your VENV. You should be on the lookout when you install anything new that it does not overlay your NumPy with a previous version or a different installation of the current version.
+
+```bash
+  conda create --clone webui.03.llamacpp -n webui.04.final
+  conda deactivate
+  conda activate webui.03.llamacpp
+  pip uninstall -y numpy
+  pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --compile \
+                    -Csetup-args=-Dblas=accelerate \
+                    -Csetup-args=-Dlapack=accelerate \
+                    -Csetup-args=-Duse-ilp64=true
+```
+
+
 
 While there are more advanced instructions in the "QuickStart" guide, basically you are now finished. In the command window you are in, you can set the preferred VENV to use, and the start options for the webui. This creates a short script for starting the webui from the command line or you may open Finder to the location you gave installed and simply double click on the file "start-webui.sh and it should run in a terminal window. The options may be edited later in the start-webui.sh created here.
 
 ```bash
   # Pick whcih one of these you wish to make your preferred VENV.
   # PREFERRED_VENV=webui.03.final-ggml
-  PREFERRED_VENV=webui.04.final-gguf
+  PREFERRED_VENV=webui.04.final
 
   # Add any startup options you wich to this here:
   START_OPTIONS="--chat"
@@ -388,7 +388,7 @@ This is a lot to cover, but there are more modules which get mis-installed and n
 
 Once you feel comfortable with your checkpoints and working VENV, you can remove some of the ones you aren't using and this will improve Conda's performance.
 
-At his point, LLaMA models should start up just fine as long as they are GGML formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
+At his point, LLaMA models should start up just fine as long as they are GGUF                      formatted models and you should see a noticeable performance improvement.  Put as many GPU layers as you possibly can and set the threads at a reasonable number like 8.
 
 Some other numbers, and parameters of note which I have verified through testing.  If you have others, please let me know and I'll have a look at them and add them is they work well.
 
@@ -412,13 +412,3 @@ There are a number of extensions you can use with oobabooga textgen, but som bre
   This is the speech to text utility, modules or libraries from OpenAI, which I believe may be hosted locally as the model it uses is fairly small, though I haven't had a chance to check it out yet.
 
   The issue with Whisper is that it requires some older Python packages which will cause NumPy to be downgraded and there you have a problem.  Hopefully this will be sorted out soon.
-
-## NOTE THIS IS INCOMPLETE- To be continued
-
-There are a number of other modules like Pandas and SciPy which need review on Apple Silicon, many of these are used in oobabooga and elsewhere.
-
-Please run through the steps and feel free to comment, update, clarify, or contribute. My goal is to make this oobagooba macOS community grow and thrive, it can if everyone helps out a little bit.
-
-Thank you to all who have helped out in the past and continue to do so, and thanks to the Original oobagooba team for their Brilliant work, and all the other teams who have contributed to making this work.
-
-There many others too and I will eventually get to everyone here.

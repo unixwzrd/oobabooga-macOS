@@ -6,11 +6,311 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 ## If you hate standing in line at the bank: [oobabooga macOS Apple Silicon Quick Start for the Impatient](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS_Apple_Silicon_QuickStart.md)
 
-In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. BLAS and LAPACK are no longer required to be build, and in fact the new build/compile for NumPy will seek out and use whatever BLAS/LAPACK it finds, rather than use the ones in the Accelerate Framework.  So, if you're building/compiling NumPy, I would suggest moving those libraries away from /usr/local/lib as that's one of the first places it goes to look for them - ***EVEN*** if you have "accelerate" explicitly selected.
+In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. BLAS and LAPACK are no longer required to be build.
 
-Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment.
+The new VENV build process here is 
 
-## 20 Oct 2023 - Where things stand right now.
+**Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
+
+  - [31 Oct 2023 - NumPy uses the GPU on M1/M2 and presumably M3 Processors](#31-oct-2023---numpy-uses-the-gpu-on-m1m2-and-presumably-m3-processors)
+  - [TL;DR;](#tldr)
+  - [Numpy, llamas, and PyTorch, oh my...](#numpy-llamas-and-pytorch-oh-my)
+    - [NumPY](#numpy)
+    - [llama-cpp-python](#llama-cpp-python)
+    - [PyTorch](#pytorch)
+    - [numpybench and llama.cpp output and performance](#numpybench-and-llamacpp-output-and-performance)
+
+
+## 31 Oct 2023  NumPy uses the GPU on M1/M2 and presumably M3 Processors
+
+**NOTE** I have updated the install instructions with the latest build information.
+
+## TL;DR;
+**NumPy on Apple Silicon GPUs (M1/M2/M3)**:
+- NumPy has improved its compatibility with Apple Silicon GPUs.
+- Installation still requires specific steps beyond a simple pip install.
+- Key Points:
+  - NumPy now uses the Accelerate Framework.
+  - Special flags are needed for `llama.cpp` during build.
+  - PyTorch should be installed from daily builds.
+  - Numpy's build process has transitioned to Meson.
+  - Beware of library conflicts; NumPy might prioritize pre-existing libraries over the macOS Accelerate Framework.
+  - New switches have replaced environment variables for recompiling NumPy.
+  - A basic benchmarking tool, `numpybench`, is available to test the GPU build.
+  - Despite certain outputs suggesting otherwise, the recompiled NumPy does link to the Accelerate Framework.
+  - As of NumPy version 1.26.1, a straightforward compile might yield similar results to a custom compile, but using force flags is still recommended.
+  - Avoid simple Pip installs without specific flags as they may not optimize for the GPU and could over-utilize the CPU.
+
+I've been doing a good bit of testing to see what configurations work using the GPU on Apple Silicon machines and while it's still not as straightforward as just doing a plain pip install, the changes to getting NumPy to run taking advantage of Apple Silicon GPU's has stabilized. I stated in another update that I'd been taking some time to allow things to settle, and it appears they have to some extent. Here's where things are now.
+
+## Numpy, llamas, and PyTorch, oh my...
+
+* NumPy builds for the Accelerate Framework
+* llama.cpp still needs special flags to build correctly
+* PyTorch still needs to be installed from the daily builds
+  
+  ### NumPY
+  Alright, let's take each of those things in order. Numpy changed their build process from what they had to using Meson to generate the build files and actually build. We used to use `NPY_BLAS_ORDER` and `NPY_LAPACK_ORDER`, well as I mentioned before, the new build will try to determine if you have a libBLAS and libLAPACK dynamic library installed on your system.  There is a set order of precedence it will use to search for these libraries and I discovered that it would use previously installed libraries in /usr/local/lib if it found them there before it would use the Accelerate Framework on macOS. I haven't tested the updated Meson install to see if it checks for the framework first or if it just grabs the first library it sees, in any event, I moved the OpenBLAS and BLIS libraries I'd build previously out of the way to be sure.
+  
+  Instead of environment variables there are now switches which need to be used when recompiling NumPy with Pip, and I would suggest doing a forced install if your NumPy is ever overlaid. I will show some rough numbers from my very basic benchmark, found in this repository in the test-scripts directory called `numpybench` which will give you the build configuration of your NumPy as well as do som every simple tests to exercise the GPU. At one point I needed the NPY environment variables to build, but now it's just like this:
+
+  ```bash
+  pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --compile \
+       -Csetup-args=-Dblas=accelerate \
+       -Csetup-args=-Dlapack=accelerate \
+       -Csetup-args=-Duse-ilp64=true
+  ```
+
+  This will build and Accelerate Framework capable NumPy. When you do this install, depending on how you do it, like in verbose mode, you may notice and in the output of [numpybench](test-scripts/numpybench) that it is *not* using accelerate for `lapack`, but this very strange thing, `dep4365539152` which is some internal symbol which points to `liblapack_lite` which is included in the NumPy package, but is not linked to the Accelerate Framework but an internal `libblas` or `libcblas`, I forget which, but when you do the recompile as specified above, you do indeed get the Accelerate Framework linked in, even though it's just a wrapper. In macOS, `otool` will confirm this and on other systems, such as Linux or Unix you would likely use `ldd`. The only thing this does not seem to respect is the ilp64, 64 bit integers, bit because the Accelerate Framework doesn't support  it, it's because `lapack_lite` doesn't for Accelerate.
+
+  **HOWEVER**, I was just double checking all this and it seems NumPy has gone to 1.26.1 now and what I just wrote, which still works, it seems to get the same results as doing a straight compile when installing with Pip. It appears this will work just as well to install using Pip, feel free to use, but I'm going to stick with the forced flags. Either way 64 bit is not enabled in either one. I would not recommend installing with a simple Pip without the `--no-binary` and `--compile` also set. Here is the install with and without the compiles.
+
+  ```bash
+  pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --compile
+  ```
+
+  and without, really not a good idea because this includes a copy of the `libopenblas` library precompiled, and it will run all over your CPU.
+
+  ```bash
+  pip install numpy --force-reinstall --no-deps --no-cache
+  ```
+  
+  Another interesting observation is it seems linking with the Accelerate Framework actually uses no GPU or CPU, I can only guess they are using the Neural Engine in the SOC. I would be curious to see the performance of llama-cpp-python if it was linked with the Accelerate Framework's `libBLAS`, right now `ligggml` is taking care of any linear algebra issues. The `libllamacpp` uses a lot of GPU for processing, in fact it usually has the GPU pegged at 100%.
+
+  ### llama-cpp-python
+  
+  `llama-cpp-python` will insist on getting a new NumPy for you, but we can no longer compile NumPy during the rebuild of `llama-cpp-python` or rather the sub-package `llama.cpp `, and needs to be done the same as before, it's just we cannot specify the extra flags to Pip and using CFLAGS didn't work. I'm not a Meson expert or a Pip expert, but how enough to be dangerous. The procedure for rebuilding `llama-cpp-python` is like this still, but not installing its dependencies with `--no-deps`. Don't even bother trying the `-Csetup-args` with this, it will fail.
+
+  ```bash
+  CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 \
+  pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps
+  ```
+
+  ### PyTorch
+
+  Not really anything new about this one, it's still taken from the daily build until they get the PyPi and Conda packages up to date with the next release.
+
+  ```bash
+  pip install --pre torch torchvision torchaudio \
+              --index-url https://download.pytorch.org/whl/nightly/cpu
+  ```
+
+  ### numpybench and llama.cpp output and performance
+
+  A word about the GPU, and this first part applies to *any* GPU you might be using.  The output of llama.cpp called from llama-cpp-python gives this message in verbose mode:
+
+  ```bash
+  AVX = 0 | AVX2 = 0 | AVX512 = 0 | AVX512_VBMI = 0 | AVX512_VNNI = 0 | FMA = 0 | NEON = 1 | ARM_FMA = 1 | F16C = 0 | FP16_VA = 1 | WASM_SIMD = 0 | BLAS = 1 | SSE3 = 0 | SSSE3 = 0 | VSX = 0 |
+  ```
+
+  It is not the `BLAS = 1` which indicates you are using the SIMD or ASIMD extensions in the M1/M2/M3 AARM processor, but the `NEON = 1`
+
+    To quote [Introducing NEON Development Article](https://developer.arm.com/documentation/dht0002/a/Introducing-NEON/What-is-NEON-) from the arm developer documentation,
+     > What is NEON?
+     >
+     > ARMv7 architecture introduced the Advanced SIMD extension as an optional extension to the ARMv7-A and ARMv7-R profiles. It extends the SIMD concept by defining groups of instructions operating on vectors stored in 64-bit D, doubleword, registers and 128-bit Q, quadword, vector registers.
+     >
+     > The implementation of the Advanced SIMD extension used in ARM processors is called NEON, and this is the common terminology used outside architecture specifications. NEON technology is implemented on all current ARM Cortex-A series processors.
+
+   The BLAS simply indicates that it linked with a Basic Linear Algebra System, could be any of them `libblas, libBLAS, libcblas, libopenblas, libcublas, libblis`... Could be any of them really, so you need to look further to determine whether you're using the GPU, on any machine really.
+
+   `numpybench` actually gives more information than that and it has a number of options. running it from the command line with the help option you get this:
+
+   ```bash
+   (numpy.07.oobacurrentnpy216llama211) [unixwzrd@xanax characters]$ numpybench --help
+
+    usage: numpybench [-h] [-d [DATAFILE]] [-s] [-c COUNT]
+
+    Run NumPy benchmarks and output results.
+
+    options:
+        -h, --help            show this help message and exit
+        -d [DATAFILE], --datafile [DATAFILE]
+                              Specify the datafile to write the output to.
+        -s, --skip-tests      Skip time-consuming tests.
+        -c COUNT, --count COUNT
+                              Number of iterations.
+                        
+    (numpy.07.oobacurrentnpy216llama211) [unixwzrd@xanax characters]$ numpybench -d /dev/null -c 20
+    2023-11-01 03:17:02 Producing information for VENV ----> numpy.07.oobacurrentnpy216llama211
+    2023-11-01 03:17:02 Build Dependencies:
+    2023-11-01 03:17:02   blas:
+    2023-11-01 03:17:02     detection method: system
+    2023-11-01 03:17:02     found: true
+    2023-11-01 03:17:02     include directory: unknown
+    2023-11-01 03:17:02     lib directory: unknown
+    2023-11-01 03:17:02     name: accelerate
+    2023-11-01 03:17:02     openblas configuration: unknown
+    2023-11-01 03:17:02     pc file directory: unknown
+    2023-11-01 03:17:02     version: unknown
+    2023-11-01 03:17:02   lapack:
+    2023-11-01 03:17:02     detection method: internal
+    2023-11-01 03:17:02     found: true
+    2023-11-01 03:17:02     include directory: unknown
+    2023-11-01 03:17:02     lib directory: unknown
+    2023-11-01 03:17:02     name: dep4364251104
+    2023-11-01 03:17:02     openblas configuration: unknown
+    2023-11-01 03:17:02     pc file directory: unknown
+    2023-11-01 03:17:02     version: 1.26.1
+    2023-11-01 03:17:02 Compilers:
+    2023-11-01 03:17:02   c:
+    2023-11-01 03:17:02     commands: cc
+    2023-11-01 03:17:02     linker: ld64
+    2023-11-01 03:17:02     name: clang
+    2023-11-01 03:17:02     version: 15.0.0
+    2023-11-01 03:17:02   c++:
+    2023-11-01 03:17:02     commands: c++
+    2023-11-01 03:17:02     linker: ld64
+    2023-11-01 03:17:02     name: clang
+    2023-11-01 03:17:02     version: 15.0.0
+    2023-11-01 03:17:02   cython:
+    2023-11-01 03:17:02     commands: cython
+    2023-11-01 03:17:02     linker: cython
+    2023-11-01 03:17:02     name: cython
+    2023-11-01 03:17:02     version: 3.0.5
+    2023-11-01 03:17:02 Machine Information:
+    2023-11-01 03:17:02   build:
+    2023-11-01 03:17:02     cpu: aarch64
+    2023-11-01 03:17:02     endian: little
+    2023-11-01 03:17:02     family: aarch64
+    2023-11-01 03:17:02     system: darwin
+    2023-11-01 03:17:02   host:
+    2023-11-01 03:17:02     cpu: aarch64
+    2023-11-01 03:17:02     endian: little
+    2023-11-01 03:17:02     family: aarch64
+    2023-11-01 03:17:02     system: darwin
+    2023-11-01 03:17:02 Python Information:
+    2023-11-01 03:17:02   path: /Users/unixwzrd/miniconda3/envs/numpy.07.oobacurrentnpy216llama211/bin/python
+    2023-11-01 03:17:02   version: '3.10'
+    2023-11-01 03:17:02 SIMD Extensions:
+    2023-11-01 03:17:02   baseline:
+    2023-11-01 03:17:02   - NEON
+    2023-11-01 03:17:02   - NEON_FP16
+    2023-11-01 03:17:02   - NEON_VFPV4
+    2023-11-01 03:17:02   - ASIMD
+    2023-11-01 03:17:02   found:
+    2023-11-01 03:17:02   - ASIMDHP
+    2023-11-01 03:17:02   not found:
+    2023-11-01 03:17:02   - ASIMDFHM
+    2023-11-01 03:17:02
+    2023-11-01 03:17:02
+    2023-11-01 03:17:02 BEGIN TEST: Matrix multiplication
+    2023-11-01 03:17:03 Time for matrix multiplication: 1.0580 seconds
+    2023-11-01 03:17:03 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:17:03 BEGIN TEST: Matrix transposition
+    2023-11-01 03:17:03 Time for matrix transposition: 0.0000 seconds
+    2023-11-01 03:17:03 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:17:03 BEGIN TEST: Eigenvalue computation
+    2023-11-01 03:17:52 Time for eigenvalue computation: 49.0088 seconds
+    2023-11-01 03:17:52 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:17:52 BEGIN TEST: Fourier transformation
+    2023-11-01 03:17:53 Time for fourier transformation: 0.7249 seconds
+    2023-11-01 03:17:53 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:17:53 BEGIN TEST: Summation
+    2023-11-01 03:17:53 Time for summation: 0.0221 seconds
+    2023-11-01 03:17:53 END TEST / BEGIN NEXT TEST
+    ```
+
+    What you should really beconcerned about here is the `blas` and `lapack` entries. You can see that it is using the Accelerate Framework by this line:
+    ```
+    2023-11-01 03:17:02     name: accelerate
+    ```
+
+    However, hereps what the output looks like from a NumPy whic hhas been installed from PyPi:
+
+    ```bash
+   (dbug.01.torchtest) [unixwzrd@xanax include]$ numpybench -d /dev/null -c 20
+    2023-11-01 03:54:27 Producing information for VENV ----> dbug.01.torchtest
+    2023-11-01 03:54:27 Build Dependencies:
+    2023-11-01 03:54:27   blas:
+    2023-11-01 03:54:27     detection method: pkgconfig
+    2023-11-01 03:54:27     found: true
+    2023-11-01 03:54:27     include directory: /opt/arm64-builds/include
+    2023-11-01 03:54:27     lib directory: /opt/arm64-builds/lib
+    2023-11-01 03:54:27     name: openblas64
+    2023-11-01 03:54:27     openblas configuration: USE_64BITINT=1 DYNAMIC_ARCH=1 DYNAMIC_OLDER= NO_CBLAS=
+    2023-11-01 03:54:27       NO_LAPACK= NO_LAPACKE= NO_AFFINITY=1 USE_OPENMP= SANDYBRIDGE MAX_THREADS=3
+    2023-11-01 03:54:27     pc file directory: /usr/local/lib/pkgconfig
+    2023-11-01 03:54:27     version: 0.3.23.dev
+    2023-11-01 03:54:27   lapack:
+    2023-11-01 03:54:27     detection method: internal
+    2023-11-01 03:54:27     found: true
+    2023-11-01 03:54:27     include directory: unknown
+    2023-11-01 03:54:27     lib directory: unknown
+    2023-11-01 03:54:27     name: dep4364960240
+    2023-11-01 03:54:27     openblas configuration: unknown
+    2023-11-01 03:54:27     pc file directory: unknown
+    2023-11-01 03:54:27     version: 1.26.1
+    2023-11-01 03:54:27 Compilers:
+    2023-11-01 03:54:27   c:
+    2023-11-01 03:54:27     commands: cc
+    2023-11-01 03:54:27     linker: ld64
+    2023-11-01 03:54:27     name: clang
+    2023-11-01 03:54:27     version: 14.0.0
+    2023-11-01 03:54:27   c++:
+    2023-11-01 03:54:27     commands: c++
+    2023-11-01 03:54:27     linker: ld64
+    2023-11-01 03:54:27     name: clang
+    2023-11-01 03:54:27     version: 14.0.0
+    2023-11-01 03:54:27   cython:
+    2023-11-01 03:54:27     commands: cython
+    2023-11-01 03:54:27     linker: cython
+    2023-11-01 03:54:27     name: cython
+    2023-11-01 03:54:27     version: 3.0.3
+    2023-11-01 03:54:27 Machine Information:
+    2023-11-01 03:54:27   build:
+    2023-11-01 03:54:27     cpu: aarch64
+    2023-11-01 03:54:27     endian: little
+    2023-11-01 03:54:27     family: aarch64
+    2023-11-01 03:54:27     system: darwin
+    2023-11-01 03:54:27   host:
+    2023-11-01 03:54:27     cpu: aarch64
+    2023-11-01 03:54:27     endian: little
+    2023-11-01 03:54:27     family: aarch64
+    2023-11-01 03:54:27     system: darwin
+    2023-11-01 03:54:27 Python Information:
+    2023-11-01 03:54:27   path: /private/var/folders/76/zy5ktkns50v6gt5g8r0sf6sc0000gn/T/cibw-run-27utctq_/cp310-macosx_arm64/build/venv/bin/python
+    2023-11-01 03:54:27   version: '3.10'
+    2023-11-01 03:54:27 SIMD Extensions:
+    2023-11-01 03:54:27   baseline:
+    2023-11-01 03:54:27   - NEON
+    2023-11-01 03:54:27   - NEON_FP16
+    2023-11-01 03:54:27   - NEON_VFPV4
+    2023-11-01 03:54:27   - ASIMD
+    2023-11-01 03:54:27   found:
+    2023-11-01 03:54:27   - ASIMDHP
+    2023-11-01 03:54:27   not found:
+    2023-11-01 03:54:27   - ASIMDFHM
+    2023-11-01 03:54:27
+    2023-11-01 03:54:27
+    2023-11-01 03:54:27 BEGIN TEST: Matrix multiplication
+    2023-11-01 03:54:30 Time for matrix multiplication: 2.8783 seconds
+    2023-11-01 03:54:30 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:54:30 BEGIN TEST: Matrix transposition
+    2023-11-01 03:54:30 Time for matrix transposition: 0.0000 seconds
+    2023-11-01 03:54:30 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:54:30 BEGIN TEST: Eigenvalue computation
+    2023-11-01 03:55:58 Time for eigenvalue computation: 87.9183 seconds
+    2023-11-01 03:55:58 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:55:58 BEGIN TEST: Fourier transformation
+    2023-11-01 03:55:58 Time for fourier transformation: 0.7570 seconds
+    2023-11-01 03:55:58 END TEST / BEGIN NEXT TEST
+    2023-11-01 03:55:58 BEGIN TEST: Summation
+    2023-11-01 03:55:58 Time for summation: 0.0219 seconds
+    2023-11-01 03:55:58 END TEST / BEGIN NEXT TEST
+   ```
+
+    The numbers here to really take note of is that for 20 iterations of the tests I have in my Python script, the NumPy install from PyPi precompiled, takes almost twice as long due to the pre-compiled OpenBLAS library which in brings with it. Here they are, and standing out specifically for the Eigenvalue computation:
+
+    ```
+    Pip installed NumPy Binaries
+    2023-11-01 03:55:58 Time for eigenvalue computation: 87.9183 seconds
+
+    Locally Compiled NumPy
+    2023-11-01 03:17:52 Time for eigenvalue computation: 49.0088 seconds
+    ```
+
+## 20 Oct 2023 - Where things stand right now
 
 I have the discussions turned on for this repository and the subject was brought up regarding CoreML and I weighed with a rather lengthy response. Please feel free to add to the discussion if you like.  it was regarding this paper about [Swift and CoreML LLMs](https://huggingface.co/blog/swift-coreml-llm) and rather use an Apple native solution rather than the patchwork of python and C libraries we have here.  Well, [it's complicated, you can read all about it here](https://github.com/unixwzrd/oobabooga-macOS/discussions/2#discussioncomment-7286842). GPT-4 was nice enough to give this...
 
@@ -28,7 +328,7 @@ I haven't gone away, still around, but waiting on the dust to settle before upda
 
 * PyTorch has had a few updates and is for-the-most-part, able to run using Apple Silicon M1/M2 GPU
 * NumPy has had a major update, but last time I updated, the Python distributions did not have NumPy using Apple Silicon GPU by default.
-* llama.cpp is using the Apple Silicon GPU and has reasonable performance. While for llama-cpp-python there is a dependency for NumPy, it doesn't require it for integrating it into oobaboogs, though other things require NumPy.
+* llama.cpp is using the Apple Silicon GPU and has reasonable performance. While for llama-cpp-python there is a dependency for NumPy, it doesn't require it for integrating it into oobabooga, though other things require NumPy.
 * BLAS/LAPACK for NumPy, last I checked, point to the Accelerate Framework in macOS 13.5 (I have tested 13.5 thru 13.6.) and higher.
 * macOS sent it an upgrade for their OS macOS 14.0.  I have not tested this but I had numerous things change on my system and break with the 13.6 update. So, I decided to give things a rest until things settled down. Everything was running in my config below, and I didn't need the latest and greatest features of anything, so I decided to wait until things stabilized.
 * iOS Updates. Yeah, that too.  If it wasn't enough for everything else, Apple also put out iOS updates to iOS 17.
