@@ -45,9 +45,9 @@ I've been doing a good bit of testing to see what configurations work using the 
 
 ## Numpy, llamas, and PyTorch, oh my...
 
-* NumPy builds for the Accelerate Framework
-* llama.cpp still needs special flags to build correctly
-* PyTorch still needs to be installed from the daily builds
+* [NumPy builds for the Accelerate Framework](#numpy)
+* [llama.cpp still needs special flags to build correctly](#llama-cpp-python)
+* [PyTorch still needs to be installed from the daily builds](#pytorch)
   
   ### NumPY
   Alright, let's take each of those things in order. Numpy changed their build process from what they had to using Meson to generate the build files and actually build. We used to use `NPY_BLAS_ORDER` and `NPY_LAPACK_ORDER`, well as I mentioned before, the new build will try to determine if you have a libBLAS and libLAPACK dynamic library installed on your system.  There is a set order of precedence it will use to search for these libraries and I discovered that it would use previously installed libraries in /usr/local/lib if it found them there before it would use the Accelerate Framework on macOS. I haven't tested the updated Meson install to see if it checks for the framework first or if it just grabs the first library it sees, in any event, I moved the OpenBLAS and BLIS libraries I'd build previously out of the way to be sure.
