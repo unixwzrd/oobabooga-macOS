@@ -392,9 +392,9 @@ cd webui-macOS
 python server.py --chat
 ```
 
-## 06 Spe 2023 This thread...
+## 06 See 2023 This thread...
 
-[Exacty this. PR #1728](https://github.com/oobabooga/text-generation-webui/issues/1728#issuecomment-1708455881)
+[Exactly this. PR #1728](https://github.com/oobabooga/text-generation-webui/issues/1728#issuecomment-1708455881)
 
 Follow the link to the PR, and I was wrong in my reply, it's been almost two months. Time certainly does fly by...
 
@@ -513,7 +513,7 @@ I've been combing through anything I can find, but it's all very limited in cont
 
 I have other conjectures as well, that the whole reason that llama-cpp-python exists if due to this dependency issue and it comes with its own required linear algebra support library. Probably due to what I discovered that packages which need this will bring it along and drop it in the Python library, but also don't uninstall it when they are installed, so there's a libblas sitting in the lib directory of your venv's "root" hierarchy.
 
-After looking at the release notes for NumPy, I figured it would be a good idea to get the source for NumPy and try the regression tests from the various configurations I find being installed. I even just today found a new one which gets configured and not really mentioned anywhere I can recall,of "openblas64_" which was pulled from my /usr/local/lib build I did of OpenBLAS. To muddy things further, depending on which libraries and where they come from, there are differences in the  results of regression testing. Even when using the stock standard NumPy install. All needs tracking down which I am working on doing as quickly as possible.
+After looking at the release notes for NumPy, I figured it would be a good idea to get the source for NumPy and try the regression tests from the various configurations I find being installed. I even just today found a new one which gets configured and not really mentioned anywhere I can recall, of "openblas64" which was pulled from my /usr/local/lib build I did of OpenBLAS. To muddy things further, depending on which libraries and where they come from, there are differences in the  results of regression testing. Even when using the stock standard NumPy install. All needs tracking down which I am working on doing as quickly as possible.
 
 Not alone in this, several have approached me willing to assist in testing in with various configurations. So far, we replicated my results, but still not sure how to proceed. Bottom line is, I am hopeful regarding using the Accelerate Framework, but I must do more testing on the combinations, ordering and dependencies of the Python modules and packages. I'll keep updating here with my progress. More to come...
 
@@ -525,7 +525,7 @@ Need to look into this some more.  Don't want to lead anyone down a blind alley,
 
 ## 07 Aug 2023 - Optimizing The Environment, Silver Lining in macOS  13.5
 
-I'm have to rebuild my venv because I accidentally created inconsistencies in my Python packages, and this seems like a good a point as any to try to optimize the packages. In doing this I found something interesting when getting NumPy installed. Looking for a faster alternative to OpenBLAS or a way to have use the Apple Silicon GPU, I discovered BLIS, a faster linear algebra library.  To compare I put together a quick Python script t benchmark different builds of NumPy but noticed  when Pip does a recompile of NumPy, it actually looks for and finds the Apple [accelerate Framework](https://developer.apple.com/accelerate/) which leverages their superscalar GPU and Neural engine technology for processing vectors and tensors. I assume this is due in part by the recent upgrade to macOS 13.5 and the NumPy team putting it into their package when you compile at install time using Pip.
+I'm have to rebuild my venv because I accidentally created inconsistencies in my Python packages, and this seems like a good a point as any to try to optimize the packages. In doing this I found something interesting when getting NumPy installed. Looking for a faster alternative to OpenBLAS or a way to have use the Apple Silicon GPU, I discovered BLIS, a faster linear algebra library.  To compare I put together a quick Python script t benchmark different builds of NumPy but noticed  when Pip does a recompile of NumPy, it actually looks for and finds the Apple [Accelerate Framework](https://developer.apple.com/accelerate/) which leverages their superscalar GPU and Neural engine technology for processing vectors and tensors. I assume this is due in part by the recent upgrade to macOS 13.5 and the NumPy team putting it into their package when you compile at install time using Pip.
 
 More info to come as I try to optimize these packages which are used for AI, but also Data Science and Analytics. Keep an eye out here and you will see updated information posted in this repository regarding package optimization soon.
 
@@ -554,7 +554,7 @@ I hope to have an update out within the week. Again, anyone who want to test, pr
 
 ## 28 Jul 2023 - More Testers (QA)
 
-I've had a fe more people contact me with issues and that's a good thing because it shows me theer is an interest in what I am trying to do here and that people are actually trying my procedures out and having decent success.
+I've had a fe more people contact me with issues and that's a good thing because it shows me there is an interest in what I am trying to do here and that people are actually trying my procedures out and having decent success.
 
 I want to start getting more features into the fork I created like Llama2 support. If I can do that, the next ting I will likely do is start looking at some of the performance enhancements I have thought of as well as trying to fix a couple of UI/UX annoyances and a scripted installation and...
 
@@ -652,7 +652,7 @@ I submitted a couple of changes to oobabooga/text-generation-webui, but not sure
 
 ## 20 Jul 2023 - Rebuilt things *Again* because many modules were updated
 
-Many modules were bumped in version and some support was added for the new LLaMa 2 models.  I don't seem to have everything working, but did identify one application issue which will increase performance fro MPS, if not for Cuda.
+Many modules were bumped in version and some support was added for the new LLaMa 2 models.  I don't seem to have everything working, but did identify one application issue which will increase performance fro MPS, if not for CUDA.
 
 The two TTS modules use the same Global model variable in them, so model gets clobbered if you use them. I've submitted a pull request for this. [Dev ms #3232](https://github.com/oobabooga/text-generation-webui/pull/3232) and filed a bug report [Use of global variable model in ElevenLabs and Silero extensions clobbers application global model](https://github.com/oobabooga/text-generation-webui/issues/3234). This was my first time submitting a pull request and submitting a bug report, took a long time to actually figure out how to do it, but maybe there is an easier way than what I did.  Anyway, with this fix, macOS users with M1/M2 processors should see a vast performance improvement if you are using either of these TTS extensions.
 
