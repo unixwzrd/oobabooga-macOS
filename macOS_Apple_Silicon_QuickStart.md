@@ -4,135 +4,144 @@ Make sure Xcode at the minimum is installed.
 
 If you are really in a rush and feeling brave, copy all of these lines into a text file and edit the uncomment line for version for the type of install you want. Uncomment the lines you wish to use and paste them in one at time into a terminal session of your choice. Use the script created as a template for your start script.
 
-**DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS**
+These instructions have been tested with a non-admin, plain user, so they should work for most everyone, but do let me know if something doesn't and I'll fix it. Typos and copy and paste sometimes have a away for going wrong.
 
-## 01 Nov 2023 - Only a single llama-cpp-python and new pip install for NumPy which should be done at the very end.
+**DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS - YOU MAY NEED TO CHANGE THEM FOR YOUR SYSTEM**
 
-Latest != Greatest, Latest + Greatest != Best, Stable == None
+## 01 Jun 2024 - Only a single llama-cpp-python and new pip install for NumPy which should be done at the very end.
+
+This has ben updated with a few new items, like CMake, installing in the user's home directory.
 
 ```bash
 #!/bin/bash
+## These instructions assume you are using the Bash shell. I also sugget getting a copy
+## of iTerm2, it will make your life better, iut is much better than the default terminal
+## on macOS.
+## 
+## If you are using zsh, do this first, do it even if you are running bash,
+## it will not hurt anything.
 
-# Install Miniconda MAke sure it is arm64
-mkdir tmp
-cd tmp
+## This will give you a login shell with bash.
+exec bash -l
+
+umask 022
+
+### Choose a target directory for everything to be put into, I'm using "${HOME}/projects/ai-projects" You
+### may use whatever you wish. This must be exported because we will exec a new login shell later.
+export TARGET_DIR="${HOME}/projects/si-projects"
+
+mkdir -p "${TARGET_DIR}'"
+cd "'${TARGET_DIR}'"
+
+# This will add to your path and DYLD_LIBRARY_PATH if they aren't already seyt up.
+# export PATH=${HOME}/local/bin
+# export DYLD_LIBRARY_PATH=${HOME}/local/lib:$DYLD_LIBRARY_PATH
+
+### Be sure to add ${HOME}/local/bin to your path  **Add to your .profile, .bashrc, etc...**
+export PATH=${HOME}/local/bin:${PATH}
+
+### Thwe following Sed line will add it permanantly to your .bashrc if it's not already there.
+sed -i.bak '
+  /export PATH=/ {
+    h; s|$|:${HOME}/local/bin|
+  }
+  ${
+    x; /./ { x; q0 }
+    x; s|.*|export PATH=${HOME}/local/bin:\$PATH|; h
+  }
+  /export DYLD_LIBRARY_PATH=/ {
+    h; s|$|:${HOME}/local/lib|
+  }
+  ${
+    x; /./ { x; q0 }
+    x; s|.*|export DYLD_LIBRARY_PATH=${HOME}/local/lib:\$SYLD_LIBRARY_PATH|; h
+  }
+' ~/.bashrc && source ~/.bashrc
+
+## Install Miniconda
+
+### Download the miniconda installer
 curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
 
-# Do a non-destructive Conda install whcih will preserve existing VENV's
+### Run the installer in non-destructive mode in order to preserve any existing installation.
 sh miniconda.sh -b -u
-cd ..
+. "${HOME}/miniconda3/bin/activate"
 
-# Activate the conda environment.
-. ${HOME}/miniconda3/bin/activate
-
-# Initialize Conda which will add initialization functions to your shell's profile.
-conda init $(basename ${SHELL})
-
-# Update your Conda environment with the latest updates to th ebase environment
+conda init $(basename "${SHELL}")
 conda update -n base -c defaults conda -y
+ 
+#### Get a new login shell no that conda is activated to your shell profile.
+exec bash -l
 
-# Grab a new login shell - this will work for any shell aand you wil enter back in the
-# tmp directory we just created..
-exec $( basename ${SHELL}) -l
+#### Just in case your startup login environment scripts do some thing like change to another directory.
+#### Get back into teh target directory for teh build.
+cd "'${TARGET_DIR}'"
 
-# Update Conda if necessary
-conda update -n base -c defaults conda
+#### Set the name of the VENV to whatever you wish it to be. This will be used later when the procedure
+#### creates a script for sourcing in the Conda environment and activating the one set here when you installed.
+MACOS_LLAMA_ENV="macOS-llama-env"
 
-# Create a new Conda environment with Python 3.10
-conda create -n python3.10 python=3.10
+#### Create the base Python 3.10 and the llama-env VENV.
+conda create -n ${MACOS_LLAMA_ENV} python=3.10 -y
+conda activate ${MACOS_LLAMA_ENV}
 
-# Activate the new environment
-conda activate python3.10
+## Build and install CMake
 
-### Clone and build CMake from source
-### NOTE: This will install in your /usr/local directory tree.
+### Clone the CMake repository, build, and install CMake
 git clone https://github.com/Kitware/CMake.git
-cd cmake
-./bootstrap
-make -j24
+cd CMake
+git checkout tags/v3.29.3
+mkdir build
+cd build
+
+### This will configure the installation of cmake to be in your home directory under local, rather than /usr/local
+../bootstrap --prefix=${HOME}/local
+make -j
+make -j test
 make install
-cd ..
 
-# Make a checkpoint VENV for rollback
-onda activate python3.10
-conda create --clone python3.10 -n webui.00.base
+### Verify the installation
+which cmake       # Should say $HOME/local/bin
+### Verify you are running cmake z3.29.3
+cmake --version
 
-# It may already be installed from a previous step, but we will need PyTorch re-installed.
-# PyTorch, torchvision, and torchaudio from the PyTorch Conda channel
-conda create --clone webui.00.base -n webui.01.torch
-conda activate webui.02.torch-oldllama
-conda install pytorch torchvision torchaudio -c pytorch
-
-
-# Create a new VENV for rollback before installing th erequirements fo rthe webui.
-conda create --clone webui.01.pytorch -n webui.02.oobabase
-conda deactivate
-conda activate webui.02.oobabase 
-
-### Get the macOS repo or see the commented lines and use them to get the development or original.
-git clone https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS
-cd webui-macOS
+## Get my oobabooga and checkout macOS-test branch
+git clone https://github.com/unixwzrd/text-generation-webui-macos.git textgen-macOS
+cd textgen-macOS
+git checkout macOS-dev
 pip install -r requirements.txt
-cd ..
 
-# conda activate webui.00.ooba-macOS-test
-### macOS development
-# git clone -b test --single-branch https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS-test
-# cd webui-macOS
-# pip install -r requirements.txt
-# cd ..
+## llamacpp-python
+export CMAKE_ARGS="-DLLAMA_METAL=on"
+export FORCE_CMAKE=1
+export PATH=/usr/local/bin:$PATH  # Ensure the correct cmake is used
+pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
 
-# Get the DEV version
-# conda create --clone python3.10 -n webui.00.ooba-macOS-dev
-# conda activate webui.00.ooba-macOS-dev
-### macOS development
-# git clone -b dev --single-branch https://github.com/unixwzrd/text-generation-webui-macos.git webui-macOS-dev
-# cd webui-macOS
-# pip install -r requirements.txt
-# cd ..
+## Pip install from daily build
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu --force-reinstall --no-deps
 
-### UN-COMMENT THE NEXT FOUR LINES IF YOU WANT TO USE THE ORIGINAL OOBABOOGA
-# conda create --clone python3.10 -n webui.00.oobabase
-# conda activate webui.00.oobabase
-### oobabooga original
-# git clone https://github.com/oobabooga/text-generation-webui.git webui
-# cd webui
-# pip install -r requirements.txt
-# cd ..
+## NumPy Rebuild with Pip
+export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
+pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --no-build-isolation --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
+
+## CTransformers
+export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
+export CT_METAL=1
+pip install ctransformers --no-binary :all: --no-deps --no-build-isolation --compile --force-reinstall -v
+
+### Unset all the stuff we set while building.
+unset CMAKE_ARGS FORCE_CMAKE CFLAGS CT_METAL
 
 
-### NOTE: If you have or weill be converting your GGML files to GGUF format, use this.
-###
-### This will get the latest which will no longer work with GGML files until you convert them.
-conda create --clone webui.02.oobabase -n webui.03.llama-new
-conda activate webui.03.newllama
-CMAKE_ARGS='-DLLAMA_METAL=on' FORCE_CMAKE=1 \
-    pip install --force-reinstall --no-cache --no-binary :all: --compile llama-cpp-python==0.2.6
+## This will create a startup script whcih shoudl be clickable in finder.
 
-
-# Now is a good spot to make sure the latest NumPy is installed.
-pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --compile \
-    -Csetup-args=-Dblas=accelerate \
-    -Csetup-args=-Dlapack=accelerate \
-    -Csetup-args=-Duse-ilp64=true
-
-
-# If you used the NEW LLAMA-CPP-PYTHON, user this line
-conda craete --clone webui.03.torch-newllama -n webui.04.final-gguf
-
-# Pick whcih one of these you wish to make your preferred VENV.
-# PREFERRED_VENV=webui.03.final-ggml
-PREFERRED_VENV=webui.04.final-gguf
+### Set the startup options you wish to use
 
 # Add any startup options you wich to this here:
-START_OPTIONS="--verbose"
-#START_OPTIONS="--chat"
-#START_OPTIONS="--chat --verbose "
-#START_OPTIONS="--chat --verbose --listen"
+START_OPTIONS=
+#START_OPTIONS="--verbose "
+#START_OPTIONS="--verbose --listen"
 
-# This assumes you followed the instructions abobe for installing teh Conda or upgrading
-# the Conda oackage manager in your homme directory.  If you changed it to someting else,
-# you'll need to make appropriate changes here.
 cat <<_EOT_
 #!/bin/bash
 
@@ -150,21 +159,27 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-conda activate ${PREFERRED_VENV}
+cd "'${TARGET_DIR}/textgen-macOS'"
+
+conda activate ${MACOS_LLAMA_ENV}
 
 python server.py ${START_OPTIONS}
 _EOT_ > start-webui.sh
-chmod +x start-webui.sh
 
-# Cleanup any unneeded VENV's once we are happy with th ebuild and everytihng is running
-# smoothly
-conda uninstall --all -n webui.00.ooba-macOS
-conda uninstall --all -n webui.01.ooba-llama-0.1.78
-conda uninstall --all -n webui.01.ooba-llama-new
-conda uninstall --all -n webui.02.ooba-torch-oldllama
-conda uninstall --all -n webui.02.ooba-torch-newllama
+
+chmod +x start-webui.sh
 ```
 
-Add the --upgrade flag to upgrade any of the pip or conda commands if necessary.
+## Starting the Web UI
 
-Remember to create clones of your Conda environments at various stages to easily roll back to a previous state if something goes wrong.
+### This will create the file in the current directory which is displayed here feel free to move it
+
+````bash
+${PWD}
+```
+
+### Feel free to move it to another location.
+
+```bash
+./start-webui.sh
+```

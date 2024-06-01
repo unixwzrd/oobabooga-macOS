@@ -1,6 +1,8 @@
 # Use the GPU on your Apple Silicon Mac
 
-This stared out as a guide to getting oobabooga working with Apple Silicon better, but has turned out to contain now useful information regarding how to get numerical analysis, data science, and AI core software running to take advantage of the Apple Silicon M1 and M2 processor technologies. There is information in the guides for installing OpenBLAS, LAPACK, Pandas, NumPy, PyTorch/Torch and llama-cpp-python. I will probably create a new repository for all things Apple Silicon in the interest of getting maximum performance out of the M1 and M2 architecture.
+ - [31 May 2024 - Well, it's been a while and it's time for an update](#31-May-2024---Well,-it's-been-a-while-and-it's-time-for-an-update)
+ 
+ This stared out as a guide to getting oobabooga working with Apple Silicon better, but has turned out to contain now useful information regarding how to get numerical analysis, data science, and AI core software running to take advantage of the Apple Silicon M1 and M2 processor technologies. There is information in the guides for installing OpenBLAS, LAPACK, Pandas, NumPy, PyTorch/Torch and llama-cpp-python. I will probably create a new repository for all things Apple Silicon in the interest of getting maximum performance out of the M1 and M2 architecture.
 
 ## You probably want this: [Building Apple Silicon Support for oobabooga text-generation-webui](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS-Install.md)
 
@@ -8,20 +10,44 @@ This stared out as a guide to getting oobabooga working with Apple Silicon bette
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. BLAS and LAPACK are no longer required to be build.
 
-The new VENV build process here is 
+The new VENV build process here is, [venvutil](https://github.com/unixwzrd/venvutil). It's a set of shell functions and hopefully soon a way to get reproducible builds. Using Git, pip, conda and user definable functions.  There's still a few issues I need to work out, but it will eventually track your installed python packages and even do diffs between different VENV's and points in time.  Not quite there yet, but hoping for this to be a way to track and rebuild VENV's no matter if you use Conda, pip, and possibly a few others at some point.
+
+There's also a lot of helpful shell functions in there, one in particular if a way to lookup and use POSIX return codes for return values and exit codes - `errno` and `errfind`.  There's also `errno_warn` and `errno_exit` for scripts. If you have program which uses POSIX return codes, you would be able to do this:
+
+```bash
+someprogram
+errno $?
+```
+
+Let's say it returned 15 as an exit code, you would get this sent to STDERR:
+
+```
+errno 15
+(ENOTBLK: 15): Block device required
+```
+
+errno_warn will return after sending the code and message to STDERR, and errno_exit will cause your script to exit after writing the error code and message to STDERR.
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
 
-  - [31 Oct 2023 - NumPy uses the GPU on M1/M2 and presumably M3 Processors](#31-oct-2023---numpy-uses-the-gpu-on-m1m2-and-presumably-m3-processors)
-  - [TL;DR;](#tldr)
-  - [Numpy, llamas, and PyTorch, oh my...](#numpy-llamas-and-pytorch-oh-my)
-    - [NumPY](#numpy)
-    - [llama-cpp-python](#llama-cpp-python)
-    - [PyTorch](#pytorch)
-    - [numpybench and llama.cpp output and performance](#numpybench-and-llamacpp-output-and-performance)
+  
+## 31 May 2024 - Well, it's been a while and it's time for an update
 
+Actually, not a whole lot has changed except for an updated to oobabooga being folded in. to the dev version of oobabooga dev from 20 May 2024. I will try to merge in other bits as soon as possible. But this is ready for anyone brave enough to test.
 
-## 31 Oct 2023  NumPy uses the GPU on M1/M2 and presumably M3 Processors
+I have created a clone of the AllTalk TTS extension modified to use MPS instead of CUDA. It's not the speediest thing, but it works and has lots of features I haven't really had a chance to explore, like using your own clones/samples voices, and much more. This also depends on CoQui TTS, which I have also been able to get running using MPS as well and must be installed from a local clone. I will try to get that in a repository.
+
+I am looking into possibly getting GPTQ, Transformers working, but I am thinking it might be nicer to build a native MLX module for macOS, so that is in the works a bit too. I think that might be a better pursuit instead of trying to worm all the CUDA code out of the other modules, though I was working on a package which could install and intercept PyTorch CUDA calls, provide a traceback indicating where the code was intercepted for future revision, and route them to MPS. If there is interest in any of these, let me know.
+
+There are a number of things I'd like to do with this, so get in the GitHub Discussion for this project or open an "Issue' with an enhancement or fix request.  As always contributions are welcome
+
+See the updated instruction  for install in the places at the top of this page. Please leave your comments, suggestions and issues which I will get back to as soon as I can.
+
+I am also still looking for a paying gig, is if anyone knows someone who is hiring someone like me or you could use some assistance with a project, please get in touch. I have just set up a new LLC and am willing to work with anyone to help keep a roof over my head and the lights on.
+
+I have set up a Discord which you are welcome to join and help build a community around oobabooga for macOS. I am on Discord a lot recently as I am testing the OpenAI app for macOS and providing feedback. The community link is here [unixwzrd Discord Community](https://discord.com/channels/1153784977964675172/1245878190338084996)
+
+## 31 Oct 2023 - NumPy uses the GPU on M1/M2 and presumably M3 Processors
 
 **NOTE** I have updated the install instructions with the latest build information.
 
