@@ -106,6 +106,8 @@ make install
 which cmake       # Should say $HOME/local/bin
 ### Verify you are running cmake z3.29.3
 cmake --version
+cd  "${TARGET_DIR}"
+
 
 ## Get my oobabooga and checkout macOS-test branch
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git textgen-macOS
