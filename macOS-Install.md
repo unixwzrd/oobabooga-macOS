@@ -32,8 +32,8 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
   - [Some initial setup](#some-initial-setup)
-  - [CMake](#cmake)
   - [Get Conda (Miniconda)](#get-conda-miniconda)
+  - [CMake](#cmake)
   - [Verify we have everything set up for the rest of the build and install](#verify-we-have-everything-set-up-for-the-rest-of-the-build-and-install)
   - [Clone my oobabooga macOS GitHub Repository](#clone-my-oobabooga-macos-github-repository)
   - [Pip Install the PyTorch Daily Build](#pip-install-the-pytorch-daily-build)
@@ -175,44 +175,6 @@ sed -i.bak '
 ' ~/.bashrc && source ~/.bashrc
 ```
 
-## CMake
-
-You will need the latest version of CMake, at least version 3.29.3. Make sure you have it installed and working. You may already have CMake installed, if you do, skip this step, but verify you are using the proper version. Many dependencies rely on CMake, which is beneficial as it builds based on the original hardware and software configuration of your machine.
-
-You can find it here: <https://cmake.org/download/>
-
-CMake is easy to install and will be needed for later steps like llama.cpp, llama-cpp-python, and other modules.
-
-Download the latest source version of CMake. Avoid using the packages as they are universal binaries, and you might accidentally end up building something with x86_64 architecture. This is unverified, but it's better to be safe.
-
-A lot of issues surrounding getting all this to work stem from various machines building libraries and packages running universal binaries through Rosetta. This allows them to run on macOS, but not necessarily take advantage of the M1/M2 system on chip and unified memory. I discovered that a number of libraries are universal binaries, which could be an issue. I first noticed this when I was looking in the "Activity Monitor" and was surprised when oobabooga came up running as "Intel". This was a result of my VSCode running using Rosetta.
-
-**NOTE:** I am using a recent copy of GNU Make, which is a parallelizing make. Apple's make with macOS is an older version of GNU Make - 3.81, so it should be fine as well.
-
-**NOTE** This will want to install in ${HOME}/local/bin. Alternatively, you could install in /usr/local but you will need administrator access and possibly have to disable Apples SIP (System Integrity Protection), a process I will not go into here as it affects overall system protection. Either way, you will need to make sure that where ever you install it, it is in your path.  I Am going to assume ${HOME}/local/bin in these instructions.
-
-**NOTE:** This will want to install in /usr/local. You may not want it installing there, and there are some special things you may have to do for it to install there. I will update this later with information on how to get it installed in something like ${HOME}/local/bin, which works just fine too, as long as it's in your PATH.
-
-The steps are pretty simple and only take about 5 minutes:
-
-```bash
-### Clone the CMake repository, build, and install CMake
-git clone https://github.com/Kitware/CMake.git
-cd CMake
-git checkout tags/v3.29.3
-mkdir build
-cd build
-
-### This will configure the installation of cmake to be in your home directory under local, rather than /usr/local
-### This is just preference and will work for a non-privilged user.
-../bootstrap --prefix=${HOME}/local
-make -j
-make -j test
-make install
-```
-
-This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
-
 ## Get Conda (Miniconda)
 
 **NOTE:** If Conda is already installed on your machine, skip this step, but this will also ensure your Conda setup is up-to-date. We're going to skip over the NumPy rebuild here because the llama-cpp-python build will bring NumPy along with it, and the Conda installation of PyTorch also brings along a different NumPy with support libraries in a "hidden" package called "numpy-base".
@@ -254,6 +216,44 @@ conda activate ${MACOS_LLAMA_ENV}
 This gives us a clean environment to return to as a base. I tend to clone my conda VENVs so it's easy to roll back any changes that have negatively impacted my environment. It saves time to be able to roll back to a known good environment and move forward again. These VENVs are useful for rolling back to a known configuration. I recommend cloning your good VENV, activating it, and applying any changes to that. Many packages or updates affect multiple python modules at once, and this is an easy way to roll back and then move forward, creating a new VENV cloned from the previous one. Then, new items are installed into that VENV. When it's working, clone that one, activate it, and do the next round of updates or changes. At any point, VENVs can be completely removed and even renamed. So, you can take your final VENV, if you're happy with it, and rename it back to the base for your application. I will try to do this as I go along in this installation, taking VENV checkpoints which I can roll back to if needed.
 
 Cloning a VENV can also help you quickly determine if a compile, or some other module, provides any performance advantage. I can explain some of these techniques at another time.
+
+## CMake
+
+You will need the latest version of CMake, at least version 3.29.3. Make sure you have it installed and working. You may already have CMake installed, if you do, skip this step, but verify you are using the proper version. Many dependencies rely on CMake, which is beneficial as it builds based on the original hardware and software configuration of your machine.
+
+You can find it here: <https://cmake.org/download/>
+
+CMake is easy to install and will be needed for later steps like llama.cpp, llama-cpp-python, and other modules.
+
+Download the latest source version of CMake. Avoid using the packages as they are universal binaries, and you might accidentally end up building something with x86_64 architecture. This is unverified, but it's better to be safe.
+
+A lot of issues surrounding getting all this to work stem from various machines building libraries and packages running universal binaries through Rosetta. This allows them to run on macOS, but not necessarily take advantage of the M1/M2 system on chip and unified memory. I discovered that a number of libraries are universal binaries, which could be an issue. I first noticed this when I was looking in the "Activity Monitor" and was surprised when oobabooga came up running as "Intel". This was a result of my VSCode running using Rosetta.
+
+**NOTE:** I am using a recent copy of GNU Make, which is a parallelizing make. Apple's make with macOS is an older version of GNU Make - 3.81, so it should be fine as well.
+
+**NOTE** This will want to install in ${HOME}/local/bin. Alternatively, you could install in /usr/local but you will need administrator access and possibly have to disable Apples SIP (System Integrity Protection), a process I will not go into here as it affects overall system protection. Either way, you will need to make sure that where ever you install it, it is in your path.  I Am going to assume ${HOME}/local/bin in these instructions.
+
+**NOTE:** This will want to install in /usr/local. You may not want it installing there, and there are some special things you may have to do for it to install there. I will update this later with information on how to get it installed in something like ${HOME}/local/bin, which works just fine too, as long as it's in your PATH.
+
+The steps are pretty simple and only take about 5 minutes:
+
+```bash
+### Clone the CMake repository, build, and install CMake
+git clone https://github.com/Kitware/CMake.git
+cd CMake
+git checkout tags/v3.29.3
+mkdir build
+cd build
+
+### This will configure the installation of cmake to be in your home directory under local, rather than /usr/local
+### This is just preference and will work for a non-privilged user.
+../bootstrap --prefix=${HOME}/local
+make -j
+make -j test
+make install
+```
+
+This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores. This works rather well and builds quickly. Make should parallelize as much as it can based on dependencies.
 
 ## Verify we have everything set up for the rest of the build and install
 
