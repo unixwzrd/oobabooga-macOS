@@ -8,6 +8,9 @@ These instructions have been tested with a non-admin, plain user, so they should
 
 **DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS - YOU MAY NEED TO CHANGE THEM FOR YOUR SYSTEM**
 
+
+**There is currently a bug in here, I am looking into it. If you think you can fix it, go ahead.  It is running with one of my users, but not the other.**
+
 ## 01 Jun 2024 - Only a single llama-cpp-python and new pip install for NumPy which should be done at the very end.
 
 This has ben updated with a few new items, like CMake, installing in the user's home directory.
@@ -75,6 +78,8 @@ conda update -n base -c defaults conda -y
 #### Get a new login shell no that conda is activated to your shell profile.
 exec bash -l
 
+umask 022
+
 #### Just in case your startup login environment scripts do some thing like change to another directory.
 #### Get back into teh target directory for teh build.
 cd "${TARGET_DIR}"
@@ -131,7 +136,7 @@ pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --no-
 ## CTransformers
 export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
 export CT_METAL=1
-pip install ctransformers --no-binary :all: --no-deps --no-build-isolation --compile --force-reinstall -v
+pip install ctransformers --no-binary :all: --no-deps --no-build-isolation --compile --force-reinstall
 
 ### Unset all the stuff we set while building.
 unset CMAKE_ARGS FORCE_CMAKE CFLAGS CT_METAL
@@ -146,29 +151,29 @@ START_OPTIONS=
 #START_OPTIONS="--verbose "
 #START_OPTIONS="--verbose --listen"
 
-cat <<_EOT_
+cat <<_EOT_ > start-webui.sh
 #!/bin/bash
 
 # >>> conda initialize >>>
 __conda_setup="$('${HOME}/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
+  eval "$__conda_setup"
 else
-    if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "${HOME}/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="${HOME}/miniconda3/bin:$PATH"
-    fi
+  if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
+    . "${HOME}/miniconda3/etc/profile.d/conda.sh"
+  else
+    export PATH="${HOME}/miniconda3/bin:$PATH"
+  fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-cd "${TARGET_DIR}/textgen-macOS'"
+cd "${TARGET_DIR}/textgen-macOS"
 
 conda activate ${MACOS_LLAMA_ENV}
 
 python server.py ${START_OPTIONS}
-_EOT_ > start-webui.sh
+_EOT_
 
 
 chmod +x start-webui.sh

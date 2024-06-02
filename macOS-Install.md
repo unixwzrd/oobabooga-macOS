@@ -6,7 +6,7 @@ This repository is primarily for oobabooga users at the moment, many of the Pyth
 
 I have a new repository on the way to assist with Apple Silicon M1/M2 and GPU performance VENV builds. This will produce configurable, repeatable, consistent VENV builds for Python packages and modules in all types of layering/stacking and at some point soon, branching builds. This will allow different installation procedures to be compared and evaluated for performance and through regression tests. Getting these consistent, working builds has been a bit difficult as new packages come out all the time and there are many cross-module/package dependencies, some incompatible, and some in conflict.
 
-## 01 Nov 2023 - This is updated with new build instructions for everything really. Lots has changed and more is stable now.
+**There is currently a bug in here, I am looking into it. If you think you can fix it, go ahead.  It is running with one of my users, but not the other.**
 
 Latest != Greatest, Latest + Greatest != Best, Stable == None
 
@@ -26,7 +26,6 @@ Throughout the process, you're advised to create clones of your Conda environmen
 Please note that the guide is incomplete and is expected to be continued.
 
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
-  - [01 Nov 2023 - This is updated with new build instructions for everything really. Lots has changed and more is stable now.](#01-nov-2023---this-is-updated-with-new-build-instructions-for-everything-really-lots-has-changed-and-more-is-stable-now)
   - [TL;DR](#tldr)
     - [Status of Testing and BLAS](#status-of-testing-and-blas)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
@@ -184,25 +183,27 @@ During this process, be cautious as some libraries require the properly compiled
 One way to avoid conflicts, downgrades, and other issues is to use the "--dry-run" argument. This will show you what it plans to do without actually doing it. The output can be lengthy and you might miss things. As an extra precaution, I clone my virtual environments (VENV), then switch to the new one before making any potentially harmful changes.
 
 ```bash
- cd
- mkdir tmp
- cd tmp
- curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
- # Do a non-destructive Conda install whcih will preserve existing VENV's
- sh miniconda.sh -b -u
+cd
+mkdir tmp
+cd tmp
+curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
+# Do a non-destructive Conda install whcih will preserve existing VENV's
+sh miniconda.sh -b -u
 
- # Activate the conda environment.
- source ${HOME}/miniconda3/bin/activate
+# Activate the conda environment.
+source ${HOME}/miniconda3/bin/activate
 
-  # Initialize Conda which will add initialization functions to your shell's profile.
- conda init $(basename ${SHELL})
+ # Initialize Conda which will add initialization functions to your shell's profile.
+conda init $(basename ${SHELL})
 
-  # Update your Conda environment with the latest updates to th ebase environment
- conda update -n base -c defaults conda -y
+ # Update your Conda environment with the latest updates to th ebase environment
+conda update -n base -c defaults conda -y
 
- # Grab a new login shell - this will work for any shell aand you wil enter back in the
- # tmp directory we just created..
-  exec bash -l
+# Grab a new login shell - this will work for any shell aand you wil enter back in the
+# tmp directory we just created..
+exec bash -l
+
+umask 022
 ```
 
 Create a new VENV using Python 3.10. This will serve as your base virtual environment for anything you wish to use with Python 3.10. This is the version you need for running oobabooga. If you have another project, you can always return to the base and build from there. This helps avoid the issue of conflicting versions resulting from using package managers.
@@ -322,13 +323,19 @@ Now, at this point, we have everything we need to run the basic server with no e
 
 NumPy is finally supporting Apple Silicon. You will have to compile it on install. Many packages I've found want to install their preferred version of NumPy or other NumPy support libraries. This will likely uninstall your NumPy in your VENV. You should be on the lookout when you install anything new that it does not overlay your NumPy with a previous version or a different installation of the current version.
 
+```bash
+export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
+pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --no-build-isolation --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
+```
+
 ## CTransformers
 
 I include this one, but haven't tested it and it's unclear is it works properly on macOS.
 
 ```bash
 export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
-pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --no-build-isolation --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
+export CT_METAL=1
+pip install ctransformers --no-binary :all: --no-deps --no-build-isolation --compile --force-reinstall
 ```
 
 ## Nearly finished
@@ -357,6 +364,8 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+cd "${TARGET_DIR}/textgen-macOS"
 
 conda activate ${PREFERRED_VENV}
 
