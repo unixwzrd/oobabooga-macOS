@@ -37,8 +37,8 @@ Please note that the guide is incomplete and is expected to be continued.
   - [Verify we have everything set up for the rest of the build and install](#verify-we-have-everything-set-up-for-the-rest-of-the-build-and-install)
   - [Clone my oobabooga macOS GitHub Repository](#clone-my-oobabooga-macos-github-repository)
   - [Pip Install the PyTorch Daily Build](#pip-install-the-pytorch-daily-build)
-    - [Using Pip for PyTorch](#using-pip-for-pytorch)
   - [Llama for macOS and MPS (Metal Performance Shaders)](#llama-for-macos-and-mps-metal-performance-shaders)
+    - [Using Pip for PyTorch](#using-pip-for-pytorch)
   - [NunPy](#nunpy)
   - [CTransformers](#ctransformers)
   - [Nearly finished](#nearly-finished)
@@ -291,17 +291,6 @@ pip install -r requirements.txt
 
 ## Pip Install the PyTorch Daily Build
 
-### Using Pip for PyTorch
-
-This will install the latest PyTorch optimized for Apple Silicon.
-
-```bash
-## Pip install from daily build
-pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu --force-reinstall --no-deps
-```
-
-Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama.cpp and llama-cpp-python as we may need to build them ourselves.
-
 ## Llama for macOS and MPS (Metal Performance Shaders)
 
 The one loaded with the requirements for oobabooga is not compiled for MPS (Metal Performance Shaders) installed from PyPi at this time. It is also probably best to build your own anyway.
@@ -317,6 +306,17 @@ export PATH=/usr/local/bin:$PATH  # Ensure the correct cmake is used
 pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
 
 ```
+
+### Using Pip for PyTorch
+
+This will install the latest PyTorch optimized for Apple Silicon.
+
+```bash
+## Pip install from daily build
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu --force-reinstall --no-deps
+```
+
+Now, at this point, we have everything we need to run the basic server with no extensions. However, we should have a look at the llama.cpp and llama-cpp-python as we may need to build them ourselves.
 
 ## NunPy
 
