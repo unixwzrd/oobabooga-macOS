@@ -148,7 +148,7 @@ umask 0022
 
 
 ### Create the target directory where we sill be dowloading, building and installing from.
-mkdir -p "${TARGET_DIR}'"
+mkdir -p "'${TARGET_DIR}'"
 cd "'${TARGET_DIR}'"
 
 ### Be sure to add ${HOME}/local/bin to your path  **Add to your .profile, .bashrc, etc...**

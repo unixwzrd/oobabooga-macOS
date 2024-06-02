@@ -30,7 +30,7 @@ umask 022
 ### may use whatever you wish. This must be exported because we will exec a new login shell later.
 export TARGET_DIR="${HOME}/projects/ai-projects"
 
-mkdir -p "${TARGET_DIR}'"
+mkdir -p "'${TARGET_DIR}'"
 cd "'${TARGET_DIR}'"
 
 # This will add to your path and DYLD_LIBRARY_PATH if they aren't already seyt up.
