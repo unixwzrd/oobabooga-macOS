@@ -28,7 +28,7 @@ umask 022
 
 ### Choose a target directory for everything to be put into, I'm using "${HOME}/projects/ai-projects" You
 ### may use whatever you wish. This must be exported because we will exec a new login shell later.
-export TARGET_DIR="${HOME}/projects/si-projects"
+export TARGET_DIR="${HOME}/projects/ai-projects"
 
 mkdir -p "${TARGET_DIR}'"
 cd "'${TARGET_DIR}'"

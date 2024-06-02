@@ -140,7 +140,7 @@ exec bash -l
 
 ### Choose a target directory for everything to be put into, I'm using "${HOME}/projects/ai-projects" You
 ### may use whatever you wish. These must be exported because we will exec a new login shell later. "Normal" shell variables will not be passed to th enew login shell, we are just setting them up front.
-export TARGET_DIR="${HOME}/projects/si-projects"
+export TARGET_DIR="${HOME}/projects/ai-projects"
 export MACOS_LLAMA_ENV="macOS-llama-env"
 
 ### Set a reasonable umask - this controls the default permissions for your files when they are created.
