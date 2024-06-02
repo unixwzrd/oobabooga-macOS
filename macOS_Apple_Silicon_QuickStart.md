@@ -77,11 +77,11 @@ exec bash -l
 
 #### Just in case your startup login environment scripts do some thing like change to another directory.
 #### Get back into teh target directory for teh build.
-cd "{TARGET_DIR}"
+cd "${TARGET_DIR}"
 
 #### Set the name of the VENV to whatever you wish it to be. This will be used later when the procedure
 #### creates a script for sourcing in the Conda environment and activating the one set here when you installed.
-MACOS_LLAMA_ENV="macOS-llama-env"
+export MACOS_LLAMA_ENV="macOS-llama-env"
 
 #### Create the base Python 3.10 and the llama-env VENV.
 conda create -n ${MACOS_LLAMA_ENV} python=3.10 -y
