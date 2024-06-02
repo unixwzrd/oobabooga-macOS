@@ -6,7 +6,7 @@ This repository is primarily for oobabooga users at the moment, many of the Pyth
 
 I have a new repository on the way to assist with Apple Silicon M1/M2 and GPU performance VENV builds. This will produce configurable, repeatable, consistent VENV builds for Python packages and modules in all types of layering/stacking and at some point soon, branching builds. This will allow different installation procedures to be compared and evaluated for performance and through regression tests. Getting these consistent, working builds has been a bit difficult as new packages come out all the time and there are many cross-module/package dependencies, some incompatible, and some in conflict.
 
-**There is currently a bug in here, I am looking into it. If you think you can fix it, go ahead.  It is running with one of my users, but not the other.**
+## 02 Jun 2024 - Rolled back Jinja, should be fine now
 
 Latest != Greatest, Latest + Greatest != Best, Stable == None
 
@@ -26,6 +26,7 @@ Throughout the process, you're advised to create clones of your Conda environmen
 Please note that the guide is incomplete and is expected to be continued.
 
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
+  - [02 Jun 2024 - Rolled back Jinja, should be fine now](#02-jun-2024---rolled-back-jinja-should-be-fine-now)
   - [TL;DR](#tldr)
     - [Status of Testing and BLAS](#status-of-testing-and-blas)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)

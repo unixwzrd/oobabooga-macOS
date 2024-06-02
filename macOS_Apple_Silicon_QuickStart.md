@@ -6,12 +6,9 @@ If you are really in a rush and feeling brave, copy all of these lines into a te
 
 These instructions have been tested with a non-admin, plain user, so they should work for most everyone, but do let me know if something doesn't and I'll fix it. Typos and copy and paste sometimes have a away for going wrong.
 
-**DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS - YOU MAY NEED TO CHANGE THEM FOR YOUR SYSTEM**
+## DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS - YOU MAY NEED TO CHANGE THEM FOR YOUR SYSTEM
 
-
-**There is currently a bug in here, I am looking into it. If you think you can fix it, go ahead.  It is running with one of my users, but not the other.**
-
-## 01 Jun 2024 - Only a single llama-cpp-python and new pip install for NumPy which should be done at the very end.
+## 02 Jun 2024 - Rolled back Jinja, should be fine now
 
 This has ben updated with a few new items, like CMake, installing in the user's home directory.
 
