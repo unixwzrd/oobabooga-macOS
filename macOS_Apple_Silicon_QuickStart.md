@@ -24,14 +24,16 @@ This has ben updated with a few new items, like CMake, installing in the user's 
 ## This will give you a login shell with bash.
 exec bash -l
 
+cd "${HOME}"
+
 umask 022
 
 ### Choose a target directory for everything to be put into, I'm using "${HOME}/projects/ai-projects" You
 ### may use whatever you wish. This must be exported because we will exec a new login shell later.
 export TARGET_DIR="${HOME}/projects/ai-projects"
 
-mkdir -p "'${TARGET_DIR}'"
-cd "'${TARGET_DIR}'"
+mkdir -p "${TARGET_DIR}"
+cd "${TARGET_DIR}"
 
 # This will add to your path and DYLD_LIBRARY_PATH if they aren't already seyt up.
 # export PATH=${HOME}/local/bin
@@ -75,7 +77,7 @@ exec bash -l
 
 #### Just in case your startup login environment scripts do some thing like change to another directory.
 #### Get back into teh target directory for teh build.
-cd "'${TARGET_DIR}'"
+cd "{TARGET_DIR}"
 
 #### Set the name of the VENV to whatever you wish it to be. This will be used later when the procedure
 #### creates a script for sourcing in the Conda environment and activating the one set here when you installed.
@@ -159,7 +161,7 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-cd "'${TARGET_DIR}/textgen-macOS'"
+cd "${TARGET_DIR}/textgen-macOS'"
 
 conda activate ${MACOS_LLAMA_ENV}
 

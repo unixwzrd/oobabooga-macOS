@@ -138,6 +138,8 @@ You will need to have your environment set up for all the following steps to wor
 ### So, let's make sure we are using a fresh bash shell.
 exec bash -l
 
+cd "${HOME}"
+
 ### Choose a target directory for everything to be put into, I'm using "${HOME}/projects/ai-projects" You
 ### may use whatever you wish. These must be exported because we will exec a new login shell later. "Normal" shell variables will not be passed to th enew login shell, we are just setting them up front.
 export TARGET_DIR="${HOME}/projects/ai-projects"
@@ -148,8 +150,8 @@ umask 0022
 
 
 ### Create the target directory where we sill be dowloading, building and installing from.
-mkdir -p "'${TARGET_DIR}'"
-cd "'${TARGET_DIR}'"
+mkdir -p "${TARGET_DIR}"
+cd "${TARGET_DIR}"
 
 ### Be sure to add ${HOME}/local/bin to your path  **Add to your .profile, .bashrc, etc...**
 export PATH=${HOME}/local/bin:${PATH}
@@ -265,7 +267,7 @@ which cmake       # Should say $HOME/local/bin
 cmake --version
 
 ### Change to the target directory.
-cd "'${TARGET_DIR}'"
+cd "${TARGET_DIR}"
 ```
 
 ## Clone my oobabooga macOS GitHub Repository
