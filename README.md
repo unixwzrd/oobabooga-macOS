@@ -30,6 +30,10 @@ errno_warn will return after sending the code and message to STDERR, and errno_e
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
 
+## 01 Jun 2024 - Minor update, branches are synced
+
+I'm updating my instructions to use the main branch of the repository as I've done some housekeeping and all are in sync at this point.
+
   
 ## 31 May 2024 - Well, it's been a while and it's time for an update
 

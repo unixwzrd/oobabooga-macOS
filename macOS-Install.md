@@ -283,7 +283,7 @@ This will pull clone my repository which has some changes that allow it to run w
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git textgen-macOS
 cd textgen-macOS
 ### Checkout the development build, this may change later, and I will update this here.
-git checkout macOS-dev
+git checkout main
 pip install -r requirements.txt
 ```
 

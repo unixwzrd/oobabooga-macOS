@@ -108,7 +108,7 @@ cmake --version
 ## Get my oobabooga and checkout macOS-test branch
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git textgen-macOS
 cd textgen-macOS
-git checkout macOS-dev
+git checkout main
 pip install -r requirements.txt
 
 ## llamacpp-python
