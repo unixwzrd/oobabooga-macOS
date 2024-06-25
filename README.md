@@ -30,6 +30,9 @@ errno_warn will return after sending the code and message to STDERR, and errno_e
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
 
+## 25 Jun 2024 - NumPY updated and breaks things
+Had to change the instruction just slightly for NumPy since it breaks Numba.
+
 ## 02 Jun 2024 - Rolled back Jinja, should be fine now
 
 Rolled back to prior working version, should be fine now.
