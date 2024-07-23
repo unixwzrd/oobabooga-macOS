@@ -1,7 +1,9 @@
 # Use the GPU on your Apple Silicon Mac
 
- - [31 May 2024 - Well, it's been a while and it's time for an update](#31-May-2024---Well,-it's-been-a-while-and-it's-time-for-an-update)
- 
+## Laest Update
+ - [22 Jul 2024 - Watch this space, I have something interesting coming soon](#22-Jul-2024---Watch-this-space,-I-have-something-interesting-coming-soone)
+
+## Background
  This stared out as a guide to getting oobabooga working with Apple Silicon better, but has turned out to contain now useful information regarding how to get numerical analysis, data science, and AI core software running to take advantage of the Apple Silicon M1 and M2 processor technologies. There is information in the guides for installing OpenBLAS, LAPACK, Pandas, NumPy, PyTorch/Torch and llama-cpp-python. I will probably create a new repository for all things Apple Silicon in the interest of getting maximum performance out of the M1 and M2 architecture.
 
 ## You probably want this: [Building Apple Silicon Support for oobabooga text-generation-webui](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS-Install.md)
@@ -29,6 +31,12 @@ errno 15
 errno_warn will return after sending the code and message to STDERR, and errno_exit will cause your script to exit after writing the error code and message to STDERR.
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
+
+## 22 Jul 2024 - Watch this space, I have something interesting coming soon
+
+I have been working on rebuilding oobabooga from the ground up and creating my own object model for a text generation web UI. Right now I am concentrating on the object model for everything to do with the front-end to support conversations, or a series of turns between one or more other "Actors". Conversations of dialogues will be able to be able to branch and metadata for conversations/dialog will be retained with any turn where they changed, including changing the underlying LLM. Performance metrics will also be kept for each turn for doing testing and benchmarking. Playback is also a possibility, but I have quiet a bot planned and it may be rather ambitious, but I will be getting as much put in as I can,
+
+This effort is a departure from the oobabooga code-base completely and will have a separate repository. I do plan to try to keep it as backwards compatible as possible and plan to support llama.cpp/llama-cpp-python to begin with. Please let me know if you have any suggestions or things you would like to see in a completely overhauled product.
 
 ## 25 Jun 2024 - NumPY updated and breaks things
 Had to change the instruction just slightly for NumPy since it breaks Numba.
