@@ -143,7 +143,10 @@ cd "${HOME}"
 ### Choose a target directory for everything to be put into, I'm using "${HOME}/projects/ai-projects" You
 ### may use whatever you wish. These must be exported because we will exec a new login shell later. "Normal" shell variables will not be passed to th enew login shell, we are just setting them up front.
 export TARGET_DIR="${HOME}/projects/ai-projects"
-export MACOS_LLAMA_ENV="macOS-llama-env"
+
+### Run this commadn to ad the MACOS_LLAMA_ENV variable to your .bashrc
+### we will being it inrothe environment after teh PATH is modified below.
+echo 'export MACOS_LLAMA_ENV="macOS-llama-env"' >> ~/.bashrc
 
 ### Set a reasonable umask - this controls the default permissions for your files when they are created.
 umask 0022
@@ -262,10 +265,13 @@ This creates 24 compile jobs. I have 12 cores on my MBP, so I use 2 times cores.
 Make sure we can find the CMAke we installed earlier and make sure we are in the target directory.
 
 ```bash
+### Be sure to add ${HOME}/local/bin to your path  **Add to your .profile, .bashrc, etc...**
+export PATH=${HOME}/local/bin:${PATH}
+
 ### Verify the installation
 which cmake       # Should say $HOME/local/bin
 
-### Verify you are running cmake z3.29.3
+### Verify you are running cmake v3.30.2
 cmake --version
 
 ### Change to the target directory.
@@ -274,7 +280,7 @@ cd "${TARGET_DIR}"
 
 ## Clone my oobabooga macOS GitHub Repository
 
-**NOTE THIS IS A DEVELOPMENT BUILD - IT WILL BE PROMOTED TO TEET SOON**
+**NOTE THIS IS A DEVELOPMENT BUILD - IT WILL BE PROMOTED TO TEET SOON = I need feeback**
 
 At this point, get started setting up oobabooga in your working location, we'll use it later, referring to the requirements.txt to see which Python modules we will need.
 
@@ -283,11 +289,10 @@ Pick a good location for your clone of the project. I have a projects directory 
 This will pull clone my repository which has some changes that allow it to run with GPU acceleration.  This is unsupported, by the oobabooga people, but I will try to keep my information as up-to-date as possible along with merging code into the repository on a regular basis.
 
 ```bash
-### Get my oobabooga and checkout macOS-test branch
+## Get my oobabooga and checkout macOS-dev branch
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git textgen-macOS
 cd textgen-macOS
-### Checkout the development build, this may change later, and I will update this here.
-git checkout main
+git checkout macOS-dev
 pip install -r requirements.txt
 ```
 
@@ -302,9 +307,10 @@ You're going to need the llama library and the Python module for it. You should 
 The application llama.cpp compiles with MPS support. I'm not sure if the cmake configuration takes care of it in the llama-cpp repository build, but the flag -DLLAMA_METAL=on is required here.  When I compiled llama-cpp in order to compare its performance to the llama-cpp-python. I didn’t have to specify any flags and it just built right out of the box. This could have been due to the configuration of CMake as it thoroughly probes the system for its installed software and capabilities in order to make decisions when it creates the makefile. It is required in this case.
 
 ```bash
-export CMAKE_ARGS="-DLLAMA_METAL=on"
-export FORCE_CMAKE=1
-export PATH=/usr/local/bin:$PATH  # Ensure the correct cmake is used
+## llamacpp-python
+CMAKE_ARGS="-DLLAMA_METAL=on" \
+FORCE_CMAKE=1 \
+PATH=/usr/local/bin:$PATH \
 pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
 
 ```
@@ -325,8 +331,7 @@ Now, at this point, we have everything we need to run the basic server with no e
 NumPy is finally supporting Apple Silicon. You will have to compile it on install. Many packages I've found want to install their preferred version of NumPy or other NumPy support libraries. This will likely uninstall your NumPy in your VENV. You should be on the lookout when you install anything new that it does not overlay your NumPy with a previous version or a different installation of the current version.
 
 ```bash
-export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
-pip install numpy==1.26.* --force-reinstall --no-deps --no-cache --no-binary :all: --no-build-isolation --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
+CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate" pip install numpy --force-reinstall --no-deps --no-cache --no-binary :all: --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
 ```
 
 ## CTransformers
@@ -334,9 +339,7 @@ pip install numpy==1.26.* --force-reinstall --no-deps --no-cache --no-binary :al
 I include this one, but haven't tested it and it's unclear is it works properly on macOS.
 
 ```bash
-export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
-export CT_METAL=1
-pip install ctransformers --no-binary :all: --no-deps --no-build-isolation --compile --force-reinstall
+CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"  CT_METAL=1  pip install ctransformers --no-binary :all: --no-deps --compile --force-reinstall
 ```
 
 ## Nearly finished

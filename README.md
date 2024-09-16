@@ -1,7 +1,7 @@
 # Use the GPU on your Apple Silicon Mac
 
 ## Laest Update
- - [22 Jul 2024 - Watch this space, I have something interesting coming soon](#22-Jul-2024---Watch-this-space,-I-have-something-interesting-coming-soone)
+ - [15 Sep 2024 - New oobabooga macOS-dev merge with 1.14 ready for testing](#15-Sep-2024---New-oobabooga-macOS-dev-merge-with-1.14-ready-for-testing)
 
 ## Background
  This stared out as a guide to getting oobabooga working with Apple Silicon better, but has turned out to contain now useful information regarding how to get numerical analysis, data science, and AI core software running to take advantage of the Apple Silicon M1 and M2 processor technologies. There is information in the guides for installing OpenBLAS, LAPACK, Pandas, NumPy, PyTorch/Torch and llama-cpp-python. I will probably create a new repository for all things Apple Silicon in the interest of getting maximum performance out of the M1 and M2 architecture.
@@ -31,6 +31,16 @@ errno 15
 errno_warn will return after sending the code and message to STDERR, and errno_exit will cause your script to exit after writing the error code and message to STDERR.
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
+
+## 15 Sep 2024 - New oobabooga macOS-dev merge with 1.14 ready for testing
+
+I have a n updated version of the macOS oobabooga merged with the main oobabooga branch 1.14. There are many other things I am working on right now, and will try to get another update of this dome if they tag it as soon as possible.
+
+My web site will be launching, hopefully this week and I will move things around and my web site will be a central location for everything I am working on and more.  This repository will likely be used for the oobabooga-macOS development, and I am also working in a rewrite, which is more of a new effort than a rewrite because I wanted to add a lot of functionality for collecting metrics and more. My plan was to have my LLM backend and GUI to be somewhat compatible with oobabooga, but I have pretty much started from scratch. It is completely object oriented in design and the code should be a lot cleaner and more maintainable.
+
+I have also finished up with and plan to release in a new repo a module which intercepts CUDA functions and methods for PyTorch and redirects them into PyTorch MPS functions and methods.  The idea here is to drop this module into your code and be able to run code written for CUDA run on macOS. When it receives a CUDA function or method intercept it and send a log message out identifying the function or method and where it was called from. The goal is to locate the CUDA use and then go back into the code and add the functionality for MPS PyTorch support. I will have that ready in the next day or two. I believe I have it written so it will also work with CUDA, but I don't have any Nvidia hardware to test it on.
+
+Installation instructions for this are completed and the macOS-dev branch will be ready for testing in the next few minutes. I haven't had a chance to test it myself, but will be in the process of doing that. The intent is to put the merge as a commit before I begin testing. Let me know if you have any problems with it.
 
 ## 22 Jul 2024 - Watch this space, I have something interesting coming soon
 

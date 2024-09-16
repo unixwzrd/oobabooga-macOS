@@ -8,7 +8,7 @@ These instructions have been tested with a non-admin, plain user, so they should
 
 ## DO NOT JUST COPY AND PASTE UNLESS YOU HAVE READ AND UNDERSTAND THE INSTRUCTIONS - YOU MAY NEED TO CHANGE THEM FOR YOUR SYSTEM
 
-## 02 Jun 2024 - Rolled back Jinja, should be fine now
+## 15 Sep 2024 - updated instructions, you may need to update your CMake, I did.
 
 This has ben updated with a few new items, like CMake, installing in the user's home directory.
 
@@ -62,6 +62,9 @@ sed -i.bak '
 
 ## Install Miniconda
 
+#### We will set this heer and it will be used later when we source .bashrc later.
+echo 'export MACOS_LLAMA_ENV="macOS-llama-env"' >> ~/.bashrc
+
 ### Download the miniconda installer
 curl  https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh -o miniconda.sh
 
@@ -83,8 +86,6 @@ cd "${TARGET_DIR}"
 
 #### Set the name of the VENV to whatever you wish it to be. This will be used later when the procedure
 #### creates a script for sourcing in the Conda environment and activating the one set here when you installed.
-export MACOS_LLAMA_ENV="macOS-llama-env"
-
 #### Create the base Python 3.10 and the llama-env VENV.
 conda create -n ${MACOS_LLAMA_ENV} python=3.10 -y
 conda activate ${MACOS_LLAMA_ENV}
@@ -94,7 +95,7 @@ conda activate ${MACOS_LLAMA_ENV}
 ### Clone the CMake repository, build, and install CMake
 git clone https://github.com/Kitware/CMake.git
 cd CMake
-git checkout tags/v3.29.3
+git checkout tags/v3.30.2
 mkdir build
 cd build
 
@@ -114,20 +115,20 @@ cd  "${TARGET_DIR}"
 ## Get my oobabooga and checkout macOS-test branch
 git clone https://github.com/unixwzrd/text-generation-webui-macos.git textgen-macOS
 cd textgen-macOS
-git checkout main
+git checkout macOS-dev
 pip install -r requirements.txt
 
 ## llamacpp-python
-export CMAKE_ARGS="-DLLAMA_METAL=on"
-export FORCE_CMAKE=1
-export PATH=/usr/local/bin:$PATH  # Ensure the correct cmake is used
+CMAKE_ARGS="-DLLAMA_METAL=on" \
+FORCE_CMAKE=1 \
+PATH=/usr/local/bin:$PATH \
 pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
 
 ## Pip install from daily build
-pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu --force-reinstall --no-deps
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu --no-deps --force-reinstall
 
 ## NumPy Rebuild with Pip
-export CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate"
+CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate" \
 pip install numpy==1.26.* --force-reinstall --no-deps --no-cache --no-binary :all: --no-build-isolation --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
 
 ## CTransformers
