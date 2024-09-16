@@ -1,7 +1,7 @@
 # Use the GPU on your Apple Silicon Mac
 
 ## Laest Update
- - [15 Sep 2024 - New oobabooga macOS-dev merge with 1.14 ready for testing](#15-Sep-2024---New-oobabooga-macOS-dev-merge-with-1.14-ready-for-testing)
+ - [16 Sep 2024 - Basic testing, yes it works, and is kinda fast?](#16-Sep-2024---Basic-testing,-yes-it-works,-and-is-kinda-fast?)
 
 ## Background
  This stared out as a guide to getting oobabooga working with Apple Silicon better, but has turned out to contain now useful information regarding how to get numerical analysis, data science, and AI core software running to take advantage of the Apple Silicon M1 and M2 processor technologies. There is information in the guides for installing OpenBLAS, LAPACK, Pandas, NumPy, PyTorch/Torch and llama-cpp-python. I will probably create a new repository for all things Apple Silicon in the interest of getting maximum performance out of the M1 and M2 architecture.
@@ -28,9 +28,27 @@ errno 15
 (ENOTBLK: 15): Block device required
 ```
 
+
+
 errno_warn will return after sending the code and message to STDERR, and errno_exit will cause your script to exit after writing the error code and message to STDERR.
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
+
+## 16 Sep 2024 - Basic testing, yes it works, and is kinda fast?
+
+Ok, I just got finished making another commit to the repository for the macOS oobabooga. It's working and well, whether it's working well, is a matter of opinion. Would I trust it for production systems? Definitely not. It is kind of fun to play with and tinker with, but that's about all I can see for now. It needs a lot of work to make it solid production grade software. I've been into the code a number of times and some parts have improves, and others have not. I'll support this release as much as I can, and will continue to add bits to it and make improvements as I can too.
+
+My thoughts is that it attempts to be all things to everyone and has way too many people trying to contribute code to it, all in varying degrees of success and whether it is good or not, well, it shows signs of all things to everyone, and too many cooks. I had considered making a fork of the code (actually I did) and the two are divergent, so each release must be gone over carefully to ensure the upstream origin hasn't botched something in it's development that has hosed my branch.
+
+I have had plans of developing a system for LLM's and AI in general which should in, in effect, portable between macOS and Linus as they are both POSIX operating systems. SO, apart from anything specifically written to the hardware level could be portable across systems. In order to do this, device interfaces would have to be abstracted away to some common denominator. This would be done in a similar manner as I have done with the TorchDevice to bridge the gap between MPS and CUDA. It's a shim, but will also help people who are porting code from one platform to the other by highlighting he parts of the code which make hardware specific actions. It's not a long-term solution, though it could be a way of creating device independent code.
+
+For my plan for an LLM/AI system, I am taking some lessons from Plan-9 from Bell Labs. They took the concept of Unix and extended it in all directions and extended it a bit. Unix was a first attempt at making something simple and clean where each part of the system did one thing and did it well. It also is one of the first systems to treat everything like a file, though some things couldn't be as easily done that way and network computing was growing rapidly, so things were added where they made sense. One of the divergences which is inherent in the *nix lineage today is the difference between socket access and file access. One must use socket calls to open and maintain a socket on the network, when in reality it is just stream of data. Plan-9 was an attempt to look at Unix and what the original developers of it would do differently, and one of the things is they designed it to make everything a file, or act like one anyway, giving them the ability to create an operating system with (my memory gets a bit hazy here) only about 8 actual system calls so all access to system resources was through a familiar interface just as though it was a file.
+
+I used to be very active in the Unix Community on the East Coast and we were lucky that we had Bell Labs so close by. I remember attending a presentation given by Rob Pike about the Plan-9 Operating System, which was only proof of concept, later leading to Lucent's Inferno Operating System. The system calls were, open, close, read, write, position, delete, rfork, and a few others. The whole idea was to allow everything to communicate through a well known interface.
+
+The same applies to data passing between the user, an agent, an LLM, or really any part of the system and if these are distributed, they could run anywhere and still need to communicate with each other. From there any component or object in the system, using this standard interface, could be used to communicate with each other, no matter whether it is on the same machine or on another machine in some other location. This also provides the ability for processes to move to the data and process it in place which reduces costs and redundancies of moving data around over networks. These small units of code could be sent to all nodes in a network in advance to minimize the possibility of executing arbitrary or malicious code, they could then be started up as requested and managed similar to micro-services.
+
+That's the idea anyway, and as long as long as all objects/entities/actors in the system use the same standard interface, they can communicate with each other. AAfter all there is really no difference between a data stream to a user interface, one to an agent, or another LLM. Even simpler, this could all be done using URL's to locate and access resources or other services. This would be a fairly large project, but it is something I am working on, I'm looking for others who would be interested in helping out either as a sponsor or as a contributor.
 
 ## 15 Sep 2024 - New oobabooga macOS-dev merge with 1.14 ready for testing
 
