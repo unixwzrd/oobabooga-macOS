@@ -14,7 +14,6 @@ Latest != Greatest, Latest + Greatest != Best, Stable == None
 
 1. **Python**: Install Python 3.10 using Miniconda. Create a virtual environment and install pip.
 1. **CMake**: Install CMake from source to avoid potential issues with universal binaries. This is used for building other software.
-1. **OpenBLAS**: Build and install OpenBLAS, a library for linear algebra operations. This can optionally be used when building NumPy.
 1. **oobabooga Base**: Clone the oobabooga GitHub repository and install the Python modules listed in its requirements.txt file.
 1. **Llama for macOS and MPS**: Uninstall any existing version of llama-cpp-python, then reinstall it with specific CMake arguments to enable Metal support.
 1. **PyTorch for macOS and MPS**: Install PyTorch, torchvision, and torchaudio from the PyTorch Conda channel.
@@ -28,7 +27,6 @@ Please note that the guide is incomplete and is expected to be continued.
 - [Apple Silicon Support for oobabooga text-generation-webui](#apple-silicon-support-for-oobabooga-text-generation-webui)
   - [02 Jun 2024 - Rolled back Jinja, should be fine now](#02-jun-2024---rolled-back-jinja-should-be-fine-now)
   - [TL;DR](#tldr)
-    - [Status of Testing and BLAS](#status-of-testing-and-blas)
   - [Building for macOS and Apple Silicon](#building-for-macos-and-apple-silicon)
   - [Pre-requisites](#pre-requisites)
   - [Some initial setup](#some-initial-setup)
@@ -48,16 +46,6 @@ Please note that the guide is incomplete and is expected to be continued.
 
 
 This guide is quite comprehensive and covers everything from getting the necessary prerequisites to building and installing all the required components. It also includes a section on how to clone and install the oobabooga repository and its requirements. The guide is still a work in progress and will be updated with more information in the future.
-
-### Status of Testing and BLAS
-
-The benchmarking project is going fairly well.  It took much more time to gather all the information on the linear algebra libraries, discovering other projects who use linear algebra, matrix manipulation, vector and tensor processing to discover that everyone is pretty much working in their own sandboxes. I was very surprised to see that there are no BLAS (Basic Linear Algebra Subroutines/System/Software) which would build or are built, at this time, other than the Apple Accelerate Framework, which appears to have little support from apple for the mathematical and scientific community, instead focusing more on consumer products like the iPhone. It seems a good deal of effort is put to consumer goods as they have a larger market share than Macs do.
-
-Some people have built their own libraries like it seems with PyTorch, SciPy, and even GGML/GGUF are using their own libraries to handle the matrix manipulation. I'm very surprised at this and how little support there seems to come from Apple, but that's their market they are playing to. Macs make up around 6% of their revenue, and it's unlikely they will ever enter the Datacenter market for other than their own hardware. People it seems have found a way around what seems through my research to be a two or three year period where Apple was doing little in helping the Open Source data science people, AI people, or the mathematics community. Never mind the apparent lack off cooperation between the various project teams and not pointing any fingers here, it seems to me there could have been a bit more collaboration. Reading their PR's here on GitHub was rather interesting as it seems one project or another would be keeping tabs on what another project was doing, but there was never any coordinated effort to Open Source the whole thing for everyone. This may be one of the weaknesses of Open Source in not having any sort of central governing body helping to connect and guide resources in a particular direction to solve a problem for the common good. I might have missed something in the few weeks of research I did, but that was my impression, each group of developers watching the others and finally when one group started working on Apple Silicon support, they would take that as their cue to work on theirs instead of working together, maybe I'm wrong.
-
-I have gathered a lot of information and it seems somewhat anticlimactic, but I seem to have found the best way I can to get the best performance possible from has been a moving target the past couple of weeks and will probably continue to be that way. It seems that at the core of the issue is NumPy is used by pretty much everyone to define core data types, and some other things I haven't discovered as my focus was in getting the most performance I could out of the Apple Silicon. I started down the path of eventually putting together a package building script in Bash and only near the end, discovered manipulating the graph data structure of layered and branching packages and libraries in a VENV was more than I could easily and simply handle in Bash. It does give consistent repeatable builds using a configuration file, and I am moving to Python in order to traverse the graph structure. Anyway, I will be opening another repository in a few days to throw everything in there.  My plan id to also use the package benchmark and regression testing suites to see different stacking, libraries and other issues will compare for compatibility, performance and overall function.
-
-I'd hoped to have all this out by now, but I kept finding new information, but for now, I can at least give what seems to be my best possible configuration for running LLM's on Apple Silicon, and the few libraries I've looked at. As I mentioned NumPy seemed to be the bottle neck in all this, but they were also the project which gave me a clue as to what I was trying to achieve and that is all out raw BLAS performance. For now it's time to give this document a refresh and update it with new information. I will say that performance I am seeing is somewhere between 2-5 tokens/sec, maybe more at times, and it's very usable and that's with the 70B LLaMa2 model with four bit quantization. I do not have hard numbers, but wanted to get my build out there as soon as possible. The hardware is a MacBook Pro M2 Max with 96GB RAM.
 
 ## Building for macOS and Apple Silicon
 
