@@ -1,6 +1,6 @@
 # Use the GPU on your Apple Silicon Mac
 
-## Laest Update
+## Latest Update
 
  - [01 Oct 2024 - Library dependencies have changed](#-01-Oct-2024---Library-dependencies-have-changed)
  - [16 Sep 2024 - Basic testing, yes it works, and is kinda fast?](#16-Sep-2024---Basic-testing,-yes-it-works,-and-is-kinda-fast?)
