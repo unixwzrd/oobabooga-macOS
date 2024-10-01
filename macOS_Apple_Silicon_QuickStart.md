@@ -122,7 +122,7 @@ pip install -r requirements.txt
 CMAKE_ARGS="-DLLAMA_METAL=on" \
 FORCE_CMAKE=1 \
 PATH=/usr/local/bin:$PATH \
-pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
+pip install llama-cpp-python==0.2.90 --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
 
 ## Pip install from daily build
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu --no-deps --force-reinstall

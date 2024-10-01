@@ -1,6 +1,8 @@
 # Use the GPU on your Apple Silicon Mac
 
 ## Laest Update
+
+ - [01 Oct 2024 - Library dependencies have changed](#-01-Oct-2024---Library-dependencies-have-changed)
  - [16 Sep 2024 - Basic testing, yes it works, and is kinda fast?](#16-Sep-2024---Basic-testing,-yes-it-works,-and-is-kinda-fast?)
 
 ## Background
@@ -31,6 +33,21 @@ errno 15
 errno_warn will return after sending the code and message to STDERR, and errno_exit will cause your script to exit after writing the error code and message to STDERR.
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
+
+## 01 Oct 2024 - Library dependencies have changed
+
+I just finished up with creating a web site and I now know way too much about Jekyll, also OpeAI's new model o1-mini writes shell scripts just like it's writing Python, complete with a call to function "main" at the end. What was supposed to take me two weeks and at most four, took almost three months to accomplish.  Not all of that is based on getting to know Jekyll, some was waiting for other people, which I have no control over. The site is up now, is it perfect? Not really, it will be a work in progress. I will be moving posts like this over there as I will keep a blog about projects I am working on and other things happening in life.
+
+Anyway, there are two major libraries I can see right off the top which are both critical to oobabooga and critical to have the proper version. I'm still nailing down some potential issues, but that's what happens when you want to upgrade libraries and try the latest and greatest. Ok so here they are so far:
+
+  - llama-cpp-python --> 0.2.90
+  - numpy --> 1.26.4
+
+There may be others and I've updated the instructions and will be pushing a new version of the requirements up with the new library versions. These two should be built manually or compiled locally using the instructions I have as they will give the best performance as far as I know.
+
+I may be supporting this less and less as I have several other things I have been working on and would like to shift to them.  One is a Python module which will assist in porting things from CUDA to Apple Silicon.  Another is yet another LLM framework, but I hope it is simpler and easier to maintain as I have learned a lot while trying to keep bandaids on the original oobabooga keeping it working on macOS.  That's been on hold the past three months and I need to get back to it.
+
+I also made a port or Coqui and AllTalk to run on macOS using Apple Silicon, but haven't created branches of them and only have them in local repositories for now. There's a lot I'd like to be doing, but I have been scraping to get by for more than a year now. I am still looking for employment or project funding. I got cut loose while on FMLA and haven't been able to find any thing to help pay the bills.
 
 ## 16 Sep 2024 - Basic testing, yes it works, and is kinda fast?
 

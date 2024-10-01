@@ -299,7 +299,7 @@ The application llama.cpp compiles with MPS support. I'm not sure if the cmake c
 CMAKE_ARGS="-DLLAMA_METAL=on" \
 FORCE_CMAKE=1 \
 PATH=/usr/local/bin:$PATH \
-pip install llama-cpp-python --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
+pip install llama-cpp-python==0.2.90 --force-reinstall --no-cache --no-binary :all: --compile --no-deps --no-build-isolation
 
 ```
 
