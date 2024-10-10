@@ -2,8 +2,7 @@
 
 ## Latest Update
 
- - [10 Oct 2024 - Change of Plans With Sonoma plus GCC](#10-oct-2024---change-of-plans-with-sonoma-plus-gcc10-Oct-2024---Change-of-Plans-With-Sonoma-plus-GCC
-)
+ - [10 Oct 2024 - Change of Plans With Sonoma plus GCC](#10-oct-2024---change-of-plans-with-sonoma-plus-gcc10-Oct-2024---Change-of-Plans-With-Sonoma-plus-GCC)
  - [01 Oct 2024 - Library dependencies have changed](#01-Oct-2024---Library-dependencies-have-changed)
  - [16 Sep 2024 - Basic testing, yes it works, and is kinda fast?](#16-Sep-2024---Basic-testing,-yes-it-works,-and-is-kinda-fast?)
 
