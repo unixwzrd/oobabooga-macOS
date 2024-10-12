@@ -2,7 +2,7 @@
 
 ## Latest Update
 
- - [10 Oct 2024 - Change of Plans With Sonoma plus GCC](#10-Oct-2024---Change-of-Plans-With-Sonoma-Plus-GCC)
+ - [10 Oct 2024 - Change of Plans With Sequoia plus GCC](#10-Oct-2024---Change-of-Plans-With-Sequoia-Plus-GCC)
  - [01 Oct 2024 - Library dependencies have changed](#01-Oct-2024---Library-dependencies-have-changed)
  - [16 Sep 2024 - Basic testing, yes it works, and is kinda fast?](#16-Sep-2024---Basic-testing,-yes-it-works,-and-is-kinda-fast?)
 
@@ -35,9 +35,9 @@ errno_warn will return after sending the code and message to STDERR, and errno_e
 
 **Anyone wishing to provide any additional information or assistance, pleas feel free.  If you are interested in working on this with me, please let me know as well. It's still only myself and a few volunteers assisting me at the moment. Keeping up with call this does take a good bit of time to keep up with and organize in this rapidly changing world, so any help would be appreciated.**
 
-## 10 Oct 2024 - Change of Plans With Sonoma plus GCC
+## 10 Oct 2024 - Change of Plans With Sequoia plus GCC
 
-I upgraded to macOS Sonoma 15.0.1, additionally, I've done a new merge with oobabooga 1.15, their latest.  I am working on getting the libraries and packages built, but am having some difficulty with Sonoma. I'm rebuilding lots of things from source right now an want to do some checking for perfomance, especially with PyTorch and Numpy which seem to be the ones most dependent on the Accelerate Framework.
+I upgraded to macOS Sequoia 15.0.1, additionally, I've done a new merge with oobabooga 1.15, their latest.  I am working on getting the libraries and packages built, but am having some difficulty with . I'm rebuilding lots of things from source right now an want to do some checking for perfomance, especially with PyTorch and Numpy which seem to be the ones most dependent on the Accelerate Framework.
 
 Right now I'm trying to figure out how to get mason to build scikit for Python. It's having issues with using certain invalid flags to ld. I wil get this figured out. Additionally, I've built the Gnu Compiler Collection, including GFORTRAN, so I may have additional performance improvements soon.
 
