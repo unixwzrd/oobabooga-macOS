@@ -15,6 +15,21 @@
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. BLAS and LAPACK are no longer required to be build.
 
+## 16 Nov 2024 - Numpy build for Apple Silicon NumPy 1.26.* solved
+
+**Note this involves a hack** is more than I can write up here.  The basic issue is Meson is not passing the correct flags to detect the linker `ld` version correctly and using `--version` instead of `-v`. I spent a lot of time diving into Meson and even began looking at a NumPy build from source code. Given that and the macOS updates, rebuilding my GNU toolchain from source, it was taking way too much time. I have wrappers for the tools which meson is using and I replace `--version` with `-v` and it works just fine these "hacks" will be included in venvutil which also has a number of others useful tools for working with LLM's and VENV's.
+
+Meson and a source build of NumPy were both deep dark rabbit holes consuming a lot of my time, but I am able to compile using a Pip recompile and take advantage of the Apple Silicon using this for the build:
+
+```bash
+# NumPy Rebuild with Pip
+CFLAGS="-I/System/Library/Frameworks/vecLib.framework/Headers -Wl,-framework -Wl,Accelerate -framework Accelerate" pip install numpy==1.26.* --force-reinstall --no-deps --no-cache --no-binary :all: --compile -Csetup-args=-Dblas=accelerate -Csetup-args=-Dlapack=accelerate -Csetup-args=-Duse-ilp64=true
+```
+
+This will not work without some supplementary tools, scripts and just plain hacks, but I have verified that it improves the performance of NumPy on Apple Silicon dramatically. I'll post an update here when I get the files in the venvutil repository. and instructions for how to use it.
+
+---
+
 The new VENV build process here is, [venvutil](https://github.com/unixwzrd/venvutil). It's a set of shell functions and hopefully soon a way to get reproducible builds. Using Git, pip, conda and user definable functions.  There's still a few issues I need to work out, but it will eventually track your installed python packages and even do diffs between different VENV's and points in time.  Not quite there yet, but hoping for this to be a way to track and rebuild VENV's no matter if you use Conda, pip, and possibly a few others at some point.
 
 There's also a lot of helpful shell functions in there, one in particular if a way to lookup and use POSIX return codes for return values and exit codes - `errno` and `errfind`.  There's also `errno_warn` and `errno_exit` for scripts. If you have program which uses POSIX return codes, you would be able to do this:
