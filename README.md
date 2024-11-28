@@ -2,11 +2,13 @@
 
 ## Latest Update
 
- - [10 Oct 2024 - Change of Plans With Sequoia plus GCC](#10-Oct-2024---Change-of-Plans-With-Sequoia-Plus-GCC)
- - [01 Oct 2024 - Library dependencies have changed](#01-Oct-2024---Library-dependencies-have-changed)
- - [16 Sep 2024 - Basic testing, yes it works, and is kinda fast?](#16-Sep-2024---Basic-testing,-yes-it-works,-and-is-kinda-fast?)
+- [28 Nov 2024 - Announcing Venvutil: Streamlining Python Virtual Environments](#28-nov-2024---announcing-venvutil-streamlining-python-virtual-environments)
+- [16 Nov 2024 - NumPy build for Apple Silicon: NumPy 1.26 solved](#16-nov-2024---numpy-build-for-apple-silicon-numpy-1.26-solved)
+- [01 Oct 2024 - Library dependencies have changed](#01-oct-2024---library-dependencies-have-changed)
+- [16 Sep 2024 - Basic testing, yes it works, and is kinda fast](#16-sep-2024---basic-testing-yes-it-works-and-is-kinda-fast)
 
 ## Background
+
  This stared out as a guide to getting oobabooga working with Apple Silicon better, but has turned out to contain now useful information regarding how to get numerical analysis, data science, and AI core software running to take advantage of the Apple Silicon M1 and M2 processor technologies. There is information in the guides for installing OpenBLAS, LAPACK, Pandas, NumPy, PyTorch/Torch and llama-cpp-python. I will probably create a new repository for all things Apple Silicon in the interest of getting maximum performance out of the M1 and M2 architecture.
 
 ## You probably want this: [Building Apple Silicon Support for oobabooga text-generation-webui](https://github.com/unixwzrd/oobabooga-macOS/blob/main/macOS-Install.md)
@@ -15,7 +17,48 @@
 
 In the test-scripts directory, there are some random Python scripts using tensors to test things like data types for MPS and other compute engines.  Nothing special, just hacked together in a few minutes for checking GPU utilization and AutoCast Data Typing. BLAS and LAPACK are no longer required to be build.
 
-## 16 Nov 2024 - Numpy build for Apple Silicon NumPy 1.26.* solved
+## 28 Nov 2024 - Announcing Venvutil: Streamlining Python Virtual Environments  
+
+I’m excited to release **Venvutil**, a versatile toolset for building and managing Python Virtual Environments. While it’s still evolving, the current release offers several powerful features and solutions for common challenges, including workarounds for Meson builds for NumPy 1.26.4.  
+
+### Addressing the Meson Build Issue  
+
+NumPy 1.26.4 requires Meson for building, but Meson’s use of `--version` (instead of `-v`) to query the linker (`ld`, `c++`, `g++`) creates issues with Apple’s linker. This problem can prevent successful builds, particularly on macOS. Venvutil addresses this by providing hard-linked scripts that correct the flag, allowing NumPy to compile and take full advantage of the Accelerate framework for Apple Silicon.  
+
+### Installation  
+
+Setting up Venvutil is straightforward. Run the following commands:  
+
+```bash
+git clone https://github.com/unixwzrd/venvutil.git
+cd venvutil
+bash setup.sh install
+
+This installs Venvutil in $HOME/local/venvutil/bin. The installer is designed to be non-destructive and includes:
+ • Conda setup
+ • NLTK and Rich installation
+ • The core Venvutil payload
+
+Key Features
+
+ • Environment Tracking: Logs and tracks all changes to your Python virtual environments, aiding in recreation and debugging.
+ • Basic venvvdiff: Compare two virtual environments easily.
+ • Meson Workarounds: Custom scripts replace --version with -v, enabling successful builds on macOS and RHEL 9.
+ • Accelerate Framework: Leverages Apple Silicon’s performance advantages for NumPy compilation.
+
+Tested Platforms
+
+Venvutil has been tested on:
+ • macOS 15.1.1
+ • RHEL 9
+
+For detailed NumPy compilation steps, see this repo and the Venvutil README.
+
+Feedback and Support
+
+Give Venvutil a try! If you encounter any issues or have suggestions, please report them in the repository’s Issues section. Your feedback is invaluable in making Venvutil even better.s always you can buy me a coffe at [BuyMeACoffee](https://www.buymeacoffee.com/unixwzrd). or support me on my Patreon [Patreon](https://patreon.com/unixwzrd).
+
+## 16 Nov 2024 - Numpy build for Apple Silicon NumPy 1.26 solved
 
 **Note this involves a hack** is more than I can write up here.  The basic issue is Meson is not passing the correct flags to detect the linker `ld` version correctly and using `--version` instead of `-v`. I spent a lot of time diving into Meson and even began looking at a NumPy build from source code. Given that and the macOS updates, rebuilding my GNU toolchain from source, it was taking way too much time. I have wrappers for the tools which meson is using and I replace `--version` with `-v` and it works just fine these "hacks" will be included in venvutil which also has a number of others useful tools for working with LLM's and VENV's.
 
@@ -66,8 +109,8 @@ I just finished up with creating a web site and I now know way too much about Je
 
 Anyway, there are two major libraries I can see right off the top which are both critical to oobabooga and critical to have the proper version. I'm still nailing down some potential issues, but that's what happens when you want to upgrade libraries and try the latest and greatest. Ok so here they are so far:
 
-  - llama-cpp-python --> 0.2.90
-  - numpy --> 1.26.4
+- llama-cpp-python --> 0.2.90
+- numpy --> 1.26.4
 
 There may be others and I've updated the instructions and will be pushing a new version of the requirements up with the new library versions. These two should be built manually or compiled locally using the instructions I have as they will give the best performance as far as I know.
 
@@ -108,6 +151,7 @@ I have been working on rebuilding oobabooga from the ground up and creating my o
 This effort is a departure from the oobabooga code-base completely and will have a separate repository. I do plan to try to keep it as backwards compatible as possible and plan to support llama.cpp/llama-cpp-python to begin with. Please let me know if you have any suggestions or things you would like to see in a completely overhauled product.
 
 ## 25 Jun 2024 - NumPY updated and breaks things
+
 Had to change the instruction just slightly for NumPy since it breaks Numba.
 
 ## 02 Jun 2024 - Rolled back Jinja, should be fine now
@@ -120,7 +164,6 @@ Rolled back to prior working version, should be fine now.
 
 I'm updating my instructions to use the main branch of the repository as I've done some housekeeping and all are in sync at this point.
 
-  
 ## 31 May 2024 - Well, it's been a while and it's time for an update
 
 Actually, not a whole lot has changed except for an updated to oobabooga being folded in. to the dev version of oobabooga dev from 20 May 2024. I will try to merge in other bits as soon as possible. But this is ready for anyone brave enough to test.
@@ -141,8 +184,10 @@ I have set up a Discord which you are welcome to join and help build a community
 
 **NOTE** I have updated the install instructions with the latest build information.
 
-## TL;DR;
+## TL;DR
+
 **NumPy on Apple Silicon GPUs (M1/M2/M3)**:
+
 - NumPy has improved its compatibility with Apple Silicon GPUs.
 - Installation still requires specific steps beyond a simple pip install.
 - Key Points:
@@ -159,13 +204,14 @@ I have set up a Discord which you are welcome to join and help build a community
 
 I've been doing a good bit of testing to see what configurations work using the GPU on Apple Silicon machines and while it's still not as straightforward as just doing a plain pip install, the changes to getting NumPy to run taking advantage of Apple Silicon GPU's has stabilized. I stated in another update that I'd been taking some time to allow things to settle, and it appears they have to some extent. Here's where things are now.
 
-## Numpy, llamas, and PyTorch, oh my...
+## Numpy, llamas, and PyTorch, oh my
 
-* [NumPy builds for the Accelerate Framework](#numpy)
-* [llama.cpp still needs special flags to build correctly](#llama-cpp-python)
-* [PyTorch still needs to be installed from the daily builds](#pytorch)
+- [NumPy builds for the Accelerate Framework](#numpy)
+- [llama.cpp still needs special flags to build correctly](#llama-cpp-python)
+- [PyTorch still needs to be installed from the daily builds](#pytorch)
   
   ### NumPY
+
   Alright, let's take each of those things in order. Numpy changed their build process from what they had to using Meson to generate the build files and actually build. We used to use `NPY_BLAS_ORDER` and `NPY_LAPACK_ORDER`, well as I mentioned before, the new build will try to determine if you have a libBLAS and libLAPACK dynamic library installed on your system.  There is a set order of precedence it will use to search for these libraries and I discovered that it would use previously installed libraries in /usr/local/lib if it found them there before it would use the Accelerate Framework on macOS. I haven't tested the updated Meson install to see if it checks for the framework first or if it just grabs the first library it sees, in any event, I moved the OpenBLAS and BLIS libraries I'd build previously out of the way to be sure.
   
   Instead of environment variables there are now switches which need to be used when recompiling NumPy with Pip, and I would suggest doing a forced install if your NumPy is ever overlaid. I will show some rough numbers from my very basic benchmark, found in this repository in the test-scripts directory called `numpybench` which will give you the build configuration of your NumPy as well as do som every simple tests to exercise the GPU. At one point I needed the NPY environment variables to build, but now it's just like this:
@@ -195,7 +241,7 @@ I've been doing a good bit of testing to see what configurations work using the 
 
   ### llama-cpp-python
   
-  `llama-cpp-python` will insist on getting a new NumPy for you, but we can no longer compile NumPy during the rebuild of `llama-cpp-python` or rather the sub-package `llama.cpp `, and needs to be done the same as before, it's just we cannot specify the extra flags to Pip and using CFLAGS didn't work. I'm not a Meson expert or a Pip expert, but how enough to be dangerous. The procedure for rebuilding `llama-cpp-python` is like this still, but not installing its dependencies with `--no-deps`. Don't even bother trying the `-Csetup-args` with this, it will fail.
+  `llama-cpp-python` will insist on getting a new NumPy for you, but we can no longer compile NumPy during the rebuild of `llama-cpp-python` or rather the sub-package `llama.cpp`, and needs to be done the same as before, it's just we cannot specify the extra flags to Pip and using CFLAGS didn't work. I'm not a Meson expert or a Pip expert, but how enough to be dangerous. The procedure for rebuilding `llama-cpp-python` is like this still, but not installing its dependencies with `--no-deps`. Don't even bother trying the `-Csetup-args` with this, it will fail.
 
   ```bash
   CMAKE_ARGS="-DLLAMA_METAL=on" FORCE_CMAKE=1 \
@@ -328,6 +374,7 @@ I've been doing a good bit of testing to see what configurations work using the 
     ```
 
     What you should really beconcerned about here is the `blas` and `lapack` entries. You can see that it is using the Accelerate Framework by this line:
+
     ```
     2023-11-01 03:17:02     name: accelerate
     ```
@@ -430,24 +477,26 @@ I've been doing a good bit of testing to see what configurations work using the 
 
 I have the discussions turned on for this repository and the subject was brought up regarding CoreML and I weighed with a rather lengthy response. Please feel free to add to the discussion if you like.  it was regarding this paper about [Swift and CoreML LLMs](https://huggingface.co/blog/swift-coreml-llm) and rather use an Apple native solution rather than the patchwork of python and C libraries we have here.  Well, [it's complicated, you can read all about it here](https://github.com/unixwzrd/oobabooga-macOS/discussions/2#discussioncomment-7286842). GPT-4 was nice enough to give this...
 
-### TL;DR:
-* Apple's CoreML is powerful but remains largely within the Apple ecosystem, making it niche.
-* llama.cpp aims for model portability and could become a standard for running models, especially with its GGUF file format.
-* oobabooga is feature-rich but has performance and stability issues, and it's too PC-focused.
-* Dependency hell and update cycles are significant challenges, especially with libraries like NumPy and PyTorch.
-* ctransformers could be a game-changer, but you haven't had a chance to explore it yet.
-* You're considering a new project that would be more modular and flexible than oobabooga, possibly using a message-passing architecture.
+### TL;DR
+
+- Apple's CoreML is powerful but remains largely within the Apple ecosystem, making it niche.
+
+- llama.cpp aims for model portability and could become a standard for running models, especially with its GGUF file format.
+- oobabooga is feature-rich but has performance and stability issues, and it's too PC-focused.
+- Dependency hell and update cycles are significant challenges, especially with libraries like NumPy and PyTorch.
+- ctransformers could be a game-changer, but you haven't had a chance to explore it yet.
+- You're considering a new project that would be more modular and flexible than oobabooga, possibly using a message-passing architecture.
 
 ## 15 Oct 2023 - Update coming soon
 
 I haven't gone away, still around, but waiting on the dust to settle before updating.  Lots of things have changed.
 
-* PyTorch has had a few updates and is for-the-most-part, able to run using Apple Silicon M1/M2 GPU
-* NumPy has had a major update, but last time I updated, the Python distributions did not have NumPy using Apple Silicon GPU by default.
-* llama.cpp is using the Apple Silicon GPU and has reasonable performance. While for llama-cpp-python there is a dependency for NumPy, it doesn't require it for integrating it into oobabooga, though other things require NumPy.
-* BLAS/LAPACK for NumPy, last I checked, point to the Accelerate Framework in macOS 13.5 (I have tested 13.5 thru 13.6.) and higher.
-* macOS sent it an upgrade for their OS macOS 14.0.  I have not tested this but I had numerous things change on my system and break with the 13.6 update. So, I decided to give things a rest until things settled down. Everything was running in my config below, and I didn't need the latest and greatest features of anything, so I decided to wait until things stabilized.
-* iOS Updates. Yeah, that too.  If it wasn't enough for everything else, Apple also put out iOS updates to iOS 17.
+- PyTorch has had a few updates and is for-the-most-part, able to run using Apple Silicon M1/M2 GPU
+- NumPy has had a major update, but last time I updated, the Python distributions did not have NumPy using Apple Silicon GPU by default.
+- llama.cpp is using the Apple Silicon GPU and has reasonable performance. While for llama-cpp-python there is a dependency for NumPy, it doesn't require it for integrating it into oobabooga, though other things require NumPy.
+- BLAS/LAPACK for NumPy, last I checked, point to the Accelerate Framework in macOS 13.5 (I have tested 13.5 thru 13.6.) and higher.
+- macOS sent it an upgrade for their OS macOS 14.0.  I have not tested this but I had numerous things change on my system and break with the 13.6 update. So, I decided to give things a rest until things settled down. Everything was running in my config below, and I didn't need the latest and greatest features of anything, so I decided to wait until things stabilized.
+- iOS Updates. Yeah, that too.  If it wasn't enough for everything else, Apple also put out iOS updates to iOS 17.
 
 Basically, I was bouncing from one update to the next and hardly time to take a break. The repo I have for oobabooga-macos had a buglet or two patched, but it does llama2 support, though with configurations I have specified below and on my instructions, it is supported to version 1.6 as far as I can tell, and should run fine.  If you have any problems with it, feel free to reach out and let me know.
 
@@ -482,10 +531,10 @@ I'm guilty of this to some extent, I have things I need to get released, but som
 
 For some reason the distribution of PyTorch, llama-cpp-python, and something in the oobabooga requirements.txt, all conflict with each other, including installing over an existing NumPy install or even downgrading it from 1.25.3 to 1.24.0. The PyTorch distribution at PyTorch also had some conflicting dependencies with other things as well, so you can't just do a --force-reinstall/install with things, and get the daily build of PyTorch because something has change in the distribution. I did manage to fins a combination which works solves the problems ad posted it in the #macOS-setup of the oobabooga Discord server. To save a bit, here's what I wrote:
 
-
 `RuntimeError: MPS does not support cumsum op with int64 input.` This has something to do with PyTorch and their Metal support on macOS using the Accelerate Framework for the M1/M2 GPU acceleration, in particular the version of NumPy and associated "numpy-base" package which is distributed with PyTorch is also problematic. Some time ago, this problem was solved, but seems to have returned. There are several issues with the install process you followed and most of it is due to ever-changing libraries, modules and dependencies. Not only all that, but it does not seem to use the Apple Silicon M1/M2 GPU acceleration, so simply installing things in the proper order doesn't particularly help either.
 
 You could probably repair the modules and libraries in your Python installation, but the quickest and probably the easiest way will be to create a new VENV and install things in this order:
+
 - Create new VENV and make it active.
 - `pip install --upgrade --no-deps --force-reinstall --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu`
 - `pip install -r requirements_nocuda.txt`
@@ -508,7 +557,7 @@ cd webui-macOS
 python server.py --chat
 ```
 
-## 06 See 2023 This thread...
+## 06 See 2023 This thread
 
 [Exactly this. PR #1728](https://github.com/oobabooga/text-generation-webui/issues/1728#issuecomment-1708455881)
 
@@ -536,7 +585,7 @@ Living the dream of high speed Internet and unlimited data.
 
 ## 29 Aug 2023 - GGML -> GGUF
 
-* **NOTICE GGML File Format Change to GGUF**
+- **NOTICE GGML File Format Change to GGUF**
 
 The new llama.cpp is quite fast now and seems to take advantage of MPS now nicely. But in order to use the latest, any GGML files will need to be converted to GGUF files. It's quite simple to do. The script to do the conversion is in the llama.cpp repo and there is only one requirement is to import gguf into your Python installation.
 
@@ -558,9 +607,9 @@ Added and changed a few things in the instructions. Updated the dev and main rep
 
 There does seem to be an inconsistency with one of my llama builds with torch, and I'm tracking it down now, but the one which is the base packages before rebuilding anything is due to the SciPy support that gets loaded with the oobabooga requirements, they took a different approach to their builds and combining their own Numpy embedded with the SciPy package somehow, or at least that's what it appears to be to me.  I will continue to investigate and have an update soon.
 
-## 28 Aug 2023 - Performance Improvements And LLaMa2 works.
+## 28 Aug 2023 - Performance Improvements And LLaMa2 works
 
-* UPDATED QUICK INSTALL. PLEASE NOTE REGARDING GGML FILES, 0.1.78 llama-cpp-python must be used with GGML files. Both that version and the latest will work with LLaMa2.
+- UPDATED QUICK INSTALL. PLEASE NOTE REGARDING GGML FILES, 0.1.78 llama-cpp-python must be used with GGML files. Both that version and the latest will work with LLaMa2.
 
 Have spent much time looking at Python packages for numerical analysis, data analytics and AI. There are many different combinations of libraries, depending on which order you install them and whether you compile in the Accelerate Framework. I believe it is working for the most part, but I haven't tested it completely. However, PyTorch now fully supports Apple Silicon, but other Python modules dance on some of the libraries installed by NumPy and PyTorch, specifically the BLAS libraries. I have a configuration tool I was putting together in Bash, but the logic ran me into a wall regarding graph traversal, so I am planning to have that re-done in Python.
 
@@ -609,7 +658,7 @@ My reasons for releasing is to allow people to use and test some of the new feat
 
 I'll continue testing and benchmarking things and will try to get some real numbers produced and presented soon. No matter what, keep watching this spot for my latest updates on this issue.
 
-## 11 Aug 2023 - This Kind of Explains the Issue With pip, conda, etc al.
+## 11 Aug 2023 - This Kind of Explains the Issue With pip, conda, etc al
 
 Well, I haven't tried the latest main branch of oobagooba as I'm still on a working 1.3.1 I have in my repository.  I'm sorting some performance and library compatibility issues out now, but hope to be back to getting a 1.5 release which is tested and running on macOS using Metal.  Metal also happens to be the piece I'm looking into deeply because there seem yo be issues about it using GPU or CPU or both, I have just about got a test framework setup for different combinations of things like NumPy, Pandas, PyTorch, and will test them in various configurations.
 
